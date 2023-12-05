@@ -1,6 +1,9 @@
 #include <iostream>
+#include "tracing/chapter_2.h"
+
+using namespace tracing;
 
 int main() {
-  std::cout << "Hello World" << std::endl;
+  ppm_basics();
   return 0;
 }

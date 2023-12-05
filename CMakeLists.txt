@@ -10,6 +10,7 @@ include_directories(include)
 
 set(RAYTRACING_SOURCES
   main.cpp
+  src/chapter_2.cpp
 )
 
 add_executable(tracing ${RAYTRACING_SOURCES})
