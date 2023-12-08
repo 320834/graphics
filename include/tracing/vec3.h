@@ -21,9 +21,6 @@ public:
   Vec3& operator*=(const double t);
   Vec3& operator/=(const double t);
 
-  Vec3 operator+(const Vec3 &right) const;
-  Vec3 operator-(const Vec3 &right) const;
-
   double length() const;
   double length_squared() const;
 
