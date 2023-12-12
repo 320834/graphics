@@ -7,6 +7,7 @@
 #include "tracing/hittable.h"
 #include "tracing/hittable_list.h"
 #include "tracing/utils.h"
+#include "tracing/interval.h"
 
 using namespace tracing;
 

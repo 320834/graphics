@@ -6,6 +6,7 @@
 #include "tracing/hittable_list.h"
 #include "tracing/sphere.h"
 #include "tracing/utils.h"
+#include "tracing/interval.h"
 
 namespace tracing {
 
@@ -26,24 +27,10 @@ void ppm_basics() {
   std::cerr << "\nDone.\n";
 }
 
-// double hit_sphere(const Point3& center, double radius, const Ray& r) {
-//     Vec3 oc = r.origin() - center;
-//     auto a = r.direction().length_squared();
-//     auto half_b = dot(oc, r.direction());
-//     auto c = oc.length_squared() - radius*radius;
-//     auto discriminant = half_b*half_b - a*c;
-
-//     if(discriminant < 0) {
-//       return -1.0;
-//     } else {
-//       return (-half_b - sqrt(discriminant) ) / a;
-//     }
-// }
-
 Color ray_color(const Ray& r, const Hittable& world) {
 
   HitRecord rec;
-  if(world.hit(r, 0, TRACING_INFINITY, rec)) {
+  if(world.hit(r, Interval(0, TRACING_INFINITY), rec)) {
     return 0.5 * (rec.normal + Color(1,1,1));
   }
 
