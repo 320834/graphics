@@ -5,6 +5,8 @@
 #include "tracing/ray.h"
 #include "tracing/sphere.h"
 #include "tracing/hittable.h"
+#include "tracing/hittable_list.h"
+#include "tracing/utils.h"
 
 using namespace tracing;
 

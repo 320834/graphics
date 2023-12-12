@@ -2,6 +2,10 @@
 #include "tracing/chapter.h"
 #include "tracing/color.h"
 #include "tracing/ray.h"
+#include "tracing/hittable.h"
+#include "tracing/hittable_list.h"
+#include "tracing/sphere.h"
+#include "tracing/utils.h"
 
 namespace tracing {
 
@@ -22,27 +26,25 @@ void ppm_basics() {
   std::cerr << "\nDone.\n";
 }
 
-double hit_sphere(const Point3& center, double radius, const Ray& r) {
-    Vec3 oc = r.origin() - center;
-    auto a = r.direction().length_squared();
-    auto half_b = dot(oc, r.direction());
-    auto c = oc.length_squared() - radius*radius;
-    auto discriminant = half_b*half_b - a*c;
+// double hit_sphere(const Point3& center, double radius, const Ray& r) {
+//     Vec3 oc = r.origin() - center;
+//     auto a = r.direction().length_squared();
+//     auto half_b = dot(oc, r.direction());
+//     auto c = oc.length_squared() - radius*radius;
+//     auto discriminant = half_b*half_b - a*c;
 
-    if(discriminant < 0) {
-      return -1.0;
-    } else {
-      return (-half_b - sqrt(discriminant) ) / a;
-    }
-}
+//     if(discriminant < 0) {
+//       return -1.0;
+//     } else {
+//       return (-half_b - sqrt(discriminant) ) / a;
+//     }
+// }
 
-Color ray_color(const Ray& r) {
+Color ray_color(const Ray& r, const Hittable& world) {
 
-  double t = hit_sphere(Point3(0,0,-1), 0.7, r);
-  if (t > 0.0) {
-    Vec3 N = unit_vector(r.at(t) - Vec3(0,0,-1));
-
-    return 0.5 * Color(N.x() + 1, N.y() + 1, N.z() + 1);
+  HitRecord rec;
+  if(world.hit(r, 0, TRACING_INFINITY, rec)) {
+    return 0.5 * (rec.normal + Color(1,1,1));
   }
 
   Vec3 unit_direction = unit_vector(r.direction());
@@ -57,6 +59,11 @@ void ray_tracing_setup() {
   // Calculate the image height, and ensure that it's at least 1.
   int image_height = static_cast<int>(image_width / aspect_ratio);
   image_height = (image_height < 1) ? 1 : image_height;
+
+  // World
+  HittableList world;
+  world.add(std::make_shared<Sphere>(Point3(0,0,-1), 0.5));
+  world.add(std::make_shared<Sphere>(Point3(0,-100.5,-1), 100));
 
   // Camera
   auto focal_length = 1.0;
@@ -86,7 +93,7 @@ void ray_tracing_setup() {
         auto ray_direction = pixel_center - camera_center;
         Ray r(camera_center, ray_direction);
 
-        Color pixel_color = ray_color(r);
+        Color pixel_color = ray_color(r, world);
         write_color(std::cout, pixel_color);
       }
   }
