@@ -14,6 +14,8 @@ public:
   bool contains(double x) const;
   bool surrounds(double x) const;
 
+  double clamp(double x) const;
+
   static const Interval empty, universe;
 
 };
@@ -31,5 +33,11 @@ inline bool Interval::surrounds(double x) const {
 
 const static Interval empty(+TRACING_INFINITY, -TRACING_INFINITY);
 const static Interval universe(+TRACING_INFINITY, -TRACING_INFINITY);
+
+inline double Interval::clamp(double x) const {
+    if (x < min) return min;
+    if (x > max) return max;
+    return x;
+}
 
 #endif // TRACING_INTERVAL_H

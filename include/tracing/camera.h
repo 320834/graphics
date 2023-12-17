@@ -10,6 +10,8 @@ class Camera {
 public:
   double aspect_ratio = 1.0;
   int image_width = 100;
+  int samples_per_pixel = 10;
+
   void render(const Hittable& world);
 private:
   int    image_height;   // Rendered image height
@@ -19,8 +21,9 @@ private:
   Vec3   pixel_delta_v;  // Offset to pixel below
 
   void initialize();
+  Ray get_ray(int i, int j) const;
   Color ray_color(const Ray& ray, const Hittable& world) const;
-
+  Vec3 pixel_sample_square() const;
 
 };
 
@@ -33,12 +36,13 @@ inline void Camera::render(const Hittable& world) {
   for (int j = 0; j < image_height; ++j) {
       std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
       for (int i = 0; i < image_width; ++i) {
-        auto pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
-        auto ray_direction = pixel_center - center;
-        Ray r(center, ray_direction);
+        Color pixel_color(0,0,0);
+        for(int sample = 0; sample < samples_per_pixel; ++sample) {
+          Ray r = get_ray(i, j);
+          pixel_color += ray_color(r, world);
+        }
 
-        Color pixel_color = ray_color(r, world);
-        write_color(std::cout, pixel_color);
+        write_color(std::cout, pixel_color, samples_per_pixel);
       }
   }
 
@@ -74,6 +78,36 @@ inline void Camera::initialize() {
   Vec3 viewport_upper_left = 
     center - Vec3(0,0, focal_length) - viewport_u/2 - viewport_v/2;
   pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+}
+
+inline Ray Camera::get_ray(int i, int j) const {
+
+  auto pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
+  auto pixel_sample = pixel_center + pixel_sample_square();
+  
+  auto ray_origin = center;
+  auto ray_direction = pixel_sample - ray_origin;
+  
+  Ray r(ray_origin, ray_direction);
+
+  return r;
+}
+
+// inline Ray Camera::get_ray(int i, int j) const {
+
+//   auto pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
+//   auto pixel_sample = pixel_center + pixel_sample_square();
+//   auto ray_direction = pixel_center - center;
+//   Ray r(center, ray_direction);
+
+//   return r;
+// }
+
+Vec3 Camera::pixel_sample_square() const {
+    // Returns a random point in the square surrounding a pixel at the origin.
+    auto px =  -0.5 + random_double();
+    auto py =  -0.5 + random_double();
+    return (px * pixel_delta_u) + (py * pixel_delta_v);
 }
 
 inline Color Camera::ray_color(const Ray& ray, const Hittable& world) const {
