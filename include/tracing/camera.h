@@ -11,6 +11,7 @@ public:
   double aspect_ratio = 1.0;
   int image_width = 100;
   int samples_per_pixel = 10;
+  int max_depth = 10;
 
   void render(const Hittable& world);
 private:
@@ -22,7 +23,7 @@ private:
 
   void initialize();
   Ray get_ray(int i, int j) const;
-  Color ray_color(const Ray& ray, const Hittable& world) const;
+  Color ray_color(const Ray& ray, int depth, const Hittable& world) const;
   Vec3 pixel_sample_square() const;
 
 };
@@ -39,7 +40,7 @@ inline void Camera::render(const Hittable& world) {
         Color pixel_color(0,0,0);
         for(int sample = 0; sample < samples_per_pixel; ++sample) {
           Ray r = get_ray(i, j);
-          pixel_color += ray_color(r, world);
+          pixel_color += ray_color(r, max_depth, world);
         }
 
         write_color(std::cout, pixel_color, samples_per_pixel);
@@ -110,11 +111,17 @@ Vec3 Camera::pixel_sample_square() const {
     return (px * pixel_delta_u) + (py * pixel_delta_v);
 }
 
-inline Color Camera::ray_color(const Ray& ray, const Hittable& world) const {
+inline Color Camera::ray_color(const Ray& ray, int depth, const Hittable& world) const {
   HitRecord rec;
 
-  if(world.hit(ray, Interval(0, TRACING_INFINITY), rec)) {
-    return 0.5 * (rec.normal + Color(1,1,1));
+  if(depth <= 0) {
+    return Color(0,0,0);
+  }
+
+  if(world.hit(ray, Interval(0.001, TRACING_INFINITY), rec)) {
+    Vec3 direction = rec.p.random_on_hemisphere(rec.normal);
+    return 0.5 * ray_color(Ray(rec.p, direction), depth - 1, world);
+    // return 0.5 * (rec.normal + Color(1,1,1));
   }
 
   Vec3 unit_direction = unit_vector(ray.direction());
