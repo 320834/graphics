@@ -141,7 +141,8 @@ Initialize shader_program()
   return {
     .shaderProgram = shaderProgram,
     .VAO = VAO,
-    .EBO = EBO
+    .EBO = EBO,
+    .VBO = VBO
   };
 
 }
@@ -198,6 +199,10 @@ int hello_triangle()
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
+
+  glDeleteVertexArrays(1, &obj.VAO);
+  glDeleteBuffers(1, &obj.VBO);
+  glDeleteProgram(obj.shaderProgram);
 
   glfwTerminate();
 

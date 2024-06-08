@@ -5,6 +5,7 @@ struct Initialize {
   unsigned int shaderProgram;
   unsigned int VAO;
   unsigned int EBO;
+  unsigned int VBO;
 };
 
 int hello_triangle();
