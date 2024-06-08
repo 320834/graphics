@@ -2,6 +2,20 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+const char *vertexShaderSource = "#version 460 core\n"
+  "layout (location = 0) in vec3 aPos;\n"
+  "void main()\n"
+  "{\n"
+  " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+  "}\0";
+
+const char *fragmentShaderSource = "#version 460 core\n"
+  "out vec4 FragColor;\n"
+  "void main()\n"
+  "{\n"
+  "  FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+  "}\n\0";
+
 struct Initialize {
   unsigned int shaderProgram;
   unsigned int VAO;
@@ -20,27 +34,9 @@ void processInput(GLFWwindow *window)
 
 Initialize shader_program()
 {
-  // Set up vertices
-  float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    0.0f, 0.5f, 0.0f
-  };
-
-  unsigned int VBO;
-  glGenBuffers(1, &VBO);
-
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   // ===================
   // Vertex Shader
-  const char *vertexShaderSource = "#version 460 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
 
   unsigned int vertexShader;
   vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -62,17 +58,19 @@ Initialize shader_program()
   // =====================
   // Fragment Shader
 
-  const char *fragmentShaderSource = "#version 460 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "  FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";
-
   unsigned int fragmentShader;
   fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
   glCompileShader(fragmentShader);
+
+  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+
+  if(!success)
+  {
+    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+    std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
+      infoLog << std::endl;
+  }
 
   // =====================
   // Linking shaders
@@ -87,22 +85,24 @@ Initialize shader_program()
   glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
   if(!success) {
     glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
   }
 
-  // Activate shaders
-  glUseProgram(shaderProgram);
-
+  // Delete shaders no longer needed
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-    3 * sizeof(float), (void*)0);
-
-  glEnableVertexAttribArray(0);
+  // Set up vertices
+  float vertices[] = {
+    -0.5f, -0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f,
+    0.0f, 0.5f, 0.0f
+  };
 
   // Generate VAO to store vertices and reuse
-  unsigned int VAO;
+  unsigned int VAO, VBO;
   glGenVertexArrays(1, &VAO);
+  glGenBuffers(1, &VBO);
 
   // 1. bind Vertex Array Object
   glBindVertexArray(VAO);
@@ -113,6 +113,8 @@ Initialize shader_program()
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
     (void*)0);
   glEnableVertexAttribArray(0);
+
+  // glBindVertexArray(1); 
 
   return {
     .shaderProgram = shaderProgram,
