@@ -27,6 +27,7 @@ set(DEPENDENCY_SOURCES
 
 set(GRAPHICS_SOURCES
   main.cpp
+  src/lessons/chp_5_hello_triangle.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})
