@@ -11,17 +11,6 @@ struct Initialize {
   unsigned int VBO;
 };
 
-inline void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-  glViewport(0, 0, width, height);
-}
-
-inline void processInput(GLFWwindow *window)
-{
-  if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
-}
-
 int hello_triangle();
 int chp_5_exercise_1_1();
 int chp_5_exercise_1_2();
