@@ -19,17 +19,6 @@ const char *fragmentShaderSource = "#version 330 core\n"
   "  FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
   "}\n\0";
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-  glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow *window)
-{
-  if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
-}
-
 Initialize shader_program()
 {
 
