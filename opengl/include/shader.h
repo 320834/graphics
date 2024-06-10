@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+
 class Shader
 {
 public:
@@ -19,6 +20,8 @@ public:
   void setBool(const std::string &name, bool value) const;
   void setInt(const std::string &name, int value) const;
   void setFloat(const std::string &name, float value) const;
+
+  unsigned int get_program();
 };
 
 inline Shader::Shader(const char* vertexPath, const char* fragmentPath) {
@@ -84,8 +87,8 @@ inline Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
     if(!success)
     {
-      glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-      std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
+      glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+      std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<
         infoLog << std::endl;
     };
   }
@@ -128,6 +131,10 @@ inline void Shader::setInt(const std::string &name, int value) const
 inline void Shader::setFloat(const std::string &name, float value) const
 {
   glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value);
+}
+
+inline unsigned int Shader::get_program() {
+  return m_ID;
 }
 
 #endif //SHADER_H_

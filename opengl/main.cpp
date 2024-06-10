@@ -10,7 +10,10 @@ int main() {
   // chp_5_exercise_1_2();
   // chp_5_exercise_1_3();
 
-  chapter_6_shaders();
+  // chapter_6_shaders();
+  // chp_6_exercise_1();
+  // chp_6_exercise_2();
+  chp_6_exercise_3();
 
   return 0;
 }
