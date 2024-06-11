@@ -23,6 +23,7 @@ include_directories(${HEADERS_DIR})
 
 set(DEPENDENCY_SOURCES
   src/glad/glad.c
+  src/image/stb_image.cpp
 )
 
 set(GRAPHICS_SOURCES
@@ -31,6 +32,7 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_5_exercises.cpp
   src/lessons/chp_6_shaders.cpp
   src/lessons/chp_6_exercises.cpp
+  src/lessons/chp_7_textures.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})

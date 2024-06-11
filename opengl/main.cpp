@@ -1,6 +1,7 @@
 #include <iostream>
 #include "lessons/chp_5_hello_triangle.h"
 #include "lessons/chp_6_shaders.h"
+#include "lessons/chp_7_textures.h"
 #include "shader.h"
 
 int main() {
@@ -13,7 +14,9 @@ int main() {
   // chapter_6_shaders();
   // chp_6_exercise_1();
   // chp_6_exercise_2();
-  chp_6_exercise_3();
+  // chp_6_exercise_3();
+
+  chp_7_textures();
 
   return 0;
 }
