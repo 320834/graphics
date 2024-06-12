@@ -26,14 +26,33 @@ int chp_7_generate_texture() {
 
   Shader shader("../shaders/chapter_7/generate_texture.vert", "../shaders/chapter_7/generate_texture.frag");
 
-  int width, height, nrChannels;
-  unsigned int texture;
+  int widths[2], heights[2], nrChannels[2];
+  unsigned int textures[2];
   {
-    unsigned char *data = stbi_load("../textures/container.jpg", &width, &height,
-      &nrChannels, 0);
+    unsigned char *data_one = stbi_load("../textures/container.jpg", &widths[0], &heights[0],
+      &nrChannels[0], 0);
 
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenTextures(1, &textures[0]);
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+    if(data_one) {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widths[0], heights[0], 0, GL_RGB,
+        GL_UNSIGNED_BYTE, data_one);
+      glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+      std::cout << "Failed to load texture one" << std::endl;
+    }
+
+    stbi_image_free(data_one);
+  }
+  
+  {
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char *data_two = stbi_load("../textures/awesomeface.png", &widths[1], &heights[1],
+      &nrChannels[1], 0);
+
+    glGenTextures(1, &textures[1]);
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -41,15 +60,14 @@ int chp_7_generate_texture() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    if(data) {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-        GL_UNSIGNED_BYTE, data);
+    if(data_two) {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widths[1], heights[1], 0, GL_RGBA,
+        GL_UNSIGNED_BYTE, data_two);
       glGenerateMipmap(GL_TEXTURE_2D);
     } else {
-      std::cout << "Failed to load texture" << std::endl;
+      std::cout << "Failed to load texture two" << std::endl;
     }
-
-    stbi_image_free(data);
+    stbi_image_free(data_two);
   }
 
   float vertices[] = {
@@ -90,6 +108,14 @@ int chp_7_generate_texture() {
     (void*)(6 * sizeof(float)));
   glEnableVertexAttribArray(2);
 
+  shader.use();
+
+  glUniform1i(glGetUniformLocation(shader.get_program(), "ourTextureOne"), 0);
+  shader.setInt("ourTextureOne", 0);
+
+  glUniform1i(glGetUniformLocation(shader.get_program(), "ourTextureTwo"), 0);
+  shader.setInt("ourTextureTwo", 1);
+
   while(!glfwWindowShouldClose(window)) {
     processInput(window);
 
@@ -99,7 +125,12 @@ int chp_7_generate_texture() {
 
     shader.use();
 
-    glBindTexture(GL_TEXTURE_2D, texture);
+    // Explicitly use first texture.
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

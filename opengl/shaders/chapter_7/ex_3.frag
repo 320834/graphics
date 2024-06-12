@@ -13,7 +13,7 @@ void main() {
   
   FragColor = mix(
     texture(ourTextureOne, textCoords),
-    texture(ourTextureTwo, textCoords),
-    0.35 // Interpolated value. How much to show for second image.
+    texture(ourTextureTwo, vec2(textCoords.x, textCoords.y)),
+    1.0 // Interpolated value. How much to show for second image.
   );
 }

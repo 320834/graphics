@@ -16,7 +16,10 @@ int main() {
   // chp_6_exercise_2();
   // chp_6_exercise_3();
 
-  chp_7_textures();
+  // chp_7_textures();
+  // chp_7_ex_1_and_4();
+  // chp_7_ex_2();
+  chp_7_ex_3();
 
   return 0;
 }

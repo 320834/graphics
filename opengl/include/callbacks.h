@@ -15,4 +15,14 @@ inline void processInput(GLFWwindow *window)
     glfwSetWindowShouldClose(window, true);
 }
 
+inline bool processInputUp(GLFWwindow *window)
+{  
+  return glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS;
+}
+
+inline bool processInputDown(GLFWwindow *window)
+{
+  return glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS;
+}
+
 #endif //CALLBACKS_H_

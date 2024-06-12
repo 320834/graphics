@@ -33,6 +33,7 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_6_shaders.cpp
   src/lessons/chp_6_exercises.cpp
   src/lessons/chp_7_textures.cpp
+  src/lessons/chp_7_exercises.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})
