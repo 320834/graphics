@@ -21,6 +21,11 @@ FetchContent_MakeAvailable(glfw)
 set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${HEADERS_DIR})
 
+# Set glm headers
+set(HEADERS_GLM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/glm)
+include_directories(${HEADERS_GLM_DIR})
+
+
 set(DEPENDENCY_SOURCES
   src/glad/glad.c
   src/image/stb_image.cpp
@@ -34,6 +39,7 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_6_exercises.cpp
   src/lessons/chp_7_textures.cpp
   src/lessons/chp_7_exercises.cpp
+  src/lessons/chp_8_transform.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})

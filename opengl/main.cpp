@@ -2,6 +2,7 @@
 #include "lessons/chp_5_hello_triangle.h"
 #include "lessons/chp_6_shaders.h"
 #include "lessons/chp_7_textures.h"
+#include "lessons/chp_8_transform.h"
 #include "shader.h"
 
 int main() {
@@ -19,7 +20,9 @@ int main() {
   // chp_7_textures();
   // chp_7_ex_1_and_4();
   // chp_7_ex_2();
-  chp_7_ex_3();
+  // chp_7_ex_3();
+
+  chp_8_transform();
 
   return 0;
 }

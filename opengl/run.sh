@@ -27,14 +27,23 @@ shaders() {
   fi
 }
 
-# if [ "$1" == "build" ]; then
-#   echo "Starting building setup"
-#   build
-# elif [ "$1" == "shaders" ]; then
-#   echo "Copying shaders to directory."
-#   shaders
-# else
-#   echo "Unknown command: $1 | Or no arguments entered"
-# fi
+glm() {
+  if [ -d include ]; then
+    pushd include
 
-build
+    git clone https://github.com/g-truc/glm.git
+
+    popd
+
+  fi
+}
+
+if [ "$1" == "build" ]; then
+  echo "Starting building setup"
+  build
+elif [ "$1" == "glm" ]; then
+  echo "Downloading glm"
+  glm
+else
+  echo "Unknown command: $1 | Or no arguments entered"
+fi
