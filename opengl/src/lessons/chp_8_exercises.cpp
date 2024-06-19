@@ -12,15 +12,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-int chp_8_transform() {
-  InitReturn win_obj = init("Chapter 8: Generate Textures");
+int chp_8_ex_1() {
+  InitReturn win_obj = init("Chapter 8: Exercise 2");
   if(win_obj.status == -1) {
     return -1;
   }
 
   GLFWwindow* window = win_obj.window;
 
-  Shader shader("../shaders/chapter_8/transform.vert", "../shaders/chapter_8/transform.frag");
+  Shader shader("../shaders/chapter_8/ex_2.vert", "../shaders/chapter_8/ex_2.frag");
 
   int widths[2], heights[2], nrChannels[2];
   unsigned int textures[2];
@@ -76,7 +76,7 @@ int chp_8_transform() {
 
   unsigned int indices[] = {  
     0, 1, 3, // first triangle
-    1, 2, 3  // second triangle
+    1, 2, 3, // second triangle
   };
 
   unsigned int VAO, VBO, EBO;
@@ -105,16 +105,21 @@ int chp_8_transform() {
   glEnableVertexAttribArray(2);
 
   // glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-  glm::mat4 trans = glm::mat4(1.0f);
+  glm::mat4 trans_one = glm::mat4(1.0f);
   // trans = glm::translate(trans, glm::vec3(0.1f, 0.1f, 0.0f));
-  trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-  trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-  trans = glm::translate(trans, glm::vec3(0.1f, 0.1f, 0.0f));
+  // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+  trans_one = glm::scale(trans_one, glm::vec3(0.5, 0.5, 0.5));
+  trans_one = glm::translate(trans_one, glm::vec3(1.0f, 0.4f, 0.0f));
+
+  glm::mat4 trans_two = glm::mat4(1.0f);
+  // trans = glm::translate(trans, glm::vec3(0.1f, 0.1f, 0.0f));
+  // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+  trans_two = glm::scale(trans_two, glm::vec3(0.5, 0.5, 0.5));
+  trans_two = glm::translate(trans_two, glm::vec3(-1.0f, 0.4f, 0.0f));
 
   shader.use();
 
   unsigned int transformLoc = glGetUniformLocation(shader.get_program(), "transform");
-  glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
   glUniform1i(glGetUniformLocation(shader.get_program(), "ourTextureOne"), 0);
   shader.setInt("ourTextureOne", 0);
@@ -141,6 +146,21 @@ int chp_8_transform() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textures[1]);
     glBindVertexArray(VAO);
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans_one));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    float timeValue = glfwGetTime();
+    float sin_value = (sin(timeValue) / 2.0f) + 1.0f;
+    float scale_factor = 1.0f;
+    if (sin_value > 1.0) {
+      scale_factor = 1.01f;
+    } else {
+      scale_factor = 0.99f;
+    }
+
+    trans_two = glm::scale(trans_two, glm::vec3(scale_factor, scale_factor, 0.99));
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans_two));
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(window);

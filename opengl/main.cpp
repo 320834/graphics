@@ -22,7 +22,8 @@ int main() {
   // chp_7_ex_2();
   // chp_7_ex_3();
 
-  chp_8_transform();
+  // chp_8_transform();
+  chp_8_ex_1();
 
   return 0;
 }
