@@ -65,6 +65,13 @@ glm::vec3 cubePositions[] = {
   glm::vec3(-1.3f, 1.0f, -1.5f)
 };
 
+float g_lastX = 400;
+float g_lastY = 300;
+bool g_isFirst = true;
+float g_yaw = -90.0f;
+float g_pitch = 0.0f;
+float g_zoom = 45.0f;
+
 void load_textures(int widths[2], int heights[2], int nrChannels[2], unsigned int textures[2]) {
   {
     unsigned char *data_one = stbi_load("../textures/container.jpg", &widths[0], &heights[0],
@@ -130,7 +137,46 @@ void generate_buffers(unsigned int *VAO, unsigned int *VBO)
   glEnableVertexAttribArray(1);
 }
 
-int chp_10_camera_look_at()
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+
+
+  if (g_isFirst) // initially set to true
+  {
+    g_lastX = xpos;
+    g_lastY = ypos;
+    g_isFirst = false;
+  }
+
+  float xoffset = xpos - g_lastX;
+  float yoffset = g_lastY - ypos;
+
+  g_lastX = xpos;
+  g_lastY = ypos;
+
+  const float sensitivity = 0.1f;
+  xoffset *= sensitivity;
+  yoffset *= sensitivity;
+
+  g_yaw += xoffset;
+  g_pitch += yoffset;
+
+  if(g_pitch > 89.0f)
+    g_pitch = 89.0f;
+  if(g_pitch < -89.0f)
+    g_pitch = -89.0f;
+
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+  g_zoom -= (float)yoffset;
+  if (g_zoom < 1.0f)
+    g_zoom = 1.0f;
+  if (g_zoom > 45.0f)
+    g_zoom = 45.0f;
+}
+
+int chp_10_freeroam()
 {
   glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
   glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -153,7 +199,6 @@ int chp_10_camera_look_at()
   unsigned int VAO, VBO;
   generate_buffers(&VAO, &VBO);
 
-  float fov = 45.0f;
 
   glm::mat4 model = glm::mat4(1.0f);
   glm::mat4 view = glm::mat4(1.0f);
@@ -161,7 +206,7 @@ int chp_10_camera_look_at()
 
   model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
   view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-  projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
+  projection = glm::perspective(glm::radians(g_zoom), 800.0f / 600.0f, 0.1f, 100.0f);
 
   unsigned int model_id = glGetUniformLocation(shader.get_program(), "model");
   unsigned int view_id = glGetUniformLocation(shader.get_program(), "view");
@@ -182,8 +227,9 @@ int chp_10_camera_look_at()
   float cameraSpeed = 0.05f;
   float deltaTime = 0.0f; // Time between current frame and last frame
   float lastFrame = 0.0f; // Time of last frame
-  float yaw = -90.0f;
-  float pitch = 0.0f;
+
+  glfwSetCursorPosCallback(window, mouse_callback);
+  glfwSetScrollCallback(window, scroll_callback);
 
   while(!glfwWindowShouldClose(window)) {
     processInput(window);
@@ -216,9 +262,10 @@ int chp_10_camera_look_at()
     glBindVertexArray(VAO);
 
     glm::vec3 direction;
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.x = cos(glm::radians(g_yaw)) * cos(glm::radians(g_pitch));
+    direction.y = sin(glm::radians(g_pitch));
+    direction.z = sin(glm::radians(g_yaw)) * cos(glm::radians(g_pitch));
+    cameraFront = glm::normalize(direction);
 
     if(input.w) {
       cameraPos += cameraSpeed * cameraFront;
@@ -245,7 +292,7 @@ int chp_10_camera_look_at()
         glm::vec3(0.5f, 0.2f, 0.3f));
       view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-      projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
+      projection = glm::perspective(glm::radians(g_zoom), 800.0f / 600.0f, 0.1f, 100.0f);
 
       glUniformMatrix4fv(model_id, 1, GL_FALSE, glm::value_ptr(model));
       glUniformMatrix4fv(view_id, 1, GL_FALSE, glm::value_ptr(view));
@@ -268,7 +315,7 @@ int chp_10_camera_look_at()
 
 }
 
-int chp_10_freeroam()
+int chp_10_camera_look_at()
 {
 InitReturn win_obj = init("Chapter 10: Camera Look At");
 
@@ -355,29 +402,6 @@ InitReturn win_obj = init("Chapter 10: Camera Look At");
       }
     }
 
-    // if(processInputUp(window)) {
-    //   camera_y -= 0.1f;
-    // }
-
-    // if(processInputDown(window)) {
-    //   camera_y += 0.1f;
-    // }
-
-    // if(processInputRight(window)) {
-    //   camera_x -= 0.1f;
-    // }
-
-    // if(processInputLeft(window)) {
-    //   camera_x += 0.1f;
-    // }
-
-    // if(processInputW(window)) {
-    //   camera_z += 0.1f;
-    // }
-
-    // if(processInputS(window)) {
-    //   camera_z -= 0.1f;
-    // }
 
     for(unsigned int i = 0; i < 10; i++) {
       model = glm::mat4(1.0f);

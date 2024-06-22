@@ -31,7 +31,8 @@ int main() {
   // chp_9_coords();
   // chp_9_ex_3();
 
-  chp_10_camera_look_at();
+  // chp_10_camera_look_at();
+  chp_10_freeroam();
 
   return 0;
 }
