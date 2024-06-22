@@ -1,0 +1,6 @@
+#ifndef CHP_9_COORDINATE_SYSTEMS
+#define CHP_9_COORDINATE_SYSTEMS
+
+int chp_9_coords();
+
+#endif //CHP_9_COORDINATE_SYSTEMS

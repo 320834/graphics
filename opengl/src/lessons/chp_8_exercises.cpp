@@ -150,14 +150,9 @@ int chp_8_ex_1() {
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans_one));
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    float timeValue = glfwGetTime();
-    float sin_value = (sin(timeValue) / 2.0f) + 1.0f;
-    float scale_factor = 1.0f;
-    if (sin_value > 1.0) {
-      scale_factor = 1.01f;
-    } else {
-      scale_factor = 0.99f;
-    }
+    trans_two = glm::mat4(1.0f);
+    trans_two = glm::translate(trans_two, glm::vec3(-0.5f, 0.4f, 0.0f));
+    float scale_factor = (sin(glfwGetTime()) / 2.0f) + 1.0f;
 
     trans_two = glm::scale(trans_two, glm::vec3(scale_factor, scale_factor, 0.99));
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans_two));

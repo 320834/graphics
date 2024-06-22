@@ -3,6 +3,8 @@
 #include "lessons/chp_6_shaders.h"
 #include "lessons/chp_7_textures.h"
 #include "lessons/chp_8_transform.h"
+#include "lessons/chp_9_coordinate_systems.h"
+#include "lessons/chp_9_exercises.h"
 #include "shader.h"
 
 int main() {
@@ -23,7 +25,10 @@ int main() {
   // chp_7_ex_3();
 
   // chp_8_transform();
-  chp_8_ex_1();
+  // chp_8_ex_1();
+
+  // chp_9_coords();
+  chp_9_ex_3();
 
   return 0;
 }
