@@ -33,6 +33,7 @@ inline InitReturn init(const std::string window_name) {
     };
   }
   glfwMakeContextCurrent(window);
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {

@@ -5,6 +5,7 @@
 #include "lessons/chp_8_transform.h"
 #include "lessons/chp_9_coordinate_systems.h"
 #include "lessons/chp_9_exercises.h"
+#include "lessons/chp_10_camera.h"
 #include "shader.h"
 
 int main() {
@@ -28,7 +29,9 @@ int main() {
   // chp_8_ex_1();
 
   // chp_9_coords();
-  chp_9_ex_3();
+  // chp_9_ex_3();
+
+  chp_10_camera_look_at();
 
   return 0;
 }
