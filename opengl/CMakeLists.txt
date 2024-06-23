@@ -44,6 +44,7 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_9_coordinate_systems.cpp
   src/lessons/chp_9_exercises.cpp
   src/lessons/chp_10_camera.cpp
+  src/lessons/chp_10_exercises.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})

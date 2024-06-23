@@ -8,6 +8,8 @@
 #include "lessons/chp_10_camera.h"
 #include "shader.h"
 
+#include <glm/glm.hpp>
+
 int main() {
 
   // hello_triangle();
@@ -32,7 +34,18 @@ int main() {
   // chp_9_ex_3();
 
   // chp_10_camera_look_at();
-  chp_10_freeroam();
+  // chp_10_freeroam();
+  // chp_10_ex_1_and_2();
+
+  glm::mat4 translation {
+    1.0f, 2.0f, 0.0f, -5,
+    3.0f, 1.0f, 6.0f, -10,
+    0.0f, 0.0f, 1.0f, -15,
+    0.0f, 0.0f, 0.0f, 1
+  };
+
+  std::cout << translation[1][2] << std::endl;
+
 
   return 0;
 }

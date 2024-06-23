@@ -139,7 +139,6 @@ void generate_buffers(unsigned int *VAO, unsigned int *VBO)
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
-
   if (g_isFirst) // initially set to true
   {
     g_lastX = xpos;
