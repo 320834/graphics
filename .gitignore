@@ -38,3 +38,5 @@
 **/.DS_Store
 **/dependencies
 **/include/glm
+
+**/.vscode
