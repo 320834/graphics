@@ -6,6 +6,7 @@
 #include "lessons/chp_9_coordinate_systems.h"
 #include "lessons/chp_9_exercises.h"
 #include "lessons/chp_10_camera.h"
+#include "experiment/index.h"
 #include "shader.h"
 
 #include <glm/glm.hpp>
@@ -37,15 +38,12 @@ int main() {
   // chp_10_freeroam();
   // chp_10_ex_1_and_2();
 
-  glm::mat4 translation {
-    1.0f, 2.0f, 0.0f, -5,
-    3.0f, 1.0f, 6.0f, -10,
-    0.0f, 0.0f, 1.0f, -15,
-    0.0f, 0.0f, 0.0f, 1
-  };
 
-  std::cout << translation[1][2] << std::endl;
+  runner();
 
+  // glm::vec3 a(1.0f);
+
+  // std::cout << a.x << " " << a.y << " " << a.z << std::endl;
 
   return 0;
 }
