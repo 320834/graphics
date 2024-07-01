@@ -114,6 +114,9 @@ void load_textures(int widths[2], int heights[2], int nrChannels[2], unsigned in
     }
     stbi_image_free(data_two);
   }
+
+  std::cout << textures[0] << std::endl;
+  std::cout << textures[1] << std::endl;
 }
 
 void generate_buffers(unsigned int *VAO, unsigned int *VBO)
@@ -254,9 +257,11 @@ int chp_10_freeroam()
 
     // Explicitly use first texture.
     glActiveTexture(GL_TEXTURE0);
+    std::cout << GL_TEXTURE0 << " " << textures[0] << std::endl;
     glBindTexture(GL_TEXTURE_2D, textures[0]);
 
     glActiveTexture(GL_TEXTURE1);
+    std::cout << GL_TEXTURE0 << " " << textures[0] << std::endl;
     glBindTexture(GL_TEXTURE_2D, textures[1]);
     glBindVertexArray(VAO);
 

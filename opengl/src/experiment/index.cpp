@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "utils.h"
 #include "shader.h"
@@ -88,8 +89,14 @@ int runner() {
   glfwSetScrollCallback(window, scroll_callback_expri);
 
   std::vector<Cube> cubes;
-  cubes.emplace_back(shader.get_program(), std::move(glm::vec3(0.0f, 0.0f, -5.0f)));
-  cubes.emplace_back(shader.get_program(), std::move(glm::vec3(1.0f, 1.0f, -5.0f)));
+  cubes.emplace_back(
+    shader.get_program(),
+    glm::vec3(1.0f, 1.0f, -5.0f)
+  );
+  cubes.emplace_back(
+    shader.get_program(),
+    glm::vec3(0.0f, 0.0f, -5.0f)
+  );
 
   while(!glfwWindowShouldClose(window)) {
 
@@ -102,6 +109,8 @@ int runner() {
 
     auto input = processInputWASD(window);
     process_keypress(input, deltaTime);
+    const bool right = processInputRight(window);
+    const bool left = processInputLeft(window);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -124,17 +133,18 @@ int runner() {
     glUniformMatrix4fv(projection_id, 1, GL_FALSE, glm::value_ptr(projection));
 
     for(Cube cube : cubes) {
+      if(right) {
+        cube.SetTexture("awesomeface.png");
+      } else if(left) {
+        cube.SetTexture("container.jpg");
+      }
       float time = glfwGetTime();
-      float scale_factor = (sin(glfwGetTime()) / 1.0f);
       float translate_factor = (sin(glfwGetTime()) / 1.0f);
 
-      cube.SetScale(scale_factor);
       cube.SetPosition(glm::vec3(cube.GetPosition().x + translate_factor, cube.GetPosition().y, cube.GetPosition().z));
 
       cube.Render();
     }
-
-    // glDrawArrays(GL_TRIANGLES, 0, 36);
   }
 
   glDeleteVertexArrays(1, &VAO);
