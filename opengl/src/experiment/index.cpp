@@ -16,6 +16,11 @@ Camera camera;
 
 void mouse_callback_expri(GLFWwindow* window, double xpos, double ypos) {
   camera.ProcessMouseMovement(xpos, ypos);
+
+  // Some sort of ray tracer
+  // Get Camera front
+  // Shoot in x distance
+  // and then use cube formula to see if intersect
 }
 
 void scroll_callback_expri(GLFWwindow* window, double xoffset, double yoffset) {
@@ -97,6 +102,11 @@ int runner() {
     shader.get_program(),
     glm::vec3(0.0f, 0.0f, -5.0f)
   );
+  cubes.emplace_back(
+    shader.get_program(),
+    glm::vec3(-1.0f, 1.0f, -5.0f),
+    "awesomeface.png"
+  );
 
   while(!glfwWindowShouldClose(window)) {
 
@@ -111,6 +121,7 @@ int runner() {
     process_keypress(input, deltaTime);
     const bool right = processInputRight(window);
     const bool left = processInputLeft(window);
+    const bool up = processInputUp(window);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -126,6 +137,26 @@ int runner() {
     // Clear Buffer so previous frame is not stored
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    for(Cube& cube : cubes) {
+      if(right) {
+        cube.SetTexture("awesomeface.png");
+      } else if(up) {
+        cube.SetTexture("asdf");
+      } else if(left) {
+        cube.SetTexture("container.jpg");
+      }
+    }
+
+    // if(right) {
+    //   for(Cube& cube : cubes) {
+    //     cube.SetTexture("awesomeface.png");
+    //   }
+    // } else if(left) {
+    //   for(Cube& cube : cubes) {
+    //     cube.SetTexture("container.jpg");
+    //   }
+    // }
+
     glBindVertexArray(VAO);
     view = camera.GetViewMatrix();
     projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -133,11 +164,6 @@ int runner() {
     glUniformMatrix4fv(projection_id, 1, GL_FALSE, glm::value_ptr(projection));
 
     for(Cube cube : cubes) {
-      if(right) {
-        cube.SetTexture("awesomeface.png");
-      } else if(left) {
-        cube.SetTexture("container.jpg");
-      }
       float time = glfwGetTime();
       float translate_factor = (sin(glfwGetTime()) / 1.0f);
 

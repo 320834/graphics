@@ -6,6 +6,13 @@
 #include "shader.h"
 #include "image/stb_image.h"
 
+struct TextureLoadData {
+  int width;
+  int height;
+  int nr_channels;
+  unsigned char* data;
+};
+
 const std::string EMPTY;
 
 const float vertices_cube[] = {
@@ -64,11 +71,16 @@ public:
 
   glm::vec3 GetPosition();
 
-  void InitTexture(const std::string& texture_name);
-
 private:
 
-  unsigned int m_texture_id;
+  void LoadTexture(
+    TextureLoadData& texture_data,
+    const std::string extension
+  );
+
+  void FailLoadTexture();
+
+  int m_texture_id;
   float m_scale = 1.0f;
   glm::vec3 m_position;
   glm::mat4 m_model;
@@ -91,8 +103,9 @@ inline Cube::Cube(
 {
   m_model = glm::mat4(1.0f);
   m_position = position;
+  m_texture_id = -1;
 
-  InitTexture(texture_name);
+  SetTexture(texture_name);
 }
 
 inline void Cube::Render() {
@@ -100,9 +113,9 @@ inline void Cube::Render() {
   // Handle textures
   unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
   if(m_texture_id == -1) {
-    glUniform1i(use_texture_id, 0);
+    glUniform1i(use_texture_id, (int)false);
   } else {
-    glUniform1i(use_texture_id, 1);
+    glUniform1i(use_texture_id, (int)true);
 
     // unsigned int texture_uni = glGetUniformLocation(m_shader_id, "texture_one");
     // glUniform1i(texture_uni, m_texture_id);
@@ -131,30 +144,54 @@ inline void Cube::SetScale(const float scale) {
 }
 
 inline void Cube::SetTexture(const std::string& texture_name) {
-  if(m_texture_id == -1) {
-    InitTexture(texture_name);
+
+  if(texture_name.empty()) {
+    FailLoadTexture();
+    return;
   }
+
+  const std::string path = "../textures/" + texture_name;
+  int width, height, nr_channels;
+  unsigned char *data = stbi_load(path.c_str(), &width, &height,
+    &nr_channels, 0);
+
+  // null that means something bad happened
+  if(!data) {
+    FailLoadTexture();
+    return;
+  }
+
+  auto pos = texture_name.find(".");
+  if(pos == std::string::npos) {
+    FailLoadTexture();
+    return;
+  }
+
+  const std::string extension =
+    texture_name.substr(pos);
+
+  TextureLoadData texture_data = {
+    .width = width,
+    .height = height,
+    .nr_channels = nr_channels,
+    .data = data
+  };
+
+  LoadTexture(texture_data, extension);
 }
 
 inline glm::vec3 Cube::GetPosition() {
   return m_position;
 }
 
-inline void Cube::InitTexture(const std::string& texture_name) {
+inline void Cube::LoadTexture(
+  TextureLoadData& texture_data,
+  const std::string extension
+) {
 
-  m_texture_id = -1;
-
-  if(texture_name.empty()) {
-    return;
-  }
-
-  int width, height, nr_channels;
   unsigned int texture;
 
-  const std::string path = "../textures/" + texture_name;
-  unsigned char *data_one = stbi_load(path.c_str(), &width, &height,
-    &nr_channels, 0);
-
+  // Check if texture is already set
   if(m_texture_id == -1) {
     glGenTextures(1, &texture);
   } else {
@@ -168,24 +205,27 @@ inline void Cube::InitTexture(const std::string& texture_name) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  if(data_one) {
-    if(auto search = texture_name.find(".png"); search != std::string::npos) {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA,
-        GL_UNSIGNED_BYTE, data_one);
-    } else {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-        GL_UNSIGNED_BYTE, data_one);
-    }
-
-    glGenerateMipmap(GL_TEXTURE_2D);
-    m_texture_id = texture;
-
+  if(auto search = extension.find(".png"); search != std::string::npos) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture_data.width, texture_data.height, 0, GL_RGBA,
+      GL_UNSIGNED_BYTE, texture_data.data);
   } else {
-    m_texture_id = -1;
-    std::cout << "Failed to load texture" << std::endl;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture_data.width, texture_data.height, 0, GL_RGB,
+      GL_UNSIGNED_BYTE, texture_data.data);
   }
 
-  stbi_image_free(data_one);
+  glGenerateMipmap(GL_TEXTURE_2D);
+  m_texture_id = texture;
+  unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
+  glUniform1i(use_texture_id, (int)true);
+
+
+  stbi_image_free(texture_data.data);
+}
+
+inline void Cube::FailLoadTexture() {
+  unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
+  glUniform1i(use_texture_id, (int)false);
+  m_texture_id = -1;
 }
 
 #endif //EXPERIMENT_CUBE_H_
