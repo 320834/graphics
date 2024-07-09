@@ -41,9 +41,6 @@ int main() {
 
   runner();
 
-  // glm::vec3 a(1.0f);
-
-  // std::cout << a.x << " " << a.y << " " << a.z << std::endl;
 
   return 0;
 }

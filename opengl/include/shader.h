@@ -11,7 +11,10 @@ class Shader
 {
 public:
   // constructor reads and builds the shader
+  Shader();
   Shader(const char* vertexPath, const char* fragmentPath);
+  Shader(Shader& shader); // copy constructor
+
   // the program ID
   unsigned int m_ID;
   // use/activate the shader
@@ -23,6 +26,8 @@ public:
 
   unsigned int get_program();
 };
+
+inline Shader::Shader() {}
 
 inline Shader::Shader(const char* vertexPath, const char* fragmentPath) {
   // 1. retrieve the vertex/fragment source code from filePath
@@ -50,7 +55,7 @@ inline Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     fragmentCode = fShaderStream.str();
   }
   catch(std::ifstream::failure e) {
-  std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+    throw std::runtime_error("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ");
   }
 
   const char* vShaderCode = vertexCode.c_str();
@@ -70,8 +75,8 @@ inline Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     if(!success)
     {
       glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-      std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
-        infoLog << std::endl;
+      const std::string compile_error = infoLog;
+      throw std::runtime_error("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" + compile_error);
     };
   }
 
@@ -88,8 +93,8 @@ inline Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     if(!success)
     {
       glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-      std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<
-        infoLog << std::endl;
+      const std::string compile_error = infoLog;
+      throw std::runtime_error("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" + compile_error);
     };
   }
 
@@ -106,12 +111,17 @@ inline Shader::Shader(const char* vertexPath, const char* fragmentPath) {
   if(!success)
   {
     glGetProgramInfoLog(m_ID, 512, NULL, infoLog);
-    std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" <<
-      infoLog << std::endl;
+    const std::string link_error = infoLog;
+    throw std::runtime_error("ERROR::SHADER::PROGRAM::LINKING_FAILED\n" + link_error);
   }
   // delete shaders; they’re linked into our program and no longer necessary
   glDeleteShader(vertex);
   glDeleteShader(fragment);
+}
+
+inline Shader::Shader(Shader& shader) {
+  std::cout << "Copy constructor" << std::endl;
+  shader.m_ID = m_ID;
 }
 
 inline void Shader::use() {

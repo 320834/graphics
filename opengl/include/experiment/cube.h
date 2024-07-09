@@ -15,6 +15,7 @@ struct TextureLoadData {
 
 const std::string EMPTY;
 
+namespace cube {
 const float vertices_cube[] = {
   -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
   0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
@@ -53,7 +54,7 @@ const float vertices_cube[] = {
   -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
   -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
 };
-
+} // namespace cube
 class Cube {
 
 public:
@@ -68,6 +69,9 @@ public:
   void SetPosition(const glm::vec3& position);
   void SetScale(const float scale);
   void SetTexture(const std::string& texture_name);
+
+  void Transform(const glm::vec3& position);
+  void Scale(const float scale);
 
   glm::vec3 GetPosition();
 
@@ -105,6 +109,8 @@ inline Cube::Cube(
   m_position = position;
   m_texture_id = -1;
 
+  Transform(position);
+
   SetTexture(texture_name);
 }
 
@@ -123,11 +129,6 @@ inline void Cube::Render() {
     glBindTexture(GL_TEXTURE_2D, m_texture_id);    
   }
 
-  // Handle transformations
-  m_model = glm::mat4(1.0f);
-  m_model = glm::translate(m_model, m_position);
-  m_model = glm::scale(m_model, glm::vec3(m_scale));
-
   unsigned int model_id = glGetUniformLocation(m_shader_id, "model");
 
   glUniformMatrix4fv(model_id, 1, GL_FALSE, glm::value_ptr(m_model));
@@ -136,11 +137,16 @@ inline void Cube::Render() {
 }
 
 inline void Cube::SetPosition(const glm::vec3& position) {
-  m_position = position;
+  m_model = glm::mat4(1);
+  m_model = glm::translate(m_model, position);
 }
 
-inline void Cube::SetScale(const float scale) {
-  m_scale = scale;
+inline void Cube::Transform(const glm::vec3& position) {
+  m_model = glm::translate(m_model, position);
+}
+
+inline void Cube::Scale(const float scale) {
+  m_model = glm::scale(m_model, glm::vec3(scale));
 }
 
 inline void Cube::SetTexture(const std::string& texture_name) {
