@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "shader.h"
 #include "image/stb_image.h"
+#include "experiment/utils.h"
 
 struct TextureLoadData {
   int width;
@@ -16,8 +17,9 @@ struct TextureLoadData {
 const std::string EMPTY;
 
 namespace cube {
+const int g_cube_stride = 5;
 const float vertices_cube[] = {
-  -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+  -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // TopBackLeft
   0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
   0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
   0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
@@ -25,7 +27,7 @@ const float vertices_cube[] = {
   -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
   -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
   0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-  0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+  0.5f, 0.5f, 0.5f, 1.0f, 1.0f, // BottomFrontRight
   0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
   -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
   -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
@@ -55,9 +57,36 @@ const float vertices_cube[] = {
   -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
 };
 } // namespace cube
+
+inline bool is_overlapping(
+  const glm::vec3& bbl,
+  const glm::vec3& tfr,
+  const glm::vec3& corner
+)
+{
+
+  const bool isX = bbl.x <= corner.x && corner.x <= tfr.x;
+  const bool isY = bbl.y <= corner.y && corner.y <= tfr.y;
+  const bool isZ = bbl.z <= corner.z && corner.z <= tfr.z;
+
+  return isX && isY && isZ;
+}
+
 class Cube {
 
 public:
+
+  struct Collision {
+    bool collide = false;
+    size_t points = 0;
+  };
+
+  struct Scale {
+    size_t x = 0;
+    size_t y = 0;
+    size_t z = 0;
+  };
+
   Cube(const unsigned int shader_id);
   Cube(const unsigned int shader_id, const glm::vec3 position);
   Cube(
@@ -72,8 +101,16 @@ public:
 
   void Transform(const glm::vec3& position);
   void Scale(const float scale);
+  void ScaleX(const float scale);
+  void ScaleY(const float scale);
+  void ScaleZ(const float scale);
 
-  glm::vec3 GetPosition();
+  std::vector<glm::vec3> GetCorners() const;
+  glm::vec3 GetPosition() const;
+  glm::vec3 BottomBackLeft() const;
+  glm::vec3 TopFrontRight() const;
+
+  Collision IsColliding(const Cube& cube) const;
 
 private:
 
@@ -85,8 +122,9 @@ private:
   void FailLoadTexture();
 
   int m_texture_id;
-  float m_scale = 1.0f;
-  glm::vec3 m_position;
+  glm::mat4 m_transformation;
+  glm::mat4 m_rotation;
+  glm::mat4 m_scale;
   glm::mat4 m_model;
   const unsigned m_shader_id;
 
@@ -106,7 +144,9 @@ inline Cube::Cube(
 ) : m_shader_id(shader_id)
 {
   m_model = glm::mat4(1.0f);
-  m_position = position;
+  m_transformation = glm::mat4(1.0f);
+  m_rotation = glm::mat4(1.0f);
+  m_scale = glm::mat4(1.0f);
   m_texture_id = -1;
 
   Transform(position);
@@ -130,6 +170,8 @@ inline void Cube::Render() {
   }
 
   unsigned int model_id = glGetUniformLocation(m_shader_id, "model");
+  m_model = glm::mat4(1.0f);
+  m_model = m_transformation * m_rotation * m_scale;
 
   glUniformMatrix4fv(model_id, 1, GL_FALSE, glm::value_ptr(m_model));
 
@@ -142,11 +184,23 @@ inline void Cube::SetPosition(const glm::vec3& position) {
 }
 
 inline void Cube::Transform(const glm::vec3& position) {
-  m_model = glm::translate(m_model, position);
+  m_transformation = glm::translate(m_transformation, position);
 }
 
 inline void Cube::Scale(const float scale) {
-  m_model = glm::scale(m_model, glm::vec3(scale));
+  m_scale = glm::scale(m_scale, glm::vec3(scale));
+}
+
+inline void Cube::ScaleX(const float scale) {
+  m_scale = glm::scale(m_scale, glm::vec3(scale, 1.0f, 1.0f));
+}
+
+inline void Cube::ScaleY(const float scale) {
+  m_scale = glm::scale(m_scale, glm::vec3(1.0f, scale, 1.0f));
+}
+
+inline void Cube::ScaleZ(const float scale) {
+  m_scale = glm::scale(m_scale, glm::vec3(1.0f, 1.0f, scale));
 }
 
 inline void Cube::SetTexture(const std::string& texture_name) {
@@ -186,8 +240,91 @@ inline void Cube::SetTexture(const std::string& texture_name) {
   LoadTexture(texture_data, extension);
 }
 
-inline glm::vec3 Cube::GetPosition() {
-  return m_position;
+inline std::vector<glm::vec3> Cube::GetCorners() const {
+  std::vector<glm::vec4> corners = {
+    {-0.5f, -0.5f, -0.5f, 1.0f}, // bottom_back_left
+    {0.5, -0.5, -0.5, 1.0f},
+    {-0.5, 0.5, -0.5, 1.0f},
+    {0.5, 0.5, -0.5f, 1.0f},
+
+    {-0.5f, -0.5f, -0.5f, 1.0f},
+    {0.5, -0.5, 0.5, 1.0f},
+    {-0.5f, 0.5f, 0.5f, 1.0f},
+    {0.5f, 0.5f, 0.5f, 1.0f} // top_front_right
+  };
+
+  std::vector<glm::vec3> ret_corners;
+  for(auto& corner : corners) {
+    glm::vec3 ret_corner =
+      m_transformation * m_rotation * m_scale * corner;
+
+    ret_corners.push_back(ret_corner);
+  }
+
+  return ret_corners;
+}
+
+inline glm::vec3 Cube::GetPosition() const {
+  return glm::vec3(
+    m_transformation[3][0],
+    m_transformation[3][1],
+    m_transformation[3][2]
+  );
+}
+
+inline glm::vec3 Cube::BottomBackLeft() const {
+  const glm::vec4 vertex = {-0.5f, -0.5f, -0.5f, 1.0f};
+
+  return m_transformation * m_rotation * m_scale * vertex;
+}
+
+inline glm::vec3 Cube::TopFrontRight() const {
+  const glm::vec4 vertex = {0.5f, 0.5f, 0.5f, 1.0f};
+
+  return m_transformation * m_rotation * m_scale * vertex;
+}
+
+inline Cube::Collision Cube::IsColliding(const Cube& cube) const {
+
+  size_t points = 0;
+  bool found_collision = false;
+
+  glm::vec3 bbl = BottomBackLeft();
+  glm::vec3 tfr = TopFrontRight();
+
+  const auto corners_other = cube.GetCorners();
+  for(const glm::vec3& corner : corners_other) {
+    // utils::print_glm_vec(corner);
+    if(is_overlapping(bbl, tfr, corner)) {
+      found_collision = true;
+      ++points;
+    }
+  }
+
+  if(found_collision) {
+    return {
+      .collide = found_collision,
+      .points = points
+    };
+  }
+
+  // Check other cube
+  glm::vec3 bbl_other = cube.BottomBackLeft();
+  glm::vec3 tfr_other = cube.TopFrontRight();
+
+  const std::vector<glm::vec3> corners_curr = GetCorners();
+  for(const glm::vec3& corner : corners_curr) {
+    if(is_overlapping(bbl_other, tfr_other, corner)) {
+      found_collision = true;
+      ++points;
+    }
+  }
+
+  return {
+    .collide = found_collision,
+    .points = points
+  };
+
 }
 
 inline void Cube::LoadTexture(

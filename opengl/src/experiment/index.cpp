@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "experiment/engine.h"
+#include "experiment/utils.h"
 
 int runner() {
 
@@ -14,41 +15,49 @@ int runner() {
   );
 
   engine.add_cube(
-    glm::vec3(1.0f, 1.0f, -5.0f),
-    "container.jpg"
-  );
-
-  engine.add_cube(
-    glm::vec3(0.0f, 0.0f, -10.0f),
-    "container.jpg"
-  );
-
-  engine.add_cube(
-    glm::vec3(-1.0f, 1.0f, -5.0f),
+    glm::vec3(0.0f, 0.0f, -5.0f),
     "awesomeface.png"
+  );
+
+  engine.add_cube(
+    glm::vec3(1.0f, 0.0f, -5.0f),
+    "container.jpg"
   );
 
   engine.loop([](Engine& engine) {
 
-    for(Cube& cube : engine.m_cubes) {
+    auto col = engine.m_cubes[1].IsColliding(engine.m_cubes[0]);
+    if(col.collide) {
+      std::cout << "Is Colliding. Points: " << std::to_string(col.points) << std::endl;
+    } else {
+      std::cout << "Not Colliding" << std::endl;
+    }
 
-      if(glfwGetKey(engine.glfw_window(), GLFW_KEY_UP) == GLFW_PRESS) {
-        cube.SetTexture("awesomeface.png");
-      } else if(glfwGetKey(engine.glfw_window(), GLFW_KEY_DOWN) == GLFW_PRESS) {
-        cube.SetTexture("container.jpg");
-      } else if(glfwGetKey(engine.glfw_window(), GLFW_KEY_LEFT) == GLFW_PRESS) {
-        cube.SetTexture("asef.df");
-      }
+    for(Cube& cube : engine.m_cubes) {
 
       float time = glfwGetTime();
       float translate_factor = (sin(glfwGetTime()) / 1.0f);
-      std::cout << translate_factor << std::endl;
       float d = 0.01;
       if(translate_factor <= 0) {
         d *= -1;
       }
 
       cube.Transform(glm::vec3(d, 0, 0));
+
+      if(glfwGetKey(engine.glfw_window(), GLFW_KEY_UP) == GLFW_PRESS) {
+        cube.ScaleY(1.05f);
+      } 
+      else if(glfwGetKey(engine.glfw_window(), GLFW_KEY_DOWN) == GLFW_PRESS) {
+        cube.ScaleY(0.95);
+
+      } 
+      else if(glfwGetKey(engine.glfw_window(), GLFW_KEY_LEFT) == GLFW_PRESS) {
+        cube.ScaleX(1.05);
+      }
+      else if(glfwGetKey(engine.glfw_window(), GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        cube.ScaleX(0.95);
+      }
+
       cube.Render();
     }
   });
