@@ -41,8 +41,8 @@ private:
   Shader m_shader;
   Camera m_camera;
 
-  const float m_window_width;
-  const float m_window_height;
+  float m_window_width;
+  float m_window_height;
 
   unsigned int m_VAO, m_VBO;
 

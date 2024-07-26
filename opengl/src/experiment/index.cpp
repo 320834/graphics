@@ -24,6 +24,7 @@ int runner() {
     "container.jpg"
   );
 
+
   engine.loop([](Engine& engine) {
 
     auto col = engine.m_cubes[1].IsColliding(engine.m_cubes[0]);

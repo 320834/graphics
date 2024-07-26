@@ -123,6 +123,15 @@ void Engine::init_window() {
     throw std::runtime_error("Failed to initialize GLAD");
   }
 
+  #ifdef __APPLE__
+  int width = (int)m_window_width;
+  int height = (int)m_window_height;
+  glfwGetFramebufferSize(window, &width, &height);
+
+  m_window_width = static_cast<float>(width);
+  m_window_height = static_cast<float>(height);
+  #endif
+
   glViewport(0, 0, m_window_width, m_window_height);
 
   m_window = window;

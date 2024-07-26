@@ -7,10 +7,11 @@
 #include "lessons/chp_9_exercises.h"
 #include "lessons/chp_10_camera.h"
 #include "experiment/index.h"
+#include "experiment/snake.h"
 #include "shader.h"
 
 #include <glm/glm.hpp>
-
+#include <vector>
 int main() {
 
   // hello_triangle();
@@ -39,8 +40,9 @@ int main() {
   // chp_10_ex_1_and_2();
 
 
-  runner();
+  // runner();
 
+  snake_game(); 
 
   return 0;
 }

@@ -88,12 +88,25 @@ public:
   };
 
   Cube(const unsigned int shader_id);
-  Cube(const unsigned int shader_id, const glm::vec3 position);
+  Cube(
+    const unsigned int shader_id,
+    const glm::vec3 position
+  );
   Cube(
     const unsigned int shader_id,
     const glm::vec3 position,
     const std::string& texture_name
   );
+
+  Cube(const Cube& other);
+  Cube& operator=(const Cube& other);
+
+  const unsigned ShaderId() const;
+  const int TextureId() const;
+  const glm::mat4 TransformMatrix() const;
+  const glm::mat4 ScaleMatrix() const;
+  const glm::mat4 RotateMatrix() const;
+
   void Render();
   void SetPosition(const glm::vec3& position);
   void SetScale(const float scale);
@@ -154,6 +167,48 @@ inline Cube::Cube(
   SetTexture(texture_name);
 }
 
+inline Cube::Cube(const Cube& other)
+ : m_shader_id(other.ShaderId())
+{
+  m_texture_id = other.TextureId();
+  m_transformation = other.TransformMatrix();
+  m_scale = other.ScaleMatrix();
+  m_rotation = other.RotateMatrix();
+}
+
+inline Cube& Cube::operator=(const Cube& other) {
+  if(this == &other) {
+    return *this;
+  }
+
+  m_texture_id = other.TextureId();
+  m_transformation = other.TransformMatrix();
+  m_scale = other.ScaleMatrix();
+  m_rotation = other.RotateMatrix();
+
+  return *this;
+}
+
+inline const unsigned Cube::ShaderId() const {
+  return m_shader_id;
+}
+
+inline const int Cube::TextureId() const {
+  return m_texture_id;
+}
+
+inline const glm::mat4 Cube::TransformMatrix() const {
+  return m_transformation;
+}
+
+inline const glm::mat4 Cube::RotateMatrix() const {
+  return m_rotation;
+}
+
+inline const glm::mat4 Cube::ScaleMatrix() const {
+  return m_scale;
+}
+
 inline void Cube::Render() {
 
   // Handle textures
@@ -179,8 +234,8 @@ inline void Cube::Render() {
 }
 
 inline void Cube::SetPosition(const glm::vec3& position) {
-  m_model = glm::mat4(1);
-  m_model = glm::translate(m_model, position);
+  m_transformation = glm::mat4(1);
+  m_transformation = glm::translate(m_transformation, position);
 }
 
 inline void Cube::Transform(const glm::vec3& position) {
