@@ -64,6 +64,17 @@ void Engine::add_cube(
   );
 }
 
+void Engine::add_cube(
+  const glm::vec3 position, const Color& color
+)
+{
+  m_cubes.emplace_back(
+    m_shader.get_program(),
+    position,
+    color
+  );
+}
+
 void Engine::loop(std::function<void(Engine&)> function) {
   while(!glfwWindowShouldClose(m_window)) {
     process_exit();

@@ -6,8 +6,68 @@
 #include <chrono>
 #include <vector>
 
+const Color snake_body_color = {
+  .r = 76,
+  .g = 235,
+  .b = 52
+};
+
+const Color snake_head_color = {
+  .r = 229,
+  .g = 235,
+  .b = 52
+};
+
+const Color border_color = {
+  .r = 52,
+  .g = 214,
+  .b = 235
+};
+
 size_t head_index = 0;
+std::vector<Cube> g_walls;
 SnakeDirection curr_dir = SnakeDirection::LEFT;
+
+
+void init_game(Engine& engine) { 
+  float depth = -15.0f;
+  engine.add_cube(
+    glm::vec3(0.0f, 0.0f, depth), snake_body_color
+  );
+
+  engine.add_cube(
+    glm::vec3(1.0f, 0.0f, depth), snake_body_color
+  );
+
+  engine.add_cube(
+    glm::vec3(2.0f, 0.0f, depth), snake_body_color
+  );
+
+  engine.add_cube(
+    glm::vec3(3.0f, 0.0f, depth), snake_body_color
+  ); 
+  
+  // Construct walls
+  int shader_id = engine.shader().m_ID;
+
+  Cube left(shader_id, glm::vec3(-5.0f, 0.0f, depth));
+  left.ScaleY(10.0f);
+
+  Cube right(shader_id, glm::vec3(5.0f, 0.0f, depth));
+  right.ScaleY(10.0f);
+
+  Cube top(shader_id, glm::vec3(0.0f, 5.0f, depth));
+  top.ScaleX(10.0f);
+
+  Cube bottom(shader_id, glm::vec3(0.0f, -5.0f, depth));
+  bottom.ScaleX(10.0f);
+
+  g_walls.push_back(right);
+  g_walls.push_back(top);
+  g_walls.push_back(bottom);
+  g_walls.push_back(left);
+
+}
 
 void change_direction(SnakeDirection new_dir)
 {
@@ -30,8 +90,7 @@ void change_direction(SnakeDirection new_dir)
 void next_tick(Engine& engine) {
 
   size_t tail_index = 
-    head_index == 0 ? 
-    engine.m_cubes.size() - 1 :
+    head_index == 0 ? engine.m_cubes.size() - 1 :
     head_index - 1;
 
   if(head_index >= engine.m_cubes.size() ||
@@ -130,9 +189,6 @@ glm::vec3 get_append_pos(Engine& engine) {
 void insert_end(Engine& engine) {
 
   size_t insert_index = head_index;
-    // head_index == 0 ?
-    // engine.m_cubes.size() - 1 :
-    // head_index - 1;
 
   glm::vec3 new_cube_pos = get_append_pos(engine);
 
@@ -149,61 +205,45 @@ void snake_game() {
     "Snake Game", 
     "../shaders/experiment/simple.vert",
     "../shaders/experiment/simple.frag",
-    1920,
-    1080
+    640,
+    360
   );
 
-  engine.add_cube(
-    glm::vec3(0.0f, 0.0f, -5.0f)
-  );
+  // 1920
+  // 1080
+  
+  // 1280
+  // 720
 
-  engine.add_cube(
-    glm::vec3(1.0f, 0.0f, -5.0f)
-    //"awesomeface.png"
-  );
+  init_game(engine);
 
-  engine.add_cube(
-    glm::vec3(2.0f, 0.0f, -5.0f)
-    //"container.jpg"
-  );
-
-  engine.add_cube(
-    glm::vec3(3.0f, 0.0f, -5.0f)
-  );
-
-  std::chrono::time_point last_record =
-    std::chrono::system_clock::now();
-
-  std::chrono::time_point last_a_record =
-    std::chrono::system_clock::now();
-
-  engine.loop([&last_record, &last_a_record](Engine& engine) {
+  std::chrono::time_point next_tick_last = std::chrono::system_clock::now();
+  std::chrono::time_point append_last = std::chrono::system_clock::now();
+  
+  engine.loop([&next_tick_last, &append_last](Engine& engine) {
 
     std::chrono::time_point now =
       std::chrono::system_clock::now();
-    std::chrono::time_point now_a =
-      std::chrono::system_clock::now();
 
-    std::chrono::milliseconds duration =
-      std::chrono::duration_cast<std::chrono::milliseconds>(now - last_record);
+    auto duration =
+      std::chrono::duration_cast<std::chrono::milliseconds>(now - next_tick_last);
 
     auto duration_a =
-      std::chrono::duration_cast<std::chrono::milliseconds>(now_a - last_a_record);
+      std::chrono::duration_cast<std::chrono::milliseconds>(now - append_last);
 
     if(
         glfwGetKey(engine.glfw_window(), GLFW_KEY_P) == GLFW_PRESS &&
         duration_a.count() > 1000
       )
     {
-      last_a_record = std::chrono::system_clock::now();
+      append_last = std::chrono::system_clock::now();
       insert_end(engine);
-    } else {
-      if(duration.count() >= 500) {
-        last_record = std::chrono::system_clock::now();
-        next_tick(engine);
-      }
     }
-
+    
+    if(duration.count() >= 500) {
+      next_tick_last = std::chrono::system_clock::now();
+      next_tick(engine);
+    }
         
     if(glfwGetKey(engine.glfw_window(), GLFW_KEY_UP) == GLFW_PRESS) {
       change_direction(SnakeDirection::UP);
@@ -217,19 +257,38 @@ void snake_game() {
     else if(glfwGetKey(engine.glfw_window(), GLFW_KEY_RIGHT) == GLFW_PRESS) {
       change_direction(SnakeDirection::RIGHT);
     }
-    
-       
-    for(auto cube : engine.m_cubes) {
+
+    // Check if head is touching walls
+    Cube& head = engine.m_cubes[head_index];
+
+
+    for(
+      unsigned int index = 0;
+      index < engine.m_cubes.size();
+      ++index
+    ) {
+      
+      Cube& cube = engine.m_cubes[index];
+      if(index == head_index) {
+        cube.SetColor(snake_head_color);
+      } else {
+        cube.SetColor(snake_body_color);
+      }
+
       cube.Render();
     }
 
-    // Need to figure out list of cubes
-    // Move in negative position, alert position
-    // of i - 1
-    // [ 0, 1, 2, 3 ]
+    for(Cube& wall : g_walls) {
+      
+      Cube::Collision col = wall.IsColliding(head);
+      if(col.collide && col.points >= 8) {
+        std::cout << "Head is colliding" << std::endl;
+      } else {
+        std::cout << "Head is not colliding" << std::endl;
+      }
 
-    // If we want to insert, insert at head_index - 1
-    // Somehow get direction of second to last and last
-
+      wall.SetColor(border_color);
+      wall.Render();
+    }
   });
 }

@@ -14,6 +14,12 @@ struct TextureLoadData {
   unsigned char* data;
 };
 
+struct Color {
+  unsigned char r;
+  unsigned char g;
+  unsigned char b;
+};
+
 const std::string EMPTY;
 
 namespace cube {
@@ -98,6 +104,12 @@ public:
     const std::string& texture_name
   );
 
+  Cube(
+    const unsigned int shader_int,
+    const glm::vec3 position,
+    const Color color
+  );
+
   Cube(const Cube& other);
   Cube& operator=(const Cube& other);
 
@@ -110,7 +122,9 @@ public:
   void Render();
   void SetPosition(const glm::vec3& position);
   void SetScale(const float scale);
+
   void SetTexture(const std::string& texture_name);
+  void SetColor(const Color color);
 
   void Transform(const glm::vec3& position);
   void Scale(const float scale);
@@ -166,6 +180,17 @@ inline Cube::Cube(
 
   SetTexture(texture_name);
 }
+
+inline Cube::Cube(
+  const unsigned int shader_id,
+  const glm::vec3 position,
+  const Color color
+)
+  : Cube(shader_id, position, EMPTY)
+{
+  SetColor(color);
+}
+
 
 inline Cube::Cube(const Cube& other)
  : m_shader_id(other.ShaderId())
@@ -293,6 +318,18 @@ inline void Cube::SetTexture(const std::string& texture_name) {
   };
 
   LoadTexture(texture_data, extension);
+}
+
+inline void Cube::SetColor(const Color color) {
+   unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
+   glUniform1i(use_texture_id, (int)false);
+
+   unsigned int color_id = glGetUniformLocation(m_shader_id, "color");
+
+   float r = ((float)color.r) / 255;
+   float g = ((float)color.g) / 255;
+   float b = ((float)color.b) / 255;
+   glUniform4f(color_id, r, g, b, 1.0);
 }
 
 inline std::vector<glm::vec3> Cube::GetCorners() const {

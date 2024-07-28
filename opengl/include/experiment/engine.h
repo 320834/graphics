@@ -30,6 +30,7 @@ public:
   GLFWwindow* glfw_window();
 
   void add_cube(const glm::vec3 position, const std::string texture = "");
+  void add_cube(const glm::vec3 position, const Color& color);
 
   void loop(std::function<void(Engine&)> function);
 
