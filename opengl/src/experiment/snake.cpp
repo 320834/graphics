@@ -293,8 +293,10 @@ std::vector<glm::vec3> get_empty_positions(Engine& engine) {
       }
     }
   }
-
-  std::cout << "Empty Positions: " << std::to_string(empty_positions.size()) << std::endl;
+  
+  const std::string message =
+    "Empty Positions: " + std::to_string(empty_positions.size());
+  utils::log(message, "SnakeGame");
 
   return empty_positions;
 }
@@ -313,6 +315,47 @@ void spawn_food(Engine& engine) {
   const int shader_id = engine.shader().m_ID;
   g_food.emplace_back(shader_id, pos);
 
+}
+
+void check_collisions(Engine& engine) {
+
+  // Check if eat food, add to snake, and remove
+  FoodCollision food_col = has_eaten(engine);
+  if(food_col.collide) {
+    insert_end(engine);
+    int index_to_remove = food_col.index;
+
+    g_food.erase(g_food.begin() + index_to_remove);
+    spawn_food(engine);
+
+    utils::log("Head Eating", "SnakeGame");
+  }
+
+  // Check for wall collisions
+  Cube& head = engine.m_cubes[head_index];
+  for(Cube& wall : g_walls) {
+    Cube::Collision col = wall.IsColliding(head);
+    if(col.collide && col.points >= 8) {
+      utils::log("Head Colliding Wall", "SnakeGame");
+    }
+  }
+  
+  // Check for self collisions
+  for(size_t i = 0; i < engine.m_cubes.size(); ++i) {
+    
+    Cube& snake_body = engine.m_cubes[i];
+    // Do not check head
+    if(i == head_index) {
+      continue;
+    }
+
+    Cube::Collision col = head.IsColliding(snake_body);
+    
+    if(col.collide && col.points >= 8) {
+      utils::log("Head Colliding Body", "SnakeGame");
+    }
+
+  }
 }
 
 void snake_game() {
@@ -361,6 +404,8 @@ void snake_game() {
     if(duration.count() >= 500) {
       next_tick_last = std::chrono::system_clock::now();
       next_tick(engine);
+
+      check_collisions(engine);
     }
         
     if(glfwGetKey(engine.glfw_window(), GLFW_KEY_UP) == GLFW_PRESS) {
@@ -375,22 +420,6 @@ void snake_game() {
     else if(glfwGetKey(engine.glfw_window(), GLFW_KEY_RIGHT) == GLFW_PRESS) {
       change_direction(SnakeDirection::RIGHT);
     }
-
-    // Check if eat food, add to snake, and remove
-    FoodCollision food_col = has_eaten(engine);
-    if(food_col.collide) {
-      
-      insert_end(engine);
-      int index_to_remove = food_col.index;
-
-      g_food.erase(g_food.begin() + index_to_remove);
-
-      spawn_food(engine);
-    }
-
-    // Check if head is touching walls
-    Cube& head = engine.m_cubes[head_index];
-
 
     for(
       unsigned int index = 0;
@@ -408,15 +437,7 @@ void snake_game() {
       cube.Render();
     }
 
-    for(Cube& wall : g_walls) {
-      
-      Cube::Collision col = wall.IsColliding(head);
-      if(col.collide && col.points >= 8) {
-        // std::cout << "Head is colliding" << std::endl;
-      } else {
-        // std::cout << "Head is not colliding" << std::endl;
-      }
-
+    for(Cube& wall : g_walls) { 
       wall.SetColor(border_color);
       wall.Render();
     }
