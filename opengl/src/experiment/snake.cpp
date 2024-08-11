@@ -5,6 +5,12 @@
 
 #include <chrono>
 #include <vector>
+#include <unordered_set>
+
+struct FoodCollision {
+  bool collide;
+  int index;
+};
 
 const Color snake_body_color = {
   .r = 76,
@@ -18,6 +24,12 @@ const Color snake_head_color = {
   .b = 52
 };
 
+const Color food_color = {
+  .r = 255,
+  .g = 0,
+  .b = 0
+};
+
 const Color border_color = {
   .r = 52,
   .g = 214,
@@ -25,47 +37,86 @@ const Color border_color = {
 };
 
 size_t head_index = 0;
-std::vector<Cube> g_walls;
+std::chrono::time_point next_tick_last = std::chrono::system_clock::now();
+std::chrono::time_point append_last = std::chrono::system_clock::now();
+int g_max_food = 1;
+std::vector<Cube> g_food;
 SnakeDirection curr_dir = SnakeDirection::LEFT;
 
+// Wall attributes
+std::vector<Cube> g_walls;
+float g_wall_length = 6.0f;
+float g_z_depth = -15.0f;
 
 void init_game(Engine& engine) { 
-  float depth = -15.0f;
   engine.add_cube(
-    glm::vec3(0.0f, 0.0f, depth), snake_body_color
+    glm::vec3(0.0f, 0.0f, g_z_depth), snake_body_color
   );
 
   engine.add_cube(
-    glm::vec3(1.0f, 0.0f, depth), snake_body_color
+    glm::vec3(1.0f, 0.0f, g_z_depth), snake_body_color
   );
 
   engine.add_cube(
-    glm::vec3(2.0f, 0.0f, depth), snake_body_color
+    glm::vec3(2.0f, 0.0f, g_z_depth), snake_body_color
   );
 
   engine.add_cube(
-    glm::vec3(3.0f, 0.0f, depth), snake_body_color
+    glm::vec3(3.0f, 0.0f, g_z_depth), snake_body_color
   ); 
   
   // Construct walls
   int shader_id = engine.shader().m_ID;
 
-  Cube left(shader_id, glm::vec3(-5.0f, 0.0f, depth));
-  left.ScaleY(10.0f);
+  const float scale_factor =
+    g_wall_length * 2;
 
-  Cube right(shader_id, glm::vec3(5.0f, 0.0f, depth));
-  right.ScaleY(10.0f);
+  Cube left(shader_id, glm::vec3(-g_wall_length, 0.0f, g_z_depth));
+  left.ScaleY(scale_factor);
 
-  Cube top(shader_id, glm::vec3(0.0f, 5.0f, depth));
-  top.ScaleX(10.0f);
+  Cube right(shader_id, glm::vec3(g_wall_length, 0.0f, g_z_depth));
+  right.ScaleY(scale_factor);
 
-  Cube bottom(shader_id, glm::vec3(0.0f, -5.0f, depth));
-  bottom.ScaleX(10.0f);
+  Cube top(shader_id, glm::vec3(0.0f, g_wall_length, g_z_depth));
+  top.ScaleX(scale_factor);
+
+  Cube bottom(shader_id, glm::vec3(0.0f, -g_wall_length, g_z_depth));
+  bottom.ScaleX(scale_factor);
 
   g_walls.push_back(right);
   g_walls.push_back(top);
   g_walls.push_back(bottom);
   g_walls.push_back(left);
+
+}
+
+FoodCollision has_eaten(Engine& engine) {
+  if(engine.m_cubes.size() == 0) {
+    return {
+      .collide = false,
+      .index = -1
+    };
+  }
+
+  Cube& head = engine.m_cubes[head_index];
+
+  for(int index = 0; index < g_food.size(); ++index) {
+    Cube::Collision col = g_food[index].IsColliding(head); 
+    // std::cout << "In: " << std::to_string(index) << std::endl;
+ 
+    if(col.collide && col.points >= 8) {
+      return {
+        .collide = true,
+        .index = index
+      };
+    }
+
+  }
+
+  return {
+    .collide = false,
+    .index = -1
+  };
 
 }
 
@@ -200,13 +251,77 @@ void insert_end(Engine& engine) {
   engine.m_cubes.insert(it, cube);
 }
 
+// Generate a list of empty positions 
+// for food generation
+std::vector<glm::vec3> get_empty_positions(Engine& engine) {
+  
+  const int hash_table_size =
+    100 *
+    static_cast<int>(g_wall_length) *
+    static_cast<int>(g_wall_length);
+
+  std::unordered_set<std::string> filled;
+  for(Cube& snake : engine.m_cubes) {
+    const glm::vec3 pos = snake.GetPosition();
+    std::string hash =
+     utils::hash_vec_str(pos);
+    
+
+    
+    filled.emplace(hash);
+  }
+
+  for(Cube& food : g_food) {
+    const glm::vec3 pos = food.GetPosition();
+    std::string hash =
+      utils::hash_vec_str(pos);
+    filled.emplace(hash);
+  }
+
+  std::vector<glm::vec3> empty_positions;
+  for(int x = -g_wall_length + 1; x < g_wall_length; ++x)
+  {
+    for(int y = g_wall_length - 1; y > -g_wall_length; --y) 
+    {
+      const glm::vec3 potential(x, y, g_z_depth);
+
+      std::string hash =
+        utils::hash_vec_str(potential);
+
+      if(filled.count(hash) == 0) {
+         empty_positions.push_back(potential);
+      }
+    }
+  }
+
+  std::cout << "Empty Positions: " << std::to_string(empty_positions.size()) << std::endl;
+
+  return empty_positions;
+}
+
+void spawn_food(Engine& engine) {
+  std::vector<glm::vec3> positions =
+    get_empty_positions(engine);
+
+  if(positions.size() == 0) {
+    // Error or end game
+    return;
+  }
+
+  // Take first one for now
+  const glm::vec3 pos = positions[0];
+  const int shader_id = engine.shader().m_ID;
+  g_food.emplace_back(shader_id, pos);
+
+}
+
 void snake_game() {
   Engine engine(
     "Snake Game", 
     "../shaders/experiment/simple.vert",
     "../shaders/experiment/simple.frag",
     640,
-    360
+    460
   );
 
   // 1920
@@ -217,8 +332,11 @@ void snake_game() {
 
   init_game(engine);
 
+  spawn_food(engine);
+
   std::chrono::time_point next_tick_last = std::chrono::system_clock::now();
   std::chrono::time_point append_last = std::chrono::system_clock::now();
+
   
   engine.loop([&next_tick_last, &append_last](Engine& engine) {
 
@@ -258,6 +376,18 @@ void snake_game() {
       change_direction(SnakeDirection::RIGHT);
     }
 
+    // Check if eat food, add to snake, and remove
+    FoodCollision food_col = has_eaten(engine);
+    if(food_col.collide) {
+      
+      insert_end(engine);
+      int index_to_remove = food_col.index;
+
+      g_food.erase(g_food.begin() + index_to_remove);
+
+      spawn_food(engine);
+    }
+
     // Check if head is touching walls
     Cube& head = engine.m_cubes[head_index];
 
@@ -282,13 +412,18 @@ void snake_game() {
       
       Cube::Collision col = wall.IsColliding(head);
       if(col.collide && col.points >= 8) {
-        std::cout << "Head is colliding" << std::endl;
+        // std::cout << "Head is colliding" << std::endl;
       } else {
-        std::cout << "Head is not colliding" << std::endl;
+        // std::cout << "Head is not colliding" << std::endl;
       }
 
       wall.SetColor(border_color);
       wall.Render();
+    }
+
+    for(Cube& food : g_food) {
+      food.SetColor(food_color);
+      food.Render();
     }
   });
 }
