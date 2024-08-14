@@ -48,6 +48,7 @@ set(GRAPHICS_SOURCES
   src/experiment/index.cpp
   src/experiment/engine.cpp
   src/experiment/snake.cpp
+  src/experiment/snake_scene.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})

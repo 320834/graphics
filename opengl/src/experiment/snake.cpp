@@ -41,6 +41,7 @@ std::chrono::time_point next_tick_last = std::chrono::system_clock::now();
 std::chrono::time_point append_last = std::chrono::system_clock::now();
 int g_max_food = 1;
 std::vector<Cube> g_food;
+std::vector<Cube> g_snake;
 SnakeDirection curr_dir = SnakeDirection::LEFT;
 
 // Wall attributes
@@ -48,26 +49,24 @@ std::vector<Cube> g_walls;
 float g_wall_length = 6.0f;
 float g_z_depth = -15.0f;
 
-void init_game(Engine& engine) { 
-  engine.add_cube(
-    glm::vec3(0.0f, 0.0f, g_z_depth), snake_body_color
-  );
+void init_game(Engine& engine) {
+  // Construct body
+  int shader_id = engine.shader().m_ID;
+  Cube body_one(
+    shader_id, glm::vec3(0.0f, 0.0f, g_z_depth), snake_body_color);
+  Cube body_two(
+    shader_id, glm::vec3(1.0f, 0.0f, g_z_depth), snake_body_color);
+  Cube body_three(
+    shader_id, glm::vec3(2.0f, 0.0f, g_z_depth), snake_body_color);
+  Cube body_four(
+    shader_id, glm::vec3(3.0f, 0.0f, g_z_depth), snake_body_color);
 
-  engine.add_cube(
-    glm::vec3(1.0f, 0.0f, g_z_depth), snake_body_color
-  );
-
-  engine.add_cube(
-    glm::vec3(2.0f, 0.0f, g_z_depth), snake_body_color
-  );
-
-  engine.add_cube(
-    glm::vec3(3.0f, 0.0f, g_z_depth), snake_body_color
-  ); 
+  g_snake.push_back(body_one);
+  g_snake.push_back(body_two);
+  g_snake.push_back(body_three);
+  g_snake.push_back(body_four);
   
   // Construct walls
-  int shader_id = engine.shader().m_ID;
-
   const float scale_factor =
     g_wall_length * 2;
 
@@ -91,14 +90,14 @@ void init_game(Engine& engine) {
 }
 
 FoodCollision has_eaten(Engine& engine) {
-  if(engine.m_cubes.size() == 0) {
+  if(g_snake.size() == 0) {
     return {
       .collide = false,
       .index = -1
     };
   }
 
-  Cube& head = engine.m_cubes[head_index];
+  Cube& head = g_snake[head_index];
 
   for(int index = 0; index < g_food.size(); ++index) {
     Cube::Collision col = g_food[index].IsColliding(head); 
@@ -141,17 +140,17 @@ void change_direction(SnakeDirection new_dir)
 void next_tick(Engine& engine) {
 
   size_t tail_index = 
-    head_index == 0 ? engine.m_cubes.size() - 1 :
+    head_index == 0 ? g_snake.size() - 1 :
     head_index - 1;
 
-  if(head_index >= engine.m_cubes.size() ||
-     tail_index >= engine.m_cubes.size())
+  if(head_index >= g_snake.size() ||
+     tail_index >= g_snake.size())
   {
     return;
   }
 
-  Cube& head_cube = engine.m_cubes[head_index];
-  Cube& tail_cube = engine.m_cubes[tail_index];
+  Cube& head_cube = g_snake[head_index];
+  Cube& tail_cube = g_snake[tail_index];
 
   tail_cube.SetPosition(head_cube.GetPosition());
 
@@ -175,7 +174,7 @@ void next_tick(Engine& engine) {
 
   // Loop continue, update head index
   if(head_index == 0) {
-    head_index = engine.m_cubes.size() - 1;
+    head_index = g_snake.size() - 1;
   } else {
     head_index -= 1;
   }
@@ -184,16 +183,16 @@ void next_tick(Engine& engine) {
 glm::vec3 get_append_pos(Engine& engine) {
   size_t tail_index = 
      head_index == 0 ? 
-     engine.m_cubes.size() - 1 :
+     g_snake.size() - 1 :
      head_index - 1;
 
   size_t second_last =
     tail_index == 0 ?
-    engine.m_cubes.size() - 1 :
+    g_snake.size() - 1 :
     tail_index - 1;
 
-  Cube& tail_cube = engine.m_cubes[tail_index];
-  Cube& second_last_cube = engine.m_cubes[second_last];
+  Cube& tail_cube = g_snake[tail_index];
+  Cube& second_last_cube = g_snake[second_last];
   
   glm::vec3 tail_pos = tail_cube.GetPosition();
   glm::vec3 sec_last_pos = second_last_cube.GetPosition();
@@ -243,12 +242,12 @@ void insert_end(Engine& engine) {
 
   glm::vec3 new_cube_pos = get_append_pos(engine);
 
-  auto it = engine.m_cubes.begin() + insert_index;
+  auto it = g_snake.begin() + insert_index;
 
   head_index = head_index + 1;
 
   Cube cube(engine.shader().m_ID,new_cube_pos);
-  engine.m_cubes.insert(it, cube);
+  g_snake.insert(it, cube);
 }
 
 // Generate a list of empty positions 
@@ -261,7 +260,7 @@ std::vector<glm::vec3> get_empty_positions(Engine& engine) {
     static_cast<int>(g_wall_length);
 
   std::unordered_set<std::string> filled;
-  for(Cube& snake : engine.m_cubes) {
+  for(Cube& snake : g_snake) {
     const glm::vec3 pos = snake.GetPosition();
     std::string hash =
      utils::hash_vec_str(pos);
@@ -332,7 +331,7 @@ void check_collisions(Engine& engine) {
   }
 
   // Check for wall collisions
-  Cube& head = engine.m_cubes[head_index];
+  Cube& head = g_snake[head_index];
   for(Cube& wall : g_walls) {
     Cube::Collision col = wall.IsColliding(head);
     if(col.collide && col.points >= 8) {
@@ -341,9 +340,9 @@ void check_collisions(Engine& engine) {
   }
   
   // Check for self collisions
-  for(size_t i = 0; i < engine.m_cubes.size(); ++i) {
+  for(size_t i = 0; i < g_snake.size(); ++i) {
     
-    Cube& snake_body = engine.m_cubes[i];
+    Cube& snake_body = g_snake[i];
     // Do not check head
     if(i == head_index) {
       continue;
@@ -423,11 +422,11 @@ void snake_game() {
 
     for(
       unsigned int index = 0;
-      index < engine.m_cubes.size();
+      index < g_snake.size();
       ++index
     ) {
       
-      Cube& cube = engine.m_cubes[index];
+      Cube& cube = g_snake[index];
       if(index == head_index) {
         cube.SetColor(snake_head_color);
       } else {

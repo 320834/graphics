@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "shader.h"
 #include "camera.h"
@@ -13,9 +14,29 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+// Foward declare. Scene depends on engine.h
+class SceneInterface;
+
 class Engine {
 
 public:
+
+  class SceneManager {
+  public:
+    SceneManager() = default;
+
+    SceneInterface get_current_scene();
+    void set_current_scene(const std::string& scene_name);
+
+    void add_scene(const std::string& scene_name);
+    void delete_scene(const std::string& scene_name);
+
+  private:
+    std::string m_current_scene;
+    std::unordered_map<std::string, SceneInterface>
+      m_scenes;
+  };
+
   Engine(
     const std::string window_name,
     const std::string vertex_shader,
@@ -34,7 +55,6 @@ public:
 
   void loop(std::function<void(Engine&)> function);
 
-  std::vector<Cube> m_cubes;
   const std::string m_window_name;
 private:
 

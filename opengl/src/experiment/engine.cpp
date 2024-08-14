@@ -3,7 +3,14 @@
 #include "shader.h"
 #include "camera.h"
 #include "experiment/cube.h"
+#include "experiment/scene.h"
 #include "utils.h"
+
+// class SceneInterface;
+
+SceneInterface Engine::SceneManager::get_current_scene() {  
+  return m_scenes.at(m_current_scene);
+}
 
 Engine::Engine(
   const std::string window_name,
@@ -53,28 +60,6 @@ GLFWwindow* Engine::glfw_window() {
   return m_window;
 }
 
-void Engine::add_cube(
-  const glm::vec3 position, const std::string texture
-)
-{
-  m_cubes.emplace_back(
-    m_shader.get_program(),
-    position,
-    texture
-  );
-}
-
-void Engine::add_cube(
-  const glm::vec3 position, const Color& color
-)
-{
-  m_cubes.emplace_back(
-    m_shader.get_program(),
-    position,
-    color
-  );
-}
-
 void Engine::loop(std::function<void(Engine&)> function) {
   while(!glfwWindowShouldClose(m_window)) {
     process_exit();
@@ -99,14 +84,6 @@ void Engine::loop(std::function<void(Engine&)> function) {
     // Do commands here
 
     function(*this);
-
-    // for(Cube cube : m_cubes) {
-    //   float time = glfwGetTime();
-    //   float translate_factor = (sin(glfwGetTime()) / 1.0f);
-
-    //   cube.SetPosition(glm::vec3(cube.GetPosition().x + translate_factor, cube.GetPosition().y, cube.GetPosition().z));
-    //   cube.Render();
-    // }
   }
 }
 
