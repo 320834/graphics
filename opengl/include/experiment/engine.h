@@ -16,6 +16,7 @@
 
 // Foward declare. Scene depends on engine.h
 class SceneInterface;
+class Engine;
 
 class Engine {
 
@@ -25,15 +26,18 @@ public:
   public:
     SceneManager() = default;
 
-    SceneInterface get_current_scene();
+    std::shared_ptr<SceneInterface> get_current_scene();
     void set_current_scene(const std::string& scene_name);
+    std::string get_current_scene_name();
 
-    void add_scene(const std::string& scene_name);
+    bool add_scene(
+      const std::shared_ptr<SceneInterface>& new_scene
+    );
     void delete_scene(const std::string& scene_name);
 
   private:
-    std::string m_current_scene;
-    std::unordered_map<std::string, SceneInterface>
+    std::string m_current_active_scene;
+    std::unordered_map<std::string, std::shared_ptr<SceneInterface>>
       m_scenes;
   };
 
@@ -49,14 +53,34 @@ public:
   Camera& camera();
   Shader& shader();
   GLFWwindow* glfw_window();
+  SceneManager scene_manager();
 
-  void add_cube(const glm::vec3 position, const std::string texture = "");
-  void add_cube(const glm::vec3 position, const Color& color);
+  bool add_event(
+    const std::string& scene_name,
+    const std::string& event_name,
+    const std::function<void(Engine&)>& event_handler
+  );
+
+  bool invoke_event(
+    const std::string& scene_name,
+    const std::string& event_name
+  );
 
   void loop(std::function<void(Engine&)> function);
 
   const std::string m_window_name;
 private:
+
+  SceneManager m_scene_manager;
+  // Double nested map
+  // First layer is storing scene_name
+  // Second layer is storing event_name
+  std::unordered_map<
+    std::string,
+    std::unordered_map<
+      std::string, std::function<void(Engine&)>
+    >
+  > m_scene_events;
 
   GLFWwindow* m_window;
   Shader m_shader;

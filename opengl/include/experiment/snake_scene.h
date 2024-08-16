@@ -5,7 +5,11 @@
 
 class SnakeScene : SceneInterface {
 
-  SnakeScene() = default;
+  SnakeScene(
+    const std::shared_ptr<Engine> engine,
+    const std::string& scene_name)
+    : SceneInterface(engine, scene_name) 
+  {};
 
   void render() override;
   void controls() override;

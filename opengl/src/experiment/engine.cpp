@@ -6,10 +6,143 @@
 #include "experiment/scene.h"
 #include "utils.h"
 
-// class SceneInterface;
+class SceneInterface;
 
-SceneInterface Engine::SceneManager::get_current_scene() {  
-  return m_scenes.at(m_current_scene);
+bool Engine::add_event(
+  const std::string& scene_name,
+  const std::string& event_name,
+  const std::function<void(Engine&)>& event_handler
+)
+{
+  auto scene = m_scene_events.find(scene_name);
+  
+  // Found scene
+  if(scene != m_scene_events.end()) {
+    // No scene found
+
+    auto event_search = scene->second.find(event_name);
+    if(event_search != scene->second.end()) {
+      // Event with name already added
+      utils::log(
+        "Failed to add event: " + scene_name + " " + event_name,
+        "EventManager"
+      );
+      return false;
+    }
+
+    m_scene_events.find(scene_name)->second.find(event_name)->second =
+      event_handler;
+
+    return true;
+  }
+
+  // Condition that scene has not been added
+  std::unordered_map<std::string, std::function<void(Engine&)>>
+    scene_events;
+
+  scene_events.insert({event_name, event_handler});
+  m_scene_events.insert({scene_name, scene_events});
+
+  return true;
+}
+
+bool Engine::invoke_event(
+  const std::string& scene_name,
+  const std::string& event_name
+)
+{
+  if(
+    auto scene_search = m_scene_events.find(scene_name);
+    scene_search != m_scene_events.end()
+  ) {
+    std::unordered_map<
+      std::string,
+      std::function<void(Engine&)>
+    > events = scene_search->second;
+
+    if(
+      auto event_search = events.find(event_name);
+      event_search != events.end()
+    ) {
+      std::function<void(Engine&)> func = event_search->second;
+
+      func(*this);
+    }
+  }
+
+  return false;
+}
+
+std::shared_ptr<SceneInterface> Engine::SceneManager::get_current_scene() {  
+  return m_scenes.at(m_current_active_scene);
+}
+
+void Engine::SceneManager::set_current_scene(
+  const std::string& scene_name
+) {
+  if(
+    auto search = m_scenes.find(scene_name);
+    search != m_scenes.end()
+  ) {
+    m_current_active_scene = scene_name;
+  } else {
+    utils::log(
+      "Failed to set scene (not found): " + scene_name,
+      "SceneManager"
+    );
+  }
+
+  // Do nothing if it cannot set. Maybe I should
+  // throw it
+}
+
+std::string Engine::SceneManager::get_current_scene_name()
+{
+  return m_current_active_scene;
+}
+
+bool Engine::SceneManager::add_scene(
+  const std::shared_ptr<SceneInterface>& new_scene
+)
+{
+  const std::string scene_name =
+    new_scene->scene_name();
+
+  bool has_inserted = false;
+  if(
+    auto search = m_scenes.find(scene_name);
+    search == m_scenes.end() // If not found
+  ) {
+    m_scenes.insert({scene_name, new_scene});
+    has_inserted = true;
+  }
+
+  if(m_scenes.size() == 1) {
+    set_current_scene(scene_name);
+  }
+
+  return has_inserted;
+}
+
+void Engine::SceneManager::delete_scene(
+  const std::string& scene_name
+)
+{
+  if(scene_name == m_current_active_scene) {
+    utils::log(
+      "Failed To Delete Scene " + scene_name + ": Scene is active",
+      "SceneManager"
+    );
+
+    return;
+  }
+
+  if(
+    auto search = m_scenes.find(scene_name);
+    search != m_scenes.end()
+  ) {
+    m_scenes.erase(scene_name);
+  }
 }
 
 Engine::Engine(
@@ -60,6 +193,10 @@ GLFWwindow* Engine::glfw_window() {
   return m_window;
 }
 
+Engine::SceneManager Engine::scene_manager() {
+  return m_scene_manager;
+}
+
 void Engine::loop(std::function<void(Engine&)> function) {
   while(!glfwWindowShouldClose(m_window)) {
     process_exit();
@@ -83,7 +220,10 @@ void Engine::loop(std::function<void(Engine&)> function) {
     glUniformMatrix4fv(m_projection_id, 1, GL_FALSE, glm::value_ptr(m_projection));
     // Do commands here
 
-    function(*this);
+    scene_manager().get_current_scene()->controls();
+    scene_manager().get_current_scene()->render();
+
+    // function(*this);
   }
 }
 
