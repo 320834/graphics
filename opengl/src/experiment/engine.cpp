@@ -3,7 +3,147 @@
 #include "shader.h"
 #include "camera.h"
 #include "experiment/cube.h"
+#include "experiment/scene.h"
 #include "utils.h"
+
+class SceneInterface;
+
+bool Engine::add_event(
+  const std::string& scene_name,
+  const std::string& event_name,
+  const std::function<void(Engine&)>& event_handler
+)
+{
+  auto scene = m_scene_events.find(scene_name);
+  
+  // Found scene
+  if(scene != m_scene_events.end()) {
+    // No scene found
+
+    auto event_search = scene->second.find(event_name);
+    if(event_search != scene->second.end()) {
+      // Event with name already added
+      utils::log(
+        "Failed to add event: " + scene_name + " " + event_name,
+        "EventManager"
+      );
+      return false;
+    }
+
+    m_scene_events.find(scene_name)->second.find(event_name)->second =
+      event_handler;
+
+    return true;
+  }
+
+  // Condition that scene has not been added
+  std::unordered_map<std::string, std::function<void(Engine&)>>
+    scene_events;
+
+  scene_events.insert({event_name, event_handler});
+  m_scene_events.insert({scene_name, scene_events});
+
+  return true;
+}
+
+bool Engine::invoke_event(
+  const std::string& scene_name,
+  const std::string& event_name
+)
+{
+  if(
+    auto scene_search = m_scene_events.find(scene_name);
+    scene_search != m_scene_events.end()
+  ) {
+    std::unordered_map<
+      std::string,
+      std::function<void(Engine&)>
+    > events = scene_search->second;
+
+    if(
+      auto event_search = events.find(event_name);
+      event_search != events.end()
+    ) {
+      std::function<void(Engine&)> func = event_search->second;
+
+      func(*this);
+    }
+  }
+
+  return false;
+}
+
+std::shared_ptr<SceneInterface> Engine::SceneManager::get_current_scene() { 
+  return m_scenes.at(m_current_active_scene);
+}
+
+void Engine::SceneManager::set_current_scene(
+  const std::string& scene_name
+) {
+  if(
+    auto search = m_scenes.find(scene_name);
+    search != m_scenes.end()
+  ) {
+    m_current_active_scene = scene_name;
+  } else {
+    utils::log(
+      "Failed to set scene (not found): " + scene_name,
+      "SceneManager"
+    );
+  }
+
+  // Do nothing if it cannot set. Maybe I should
+  // throw it
+}
+
+std::string Engine::SceneManager::get_current_scene_name()
+{
+  return m_current_active_scene;
+}
+
+bool Engine::SceneManager::add_scene(
+  std::shared_ptr<SceneInterface> new_scene
+)
+{
+  const std::string scene_name =
+    new_scene->scene_name();
+
+  bool has_inserted = false;
+  if(
+    auto search = m_scenes.find(scene_name);
+    search == m_scenes.end() // If not found
+  ) {
+    m_scenes.insert({scene_name, new_scene});
+    has_inserted = true;
+  }
+
+  if(m_scenes.size() == 1) {
+    set_current_scene(scene_name);
+  }
+
+  return has_inserted;
+}
+
+void Engine::SceneManager::delete_scene(
+  const std::string& scene_name
+)
+{
+  if(scene_name == m_current_active_scene) {
+    utils::log(
+      "Failed To Delete Scene " + scene_name + ": Scene is active",
+      "SceneManager"
+    );
+
+    return;
+  }
+
+  if(
+    auto search = m_scenes.find(scene_name);
+    search != m_scenes.end()
+  ) {
+    m_scenes.erase(scene_name);
+  }
+}
 
 Engine::Engine(
   const std::string window_name,
@@ -53,29 +193,11 @@ GLFWwindow* Engine::glfw_window() {
   return m_window;
 }
 
-void Engine::add_cube(
-  const glm::vec3 position, const std::string texture
-)
-{
-  m_cubes.emplace_back(
-    m_shader.get_program(),
-    position,
-    texture
-  );
+Engine::SceneManager& Engine::scene_manager() {
+  return m_scene_manager;
 }
 
-void Engine::add_cube(
-  const glm::vec3 position, const Color& color
-)
-{
-  m_cubes.emplace_back(
-    m_shader.get_program(),
-    position,
-    color
-  );
-}
-
-void Engine::loop(std::function<void(Engine&)> function) {
+void Engine::loop() {
   while(!glfwWindowShouldClose(m_window)) {
     process_exit();
     calculate_delta_time();
@@ -98,15 +220,8 @@ void Engine::loop(std::function<void(Engine&)> function) {
     glUniformMatrix4fv(m_projection_id, 1, GL_FALSE, glm::value_ptr(m_projection));
     // Do commands here
 
-    function(*this);
-
-    // for(Cube cube : m_cubes) {
-    //   float time = glfwGetTime();
-    //   float translate_factor = (sin(glfwGetTime()) / 1.0f);
-
-    //   cube.SetPosition(glm::vec3(cube.GetPosition().x + translate_factor, cube.GetPosition().y, cube.GetPosition().z));
-    //   cube.Render();
-    // }
+    scene_manager().get_current_scene()->controls();
+    scene_manager().get_current_scene()->render();
   }
 }
 
