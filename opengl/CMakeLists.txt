@@ -47,7 +47,6 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_10_exercises.cpp
   src/experiment/index.cpp
   src/experiment/engine.cpp
-  src/experiment/snake.cpp
   src/experiment/snake_scene.cpp
 )
 

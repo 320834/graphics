@@ -7,7 +7,6 @@
 #include "lessons/chp_9_exercises.h"
 #include "lessons/chp_10_camera.h"
 #include "experiment/index.h"
-#include "experiment/snake.h"
 #include "shader.h"
 
 #include <glm/glm.hpp>
