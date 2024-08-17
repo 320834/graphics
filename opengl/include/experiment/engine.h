@@ -31,7 +31,7 @@ public:
     std::string get_current_scene_name();
 
     bool add_scene(
-      const std::shared_ptr<SceneInterface>& new_scene
+      std::shared_ptr<SceneInterface> new_scene
     );
     void delete_scene(const std::string& scene_name);
 
@@ -53,7 +53,7 @@ public:
   Camera& camera();
   Shader& shader();
   GLFWwindow* glfw_window();
-  SceneManager scene_manager();
+  SceneManager& scene_manager();
 
   bool add_event(
     const std::string& scene_name,
@@ -66,7 +66,7 @@ public:
     const std::string& event_name
   );
 
-  void loop(std::function<void(Engine&)> function);
+  void loop();
 
   const std::string m_window_name;
 private:

@@ -73,7 +73,7 @@ bool Engine::invoke_event(
   return false;
 }
 
-std::shared_ptr<SceneInterface> Engine::SceneManager::get_current_scene() {  
+std::shared_ptr<SceneInterface> Engine::SceneManager::get_current_scene() { 
   return m_scenes.at(m_current_active_scene);
 }
 
@@ -102,7 +102,7 @@ std::string Engine::SceneManager::get_current_scene_name()
 }
 
 bool Engine::SceneManager::add_scene(
-  const std::shared_ptr<SceneInterface>& new_scene
+  std::shared_ptr<SceneInterface> new_scene
 )
 {
   const std::string scene_name =
@@ -193,11 +193,11 @@ GLFWwindow* Engine::glfw_window() {
   return m_window;
 }
 
-Engine::SceneManager Engine::scene_manager() {
+Engine::SceneManager& Engine::scene_manager() {
   return m_scene_manager;
 }
 
-void Engine::loop(std::function<void(Engine&)> function) {
+void Engine::loop() {
   while(!glfwWindowShouldClose(m_window)) {
     process_exit();
     calculate_delta_time();
@@ -222,8 +222,6 @@ void Engine::loop(std::function<void(Engine&)> function) {
 
     scene_manager().get_current_scene()->controls();
     scene_manager().get_current_scene()->render();
-
-    // function(*this);
   }
 }
 

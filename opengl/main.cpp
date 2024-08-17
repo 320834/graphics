@@ -40,9 +40,9 @@ int main() {
   // chp_10_ex_1_and_2();
 
 
-  // runner();
+  runner();
 
-  snake_game(); 
+  // snake_game(); 
 
   return 0;
 }
