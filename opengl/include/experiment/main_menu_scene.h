@@ -18,7 +18,9 @@ public:
   void controls() override;
 
 private:
-  std::shared_ptr<PhraseBuilder> m_phrase;
+  std::shared_ptr<PhraseBuilder> m_title;
+  std::shared_ptr<PhraseBuilder> m_start;
+  std::shared_ptr<PhraseBuilder> m_quit;
 };
 
 #endif // EXPERIMENT_MAIN_MENU_H_
