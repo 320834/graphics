@@ -18,9 +18,14 @@ public:
   void controls() override;
 
 private:
+
+  void change_option(bool direction);
+
+  int m_pointer_index = 0;
+
+  std::shared_ptr<Cube> m_pointer;
   std::shared_ptr<PhraseBuilder> m_title;
-  std::shared_ptr<PhraseBuilder> m_start;
-  std::shared_ptr<PhraseBuilder> m_quit;
+  std::vector<PhraseBuilder> m_options;
 };
 
 #endif // EXPERIMENT_MAIN_MENU_H_
