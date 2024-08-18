@@ -14,8 +14,8 @@ int runner() {
       "Snake Game", 
       "../shaders/experiment/simple.vert",
       "../shaders/experiment/simple.frag",
-      640,
-      460
+      1920,
+      1080
     );
 
   // const std::string& snake_scene_name =

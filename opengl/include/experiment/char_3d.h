@@ -2,18 +2,14 @@
 #define EXPERIMENT_CHAR_3D_H_
 
 #include "experiment/cube.h"
+#include "experiment/char_3d_constants.h"
+
+#include <array>
 
 const Color default_letter_color = {
   .r = 255,
   .g = 255,
   .b = 255
-};
-
-enum class Character {
-  A,B,C,D,E,F,G,H,
-  I,J,K,L,M,N,O,P,
-  Q,R,S,T,U,V,W,X,
-  Y,Z,NONE
 };
 
 class Char3D {
@@ -29,7 +25,7 @@ public:
   
 private:
   void build_letter(); 
-  void construct_letter_blocks(const bool mapping[5][5]);
+  void construct_letter_blocks(const std::array<std::array<bool, 5>, 5> mapping);
 
   const Character m_ch;
   const unsigned int m_shader_id;

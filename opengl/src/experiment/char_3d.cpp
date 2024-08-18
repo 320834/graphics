@@ -2,6 +2,8 @@
 #include "experiment/char_3d_constants.h"
 #include "experiment/char_3d_utils.h"
 
+#include <array>
+
 Char3D::Char3D(
   const unsigned int shader_id,
   const Character ch,
@@ -27,24 +29,18 @@ void Char3D::transform(const glm::vec3& pos) {
 }
 
 void Char3D::build_letter() {
-  switch(m_ch)
-  {
-    case Character::A:
-      construct_letter_blocks(char3d_constants::A_mapping);
-      break;
-    case Character::B:
-      construct_letter_blocks(char3d_constants::B_mapping);
-      break;
-    case Character::NONE:
-      construct_letter_blocks(char3d_constants::none_mapping);
-      break;
-    default:
-      construct_letter_blocks(char3d_constants::none_mapping);
+  auto search =
+    char3d_constants::char_to_mapping.find(m_ch);
+  
+  if(search != char3d_constants::char_to_mapping.end()) {
+    construct_letter_blocks(search->second);
+  } else {
+    construct_letter_blocks(char3d_constants::none_mapping);
   }
 }
 
 void Char3D::construct_letter_blocks(
-  const bool mapping[5][5]
+  const std::array<std::array<bool, 5>, 5> mapping
 )
 {
   // Placeholder
@@ -91,8 +87,8 @@ PhraseBuilder::PhraseBuilder(
 
   for(int i = 0; i < chars.size(); ++i) {
     const Character ch = chars[i];
-    const float spacing = 1.5;
-    float x = i * (m_size + spacing);
+    const float spacing = 2;
+    float x = i * m_size * (char3d_constants::col_max + spacing);
 
     Char3D block(m_shader_id, ch, m_size);
     block.transform(glm::vec3(x, 0, 0));

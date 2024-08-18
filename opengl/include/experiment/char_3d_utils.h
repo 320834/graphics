@@ -63,6 +63,10 @@ inline Character get_character(const char c) {
     return Character::Z;
   }
 
+  if(c == ' ') {
+    return Character::SPACE;
+  }
+
   return Character::NONE;
 }
 

@@ -12,10 +12,10 @@ MainMenuScene::MainMenuScene(
   const unsigned int m_id = m_engine->shader().m_ID;
 
   m_phrase = std::make_shared<PhraseBuilder>(
-    m_id, "aabb", 0.3f 
+    m_id, "Snake", 0.35f 
   );
 
-  m_phrase->transform(glm::vec3(-3,0,-15.0f));
+  m_phrase->transform(glm::vec3(-5,1,-15));
 }
 
 void MainMenuScene::render() {
