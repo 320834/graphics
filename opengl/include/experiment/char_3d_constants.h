@@ -21,11 +21,11 @@ const int col_max = 5;
 typedef std::array<std::array<bool, 5>, 5> Array2D;
 
 const Array2D A_mapping = {
-   1, 1, 1, 1, 1,
-   1, 0, 0, 0, 1,
-   1, 1, 1, 1, 1,
-   1, 0, 0, 0, 1,
-   1, 0, 0, 0, 1 
+  1, 1, 1, 1, 1,
+  1, 0, 0, 0, 1,
+  1, 1, 1, 1, 1,
+  1, 0, 0, 0, 1,
+  1, 0, 0, 0, 1 
 };
 
 const Array2D B_mapping = {
