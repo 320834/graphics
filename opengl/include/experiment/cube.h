@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
+
 #include "shader.h"
 #include "image/stb_image.h"
 #include "experiment/utils.h"
