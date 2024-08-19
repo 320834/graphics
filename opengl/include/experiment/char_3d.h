@@ -43,7 +43,7 @@ public:
   );
 
   void render();
-  void transform(const glm::vec3& pos);
+  void transform(const glm::vec3 pos);
   std::string text();
   glm::vec3 position();
 private:

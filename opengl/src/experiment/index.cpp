@@ -18,29 +18,47 @@ int runner() {
       1080
     );
 
-  // const std::string& snake_scene_name =
-  //  "snake_game";
-  // std::shared_ptr<SnakeScene> snake_game =
-  //   std::make_shared<SnakeScene>(engine, snake_scene_name);
+  const std::string snake_scene_name =
+    "snake_game";
+  std::shared_ptr<SnakeScene> snake_game =
+    std::make_shared<SnakeScene>(engine, snake_scene_name);
 
-  // engine->scene_manager().add_scene(
-  //   snake_game
-  // );
-
-  // engine->add_event(
-  //   snake_scene_name,
-  //   "game_lose",
-  //   [](Engine& engine) {
-  //     utils::log("Terminate Game", "Engine Event");
-  //     glfwSetWindowShouldClose(engine.glfw_window(), true);
-  //   }
-  // );
-
+  const std::string menu_scene_name = "main_menu"; 
   std::shared_ptr<MainMenuScene> main_menu =
-    std::make_shared<MainMenuScene>(engine, "main_menu");
+    std::make_shared<MainMenuScene>(engine, menu_scene_name);
 
   engine->scene_manager().add_scene(main_menu);
+  engine->scene_manager().add_scene(snake_game);
 
+  engine->add_event(
+    snake_scene_name,
+    "game_lose",
+    [](Engine& engine) {
+      utils::log("Terminate Game", "Engine Event");
+      glfwSetWindowShouldClose(engine.glfw_window(), true);
+    }
+  );
+
+  
+  engine->add_event(
+    menu_scene_name,
+    "start",
+    [&snake_scene_name](Engine& engine) {
+      utils::log("Start Snake Game", "Engine Event");
+      engine.scene_manager().set_current_scene(snake_scene_name);
+    }
+  );
+
+  engine->add_event(
+    menu_scene_name,
+    "quit",
+    [](Engine& engine) {
+      utils::log("Quit", "Engine Event");
+      glfwSetWindowShouldClose(engine.glfw_window(), true);
+    }
+  );
+
+  // engine->scene_manager().set_current_scene(menu_scene_name);
   engine->loop();
 
   return 0;

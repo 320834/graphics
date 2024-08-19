@@ -80,6 +80,8 @@ PhraseBuilder::PhraseBuilder(
     m_text{text},
     m_size{size}
 {
+
+  m_transformation = glm::mat4(1.0f);
   // Extract chars
   // Do Spacing
   std::vector<Character> chars =
@@ -104,7 +106,7 @@ void PhraseBuilder::render() {
   }
 }
 
-void PhraseBuilder::transform(const glm::vec3& pos) {
+void PhraseBuilder::transform(const glm::vec3 pos) {
 
   m_transformation = glm::translate(m_transformation, pos); 
 
