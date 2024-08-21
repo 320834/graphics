@@ -17,6 +17,8 @@ public:
   void render() override;
   void controls() override; 
 
+  void reset_timer();
+
 private:
   void change_option(bool direction);
   void hit_option();

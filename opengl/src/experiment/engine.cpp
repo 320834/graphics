@@ -16,7 +16,6 @@ bool Engine::add_event(
 {
   auto scene = m_scene_events.find(scene_name);
   
-  // Found scene
   if(scene != m_scene_events.end()) {
     // No scene found
 
@@ -24,14 +23,13 @@ bool Engine::add_event(
     if(event_search != scene->second.end()) {
       // Event with name already added
       utils::log(
-        "Failed to add event: " + scene_name + " " + event_name,
+        "Failed to add event: " + scene_name + " : " + event_name,
         "EventManager"
       );
       return false;
     }
 
-    m_scene_events.find(scene_name)->second.find(event_name)->second =
-      event_handler;
+    m_scene_events[scene_name][event_name] = event_handler;
 
     return true;
   }

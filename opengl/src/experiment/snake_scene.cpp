@@ -1,6 +1,7 @@
 #include "experiment/snake_scene.h"
 
 #include <unordered_set>
+#include <random>
 
 SnakeScene::SnakeScene(
   const std::shared_ptr<Engine> engine,
@@ -309,9 +310,13 @@ void SnakeScene::spawn_food() {
     // Error or end game
     return;
   }
+  
+  std::random_device dev;
+  std::mt19937 rng(dev());
+  std::uniform_int_distribution<std::mt19937::result_type> dist(0, positions.size() - 1);
+  int pos_i = dist(rng);
 
-  // Take first one for now
-  const glm::vec3 pos = positions[0];
+  const glm::vec3 pos = positions[pos_i];
   const int shader_id = m_engine->shader().m_ID;
   m_food.emplace_back(shader_id, pos);
 }
