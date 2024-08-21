@@ -3,6 +3,7 @@
 
 #include "experiment/cube.h"
 #include "experiment/char_3d_constants.h"
+#include <glm/glm.hpp>
 
 #include <array>
 
@@ -42,12 +43,14 @@ public:
   );
 
   void render();
-  void transform(const glm::vec3& pos);
+  void transform(const glm::vec3 pos);
+  std::string text();
+  glm::vec3 position();
 private:
   
   std::vector<Character> extract_chars();
-  void build_phrase();
-
+  
+  glm::mat4 m_transformation;
   const unsigned int m_shader_id;
   std::string m_text;
   float m_size;

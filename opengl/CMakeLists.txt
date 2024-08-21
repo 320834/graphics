@@ -50,6 +50,7 @@ set(GRAPHICS_SOURCES
   src/experiment/snake_scene.cpp
   src/experiment/char_3d.cpp
   src/experiment/main_menu_scene.cpp
+  src/experiment/game_end_scene.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})

@@ -15,12 +15,20 @@ public:
   );
 
   void render() override;
-  void controls() override;
+  void controls() override; 
+
+  void reset_timer();
 
 private:
+  void change_option(bool direction);
+  void hit_option();
+
+  std::chrono::time_point<std::chrono::system_clock> m_next_tick_last;
+  int m_pointer_index = 0;
+
+  std::shared_ptr<Cube> m_pointer;
   std::shared_ptr<PhraseBuilder> m_title;
-  std::shared_ptr<PhraseBuilder> m_start;
-  std::shared_ptr<PhraseBuilder> m_quit;
+  std::vector<PhraseBuilder> m_options;
 };
 
 #endif // EXPERIMENT_MAIN_MENU_H_
