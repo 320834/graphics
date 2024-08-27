@@ -59,12 +59,13 @@ public:
   bool add_event(
     const std::string& scene_name,
     const std::string& event_name,
-    const std::function<void(Engine&)>& event_handler
+    const std::function<void(std::shared_ptr<Engine>)>& event_handler
   );
 
   bool invoke_event(
     const std::string& scene_name,
-    const std::string& event_name
+    const std::string& event_name,
+    std::shared_ptr<Engine> engine
   );
 
   void loop();
@@ -79,7 +80,7 @@ private:
   std::unordered_map<
     std::string,
     std::unordered_map<
-      std::string, std::function<void(Engine&)>
+      std::string, std::function<void(std::shared_ptr<Engine>)>
     >
   > m_scene_events;
 

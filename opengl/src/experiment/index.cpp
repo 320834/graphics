@@ -39,15 +39,16 @@ int runner() {
   engine->add_event(
     snake_scene_name,
     "game_lose",
-    [&game_end_scene_name, &snake_scene_name, &engine](Engine& engine_b) {
+    [&game_end_scene_name, &snake_scene_name](std::shared_ptr<Engine> engine) {
       utils::log("Game Lose Go Back To Main Menu", "Engine Event");
-      engine_b.scene_manager().delete_scene(snake_scene_name);
 
+      engine->scene_manager().set_current_scene(game_end_scene_name);
+
+      engine->scene_manager().delete_scene(snake_scene_name);
       std::shared_ptr<SnakeScene> snake_game =
         std::make_shared<SnakeScene>(engine, snake_scene_name);
+      engine->scene_manager().add_scene(snake_game);
 
-      engine_b.scene_manager().add_scene(snake_game);
-      engine_b.scene_manager().set_current_scene(game_end_scene_name);
     }
   );
 
@@ -55,29 +56,29 @@ int runner() {
   engine->add_event(
     menu_scene_name,
     "start",
-    [&snake_scene_name](Engine& engine) {
+    [&snake_scene_name](std::shared_ptr<Engine> engine) {
       utils::log("Start Snake Game", "Engine Event");
 
 
-      engine.scene_manager().set_current_scene(snake_scene_name);
+      engine->scene_manager().set_current_scene(snake_scene_name);
     }
   );
 
   engine->add_event(
     menu_scene_name,
     "quit",
-    [](Engine& engine) {
+    [](std::shared_ptr<Engine> engine){
       utils::log("Quit", "Engine Event");
-      glfwSetWindowShouldClose(engine.glfw_window(), true);
+      glfwSetWindowShouldClose(engine->glfw_window(), true);
     }
   );
 
   engine->add_event(
     game_end_scene_name,
     "menu",
-    [&menu_scene_name, &main_menu](Engine& engine) {
+    [&menu_scene_name, &main_menu](std::shared_ptr<Engine> engine) {
       utils::log("Go to Menu", "Engine Event");
-      engine.scene_manager().set_current_scene(menu_scene_name);
+      engine->scene_manager().set_current_scene(menu_scene_name);
       main_menu->reset_timer();
     }
   );
@@ -85,9 +86,9 @@ int runner() {
   engine->add_event(
     game_end_scene_name,
     "quit",
-    [](Engine& engine) {
+    [](std::shared_ptr<Engine> engine) {
       utils::log("Quit", "Engine Event");
-      glfwSetWindowShouldClose(engine.glfw_window(), true);
+      glfwSetWindowShouldClose(engine->glfw_window(), true);
     }
   );
 

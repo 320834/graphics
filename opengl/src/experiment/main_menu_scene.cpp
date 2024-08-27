@@ -105,8 +105,8 @@ void MainMenuScene::change_option(bool direction) {
 
 void MainMenuScene::hit_option() {
   if(m_pointer_index == 0) {
-    m_engine->invoke_event(scene_name(), "start"); 
+    m_engine->invoke_event(scene_name(), "start", m_engine); 
   } else if(m_pointer_index == 1) {
-    m_engine->invoke_event(scene_name(), "quit");
+    m_engine->invoke_event(scene_name(), "quit", m_engine);
   }
 }
