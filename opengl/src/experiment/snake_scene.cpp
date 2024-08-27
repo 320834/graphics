@@ -45,12 +45,12 @@ void SnakeScene::render() {
   }
 
   for(Cube& wall : m_walls) { 
-    wall.SetColor(border_color);
+    // wall.SetColor(border_color);
     wall.Render();
   }
 
   for(Cube& food : m_food) {
-    food.SetColor(food_color);
+    // food.SetColor(food_color);
     food.Render();
   }
 }
@@ -91,16 +91,16 @@ void SnakeScene::init_walls() {
   const float scale_factor =
     m_wall_length * 2;
 
-  Cube left(shader_id, glm::vec3(-m_wall_length, 0.0f, m_z_depth));
+  Cube left(shader_id, glm::vec3(-m_wall_length, 0.0f, m_z_depth), border_color);
   left.ScaleY(scale_factor);
 
-  Cube right(shader_id, glm::vec3(m_wall_length, 0.0f, m_z_depth));
+  Cube right(shader_id, glm::vec3(m_wall_length, 0.0f, m_z_depth), border_color);
   right.ScaleY(scale_factor);
 
-  Cube top(shader_id, glm::vec3(0.0f, m_wall_length, m_z_depth));
+  Cube top(shader_id, glm::vec3(0.0f, m_wall_length, m_z_depth), border_color);
   top.ScaleX(scale_factor);
 
-  Cube bottom(shader_id, glm::vec3(0.0f, -m_wall_length, m_z_depth));
+  Cube bottom(shader_id, glm::vec3(0.0f, -m_wall_length, m_z_depth), border_color);
   bottom.ScaleX(scale_factor);
 
   m_walls.push_back(right);
@@ -258,7 +258,7 @@ void SnakeScene::insert_body_end() {
   auto it = m_snake.begin() + insert_index;
   m_head_index = m_head_index + 1;
 
-  Cube cube(m_engine->shader().m_ID, new_cube_pos);
+  Cube cube(m_engine->shader().m_ID, new_cube_pos, snake_body_color);
   m_snake.insert(it, cube);
 }
 
@@ -318,7 +318,7 @@ void SnakeScene::spawn_food() {
 
   const glm::vec3 pos = positions[pos_i];
   const int shader_id = m_engine->shader().m_ID;
-  m_food.emplace_back(shader_id, pos);
+  m_food.emplace_back(shader_id, pos, food_color);
 }
 
 void SnakeScene::check_collisions() {
@@ -341,7 +341,7 @@ void SnakeScene::check_collisions() {
     Cube::Collision col = wall.IsColliding(head);
     if(col.collide && col.points >= 8) {
       utils::log("Head Colliding Wall", "SnakeGame");
-      m_engine->invoke_event(scene_name(), "game_lose");
+      m_engine->invoke_event(scene_name(), "game_lose", m_engine);
     }
   }
   
@@ -358,7 +358,7 @@ void SnakeScene::check_collisions() {
     
     if(col.collide && col.points >= 8) {
       utils::log("Head Colliding Body", "SnakeGame");
-      m_engine->invoke_event(scene_name(), "game_lose");
+      m_engine->invoke_event(scene_name(), "game_lose", m_engine);
     }
 
   }

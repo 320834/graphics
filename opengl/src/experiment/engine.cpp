@@ -6,12 +6,14 @@
 #include "experiment/scene.h"
 #include "utils.h"
 
+#include <memory>
+
 class SceneInterface;
 
 bool Engine::add_event(
   const std::string& scene_name,
   const std::string& event_name,
-  const std::function<void(Engine&)>& event_handler
+  const std::function<void(std::shared_ptr<Engine>)>& event_handler
 )
 {
   auto scene = m_scene_events.find(scene_name);
@@ -35,7 +37,7 @@ bool Engine::add_event(
   }
 
   // Condition that scene has not been added
-  std::unordered_map<std::string, std::function<void(Engine&)>>
+  std::unordered_map<std::string, std::function<void(std::shared_ptr<Engine>)>>
     scene_events;
 
   scene_events.insert({event_name, event_handler});
@@ -46,7 +48,8 @@ bool Engine::add_event(
 
 bool Engine::invoke_event(
   const std::string& scene_name,
-  const std::string& event_name
+  const std::string& event_name,
+  std::shared_ptr<Engine> engine
 )
 {
   if(
@@ -55,16 +58,16 @@ bool Engine::invoke_event(
   ) {
     std::unordered_map<
       std::string,
-      std::function<void(Engine&)>
+      std::function<void(std::shared_ptr<Engine>)>
     > events = scene_search->second;
 
     if(
       auto event_search = events.find(event_name);
       event_search != events.end()
     ) {
-      std::function<void(Engine&)> func = event_search->second;
+      std::function<void(std::shared_ptr<Engine>)> func = event_search->second;
 
-      func(*this);
+      func(engine);
     }
   }
 
@@ -113,6 +116,8 @@ bool Engine::SceneManager::add_scene(
   ) {
     m_scenes.insert({scene_name, new_scene});
     has_inserted = true;
+  } else {
+    utils::log("Scene Name Already Added: " + scene_name, "SceneManager");
   }
 
   if(m_scenes.size() == 1) {

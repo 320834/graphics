@@ -23,6 +23,11 @@ struct Color {
 };
 
 const std::string EMPTY;
+const Color DEFAULT_COLOR = {
+  .r = 0,
+  .g = 0,
+  .b = 0
+};
 
 namespace cube {
 const int g_cube_stride = 5;
@@ -125,8 +130,10 @@ public:
   void SetPosition(const glm::vec3& position);
   void SetScale(const float scale);
 
+  bool UseColor() const;
   void SetTexture(const std::string& texture_name);
   void SetColor(const Color color);
+  Color GetColor() const;
 
   void Transform(const glm::vec3& position);
   void Scale(const float scale);
@@ -151,6 +158,8 @@ private:
   void FailLoadTexture();
 
   int m_texture_id;
+  Color m_color;
+  bool m_use_color;
   glm::mat4 m_transformation;
   glm::mat4 m_rotation;
   glm::mat4 m_scale;
@@ -180,6 +189,7 @@ inline Cube::Cube(
 
   Transform(position);
 
+  SetColor(DEFAULT_COLOR);
   SetTexture(texture_name);
 }
 
@@ -201,6 +211,11 @@ inline Cube::Cube(const Cube& other)
   m_transformation = other.TransformMatrix();
   m_scale = other.ScaleMatrix();
   m_rotation = other.RotateMatrix();
+ 
+  // Figure out for texture
+  if(other.UseColor()) {
+    SetColor(other.GetColor()); 
+  }
 }
 
 inline Cube& Cube::operator=(const Cube& other) {
@@ -212,6 +227,10 @@ inline Cube& Cube::operator=(const Cube& other) {
   m_transformation = other.TransformMatrix();
   m_scale = other.ScaleMatrix();
   m_rotation = other.RotateMatrix();
+
+  if(other.UseColor()) {
+    SetColor(other.GetColor());
+  }
 
   return *this;
 }
@@ -239,16 +258,31 @@ inline const glm::mat4 Cube::ScaleMatrix() const {
 inline void Cube::Render() {
 
   // Handle textures
-  unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
-  if(m_texture_id == -1) {
-    glUniform1i(use_texture_id, (int)false);
-  } else {
-    glUniform1i(use_texture_id, (int)true);
+  if(!m_use_color) {
+    unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
+    if(m_texture_id == -1) {
+      glUniform1i(use_texture_id, (int)false);
+    } else {
+      glUniform1i(use_texture_id, (int)true);
 
-    // unsigned int texture_uni = glGetUniformLocation(m_shader_id, "texture_one");
-    // glUniform1i(texture_uni, m_texture_id);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture_id);    
+      // unsigned int texture_uni = glGetUniformLocation(m_shader_id, "texture_one");
+      // glUniform1i(texture_uni, m_texture_id);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_texture_id);    
+    }
+  }
+
+  // Handle color
+  if(m_use_color) {
+    unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
+   glUniform1i(use_texture_id, (int)false);
+
+    unsigned int color_id = glGetUniformLocation(m_shader_id, "color");
+
+    float r = ((float)m_color.r) / 255;
+    float g = ((float)m_color.g) / 255;
+    float b = ((float)m_color.b) / 255;
+    glUniform4f(color_id, r, g, b, 1.0);
   }
 
   unsigned int model_id = glGetUniformLocation(m_shader_id, "model");
@@ -283,6 +317,10 @@ inline void Cube::ScaleY(const float scale) {
 
 inline void Cube::ScaleZ(const float scale) {
   m_scale = glm::scale(m_scale, glm::vec3(1.0f, 1.0f, scale));
+}
+
+inline bool Cube::UseColor() const {
+  return m_use_color;
 }
 
 inline void Cube::SetTexture(const std::string& texture_name) {
@@ -320,18 +358,19 @@ inline void Cube::SetTexture(const std::string& texture_name) {
   };
 
   LoadTexture(texture_data, extension);
+
+  m_use_color = false;
 }
 
 inline void Cube::SetColor(const Color color) {
-   unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
-   glUniform1i(use_texture_id, (int)false);
 
-   unsigned int color_id = glGetUniformLocation(m_shader_id, "color");
+  m_use_color = true;
+  m_color = color;
 
-   float r = ((float)color.r) / 255;
-   float g = ((float)color.g) / 255;
-   float b = ((float)color.b) / 255;
-   glUniform4f(color_id, r, g, b, 1.0);
+}
+
+inline Color Cube::GetColor() const {
+  return m_color;
 }
 
 inline std::vector<glm::vec3> Cube::GetCorners() const {
