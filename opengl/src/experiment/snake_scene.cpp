@@ -341,7 +341,7 @@ void SnakeScene::check_collisions() {
     Cube::Collision col = wall.IsColliding(head);
     if(col.collide && col.points >= 8) {
       utils::log("Head Colliding Wall", "SnakeGame");
-      m_engine->invoke_event(scene_name(), "game_lose", m_engine);
+      m_engine->invoke_event(scene_name(), "game_lose");
     }
   }
   
@@ -358,7 +358,7 @@ void SnakeScene::check_collisions() {
     
     if(col.collide && col.points >= 8) {
       utils::log("Head Colliding Body", "SnakeGame");
-      m_engine->invoke_event(scene_name(), "game_lose", m_engine);
+      m_engine->invoke_event(scene_name(), "game_lose");
     }
 
   }

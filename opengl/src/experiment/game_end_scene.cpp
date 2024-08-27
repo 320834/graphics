@@ -118,11 +118,11 @@ void GameEndScene::change_option(bool direction) {
 void GameEndScene::hit_option() {
   if(m_pointer_index == 0) {
     m_engine->invoke_event(
-      scene_name(), "menu", m_engine 
+      scene_name(), "menu" 
     );
   } else if(m_pointer_index == 1) {
     m_engine->invoke_event(
-      scene_name(), "quit", m_engine
+      scene_name(), "quit"
     );
   }
 }

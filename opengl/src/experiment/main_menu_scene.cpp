@@ -7,15 +7,30 @@ MainMenuScene::MainMenuScene(
   const std::shared_ptr<Engine> engine,
   const std::string& scene_name
 )
-  : SceneInterface(engine, scene_name)
+  : SceneInterface(engine, scene_name),
+    m_next_tick_last{std::chrono::system_clock::now()},
+    m_title{[](std::shared_ptr<Engine> m_engine) -> std::shared_ptr<PhraseBuilder>{
+      auto title = std::make_shared<PhraseBuilder>(
+        m_engine->shader().m_ID, "Snake", 0.35f 
+      );
+      title->transform(glm::vec3(-5.5,1,-15));
+      
+      return title;
+
+    }(m_engine)},
+    m_pointer{[](std::shared_ptr<Engine> m_engine) -> std::shared_ptr<Cube>{
+      auto pointer = std::make_shared<Cube>(
+        m_engine->shader().m_ID, glm::vec3(-2.5, -0.8, -15), default_letter_color 
+      );
+
+      pointer->ScaleX(0.8f);
+      pointer->ScaleY(0.1f);
+      pointer->ScaleZ(0.1f);
+
+      return pointer;
+    }(m_engine)}
 {
   const unsigned int m_id = m_engine->shader().m_ID;
-  m_next_tick_last = std::chrono::system_clock::now();
-
-  m_title = std::make_shared<PhraseBuilder>(
-    m_id, "Snake", 0.35f 
-  );
-  m_title->transform(glm::vec3(-5.5,1,-15));
 
   PhraseBuilder start(m_id, "Start", 0.1f);
   start.transform(glm::vec3(-1.5,-1,-15));
@@ -26,14 +41,6 @@ MainMenuScene::MainMenuScene(
   quit.transform(glm::vec3(-1.5, -2.5, -15));
 
   m_options.push_back(quit);
-
-  m_pointer = std::make_shared<Cube>(
-    m_id, glm::vec3(-2.5, -0.8, -15), default_letter_color 
-  );
-
-  m_pointer->ScaleX(0.8f);
-  m_pointer->ScaleY(0.1f);
-  m_pointer->ScaleZ(0.1f);
 }
 
 void MainMenuScene::render() {
@@ -105,8 +112,8 @@ void MainMenuScene::change_option(bool direction) {
 
 void MainMenuScene::hit_option() {
   if(m_pointer_index == 0) {
-    m_engine->invoke_event(scene_name(), "start", m_engine); 
+    m_engine->invoke_event(scene_name(), "start"); 
   } else if(m_pointer_index == 1) {
-    m_engine->invoke_event(scene_name(), "quit", m_engine);
+    m_engine->invoke_event(scene_name(), "quit");
   }
 }
