@@ -7,41 +7,46 @@ GameEndScene::GameEndScene(
   std::shared_ptr<Engine> engine,
   const std::string& scene_name
 )
-  : SceneInterface(engine, scene_name)
+  : SceneInterface(engine, scene_name),
+    m_is_win{false},
+    m_lose{[&engine]() -> std::shared_ptr<PhraseBuilder>{
+      auto lose = std::make_shared<PhraseBuilder>(
+        engine->shader().m_ID, "You Lose", 0.35f 
+      );
+      lose->transform(glm::vec3(-8.5,1,-15));
+
+      return lose;
+    }()},
+    m_win{[&engine]() -> std::shared_ptr<PhraseBuilder>{
+      auto win = std::make_shared<PhraseBuilder>(
+        engine->shader().m_ID, "You Win", 0.35f);
+      win->transform(glm::vec3(-7,1,-15));
+      return win;
+    }()},
+    m_pointer{[&engine]() -> std::shared_ptr<Cube> {
+      auto pointer = std::make_shared<Cube>(
+        engine->shader().m_ID, glm::vec3(-2.5, -0.8, -15), default_letter_color 
+      );
+      
+      pointer->ScaleX(0.8f);
+      pointer->ScaleY(0.1f);
+      pointer->ScaleZ(0.1f);
+      
+      return pointer;
+
+    }()},
+    m_next_tick_last{std::chrono::system_clock::now()}
 {
   const unsigned int id = m_engine->shader().m_ID;
-  m_is_win = false; 
-
-  m_lose = std::make_shared<PhraseBuilder>(
-    id, "You Lose", 0.35f 
-  );
-  m_win = std::make_shared<PhraseBuilder>(
-    id, "You Win", 0.35f
-  );
-  m_lose->transform(glm::vec3(-8.5,1,-15));
-  m_win->transform(glm::vec3(-7,1,-15));
 
   PhraseBuilder menu(id, "Menu", 0.1f);
   menu.transform(glm::vec3(-1.5,-1,-15));
-  
-  m_options.push_back(menu);
-  
+   
   PhraseBuilder quit(id, "Quit", 0.1f);
   quit.transform(glm::vec3(-1.5, -2.5, -15));
 
+  m_options.push_back(menu);
   m_options.push_back(quit);
-
-  m_pointer = std::make_shared<Cube>(
-    id, glm::vec3(-2.5, -0.8, -15), default_letter_color 
-  );
-
-  m_pointer->ScaleX(0.8f);
-  m_pointer->ScaleY(0.1f);
-  m_pointer->ScaleZ(0.1f);
-
-
-  m_next_tick_last = std::chrono::system_clock::now();
-
 }
 
 void GameEndScene::render() {
@@ -118,11 +123,11 @@ void GameEndScene::change_option(bool direction) {
 void GameEndScene::hit_option() {
   if(m_pointer_index == 0) {
     m_engine->invoke_event(
-      scene_name(), "menu", m_engine 
+      scene_name(), "menu" 
     );
   } else if(m_pointer_index == 1) {
     m_engine->invoke_event(
-      scene_name(), "quit", m_engine
+      scene_name(), "quit"
     );
   }
 }

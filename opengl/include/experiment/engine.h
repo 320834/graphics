@@ -56,6 +56,8 @@ public:
   GLFWwindow* glfw_window();
   SceneManager& scene_manager();
 
+  void add_engine_instance(std::shared_ptr<Engine> engine);
+
   bool add_event(
     const std::string& scene_name,
     const std::string& event_name,
@@ -64,14 +66,17 @@ public:
 
   bool invoke_event(
     const std::string& scene_name,
-    const std::string& event_name,
-    std::shared_ptr<Engine> engine
+    const std::string& event_name
   );
 
   void loop();
 
   const std::string m_window_name;
 private:
+  
+  // Hold instance to ptr to Engine when created
+  // to be passed onto event handlers.
+  std::shared_ptr<Engine> m_engine;
 
   SceneManager m_scene_manager;
   // Double nested map
@@ -117,5 +122,15 @@ private:
   static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 };
+
+// This is a helper function to
+// create an engine instance
+std::shared_ptr<Engine> create_engine(
+  const std::string& window_name,
+  const std::string& vertex_shader,
+  const std::string& fragment_shader,
+  const float width,
+  const float height
+);
 
 #endif //EXPERIMENET_ENGINE_H_

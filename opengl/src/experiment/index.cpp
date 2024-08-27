@@ -11,7 +11,7 @@
 int runner() {
 
   std::shared_ptr<Engine> engine =
-    std::make_shared<Engine>(
+    create_engine(
       "Snake Game", 
       "../shaders/experiment/simple.vert",
       "../shaders/experiment/simple.frag",

@@ -10,6 +10,23 @@
 
 class SceneInterface;
 
+void Engine::add_engine_instance(
+  std::shared_ptr<Engine> engine
+)
+{
+  if(!engine) {
+    utils::log("Engine parameter not valid", "Engine (add_engine_instance): ");
+    return;
+  }
+
+  if(m_engine) {
+    utils::log("Engine member already set", "Engine (add_engine_instance): ");
+    return;
+  }
+
+  m_engine = engine;
+}
+
 bool Engine::add_event(
   const std::string& scene_name,
   const std::string& event_name,
@@ -48,8 +65,7 @@ bool Engine::add_event(
 
 bool Engine::invoke_event(
   const std::string& scene_name,
-  const std::string& event_name,
-  std::shared_ptr<Engine> engine
+  const std::string& event_name
 )
 {
   if(
@@ -66,8 +82,12 @@ bool Engine::invoke_event(
       event_search != events.end()
     ) {
       std::function<void(std::shared_ptr<Engine>)> func = event_search->second;
-
-      func(engine);
+      
+      if(m_engine) {
+        func(m_engine);
+      } else {
+        utils::log("Cannot invoke event. Engine instance null. Are you sure you set a shared_ptr to the engine after insantiating an engine", "Engine");
+      }
     }
   }
 
@@ -360,4 +380,27 @@ void Engine::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
   if(!engine) return;
 
   engine->camera().ProcessMouseScroll(yoffset);
+}
+
+std::shared_ptr<Engine> create_engine(
+  const std::string& window_name,
+  const std::string& vertex_shader,
+  const std::string& fragment_shader,
+  const float width,
+  const float height
+
+)
+{
+  std::shared_ptr<Engine> engine =
+    std::make_shared<Engine>(
+      window_name,
+      vertex_shader,
+      fragment_shader,
+      width,
+      height
+    );
+
+  engine->add_engine_instance(engine);
+
+  return engine;
 }
