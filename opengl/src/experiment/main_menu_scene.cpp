@@ -9,18 +9,18 @@ MainMenuScene::MainMenuScene(
 )
   : SceneInterface(engine, scene_name),
     m_next_tick_last{std::chrono::system_clock::now()},
-    m_title{[](std::shared_ptr<Engine> m_engine) -> std::shared_ptr<PhraseBuilder>{
+    m_title{[&engine]() -> std::shared_ptr<PhraseBuilder>{
       auto title = std::make_shared<PhraseBuilder>(
-        m_engine->shader().m_ID, "Snake", 0.35f 
+        engine->shader().m_ID, "Snake", 0.35f 
       );
       title->transform(glm::vec3(-5.5,1,-15));
       
       return title;
 
-    }(m_engine)},
-    m_pointer{[](std::shared_ptr<Engine> m_engine) -> std::shared_ptr<Cube>{
+    }()},
+    m_pointer{[&engine]() -> std::shared_ptr<Cube>{
       auto pointer = std::make_shared<Cube>(
-        m_engine->shader().m_ID, glm::vec3(-2.5, -0.8, -15), default_letter_color 
+        engine->shader().m_ID, glm::vec3(-2.5, -0.8, -15), default_letter_color 
       );
 
       pointer->ScaleX(0.8f);
@@ -28,7 +28,7 @@ MainMenuScene::MainMenuScene(
       pointer->ScaleZ(0.1f);
 
       return pointer;
-    }(m_engine)}
+    }()}
 {
   const unsigned int m_id = m_engine->shader().m_ID;
 

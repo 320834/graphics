@@ -45,12 +45,10 @@ void SnakeScene::render() {
   }
 
   for(Cube& wall : m_walls) { 
-    // wall.SetColor(border_color);
     wall.Render();
   }
 
   for(Cube& food : m_food) {
-    // food.SetColor(food_color);
     food.Render();
   }
 }
