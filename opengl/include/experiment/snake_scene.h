@@ -41,6 +41,9 @@ const Color border_color = {
   .b = 235
 };
 
+const size_t NEXT_TICK_MAXIMUM = 500;
+const size_t NEXT_TICK_MINIMUM = 50;
+
 class SnakeScene : public SceneInterface {
 public:
   SnakeScene(
@@ -67,6 +70,9 @@ private:
 
   // ==================================
   // Members
+  
+  size_t m_tick_time;
+  size_t m_score;
 
   std::chrono::time_point<std::chrono::system_clock> m_next_tick_last;
 

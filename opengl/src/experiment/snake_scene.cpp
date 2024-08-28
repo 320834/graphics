@@ -8,7 +8,9 @@ SnakeScene::SnakeScene(
   const std::string& scene_name
 )
   : SceneInterface(engine, scene_name),
-    m_next_tick_last{std::chrono::system_clock::now()}
+    m_next_tick_last{std::chrono::system_clock::now()},
+    m_tick_time{NEXT_TICK_MAXIMUM},
+    m_score{0}
 {
   init_snake_body();
   init_walls();
@@ -22,12 +24,16 @@ void SnakeScene::render() {
     std::chrono::duration_cast<std::chrono::milliseconds>(now - m_next_tick_last);
 
   // Concept of next tick. Run every x milliseconds
-  if(duration.count() >= 500) {
+  if(duration.count() >= m_tick_time) {
     m_next_tick_last = std::chrono::system_clock::now();
 
     move_snake_body();
     check_collisions();
   }
+
+  m_tick_time =
+    std::max(NEXT_TICK_MAXIMUM - ((size_t)(m_score / 5) * 25), NEXT_TICK_MINIMUM);
+
 
   for(
     unsigned int index = 0;
@@ -330,7 +336,10 @@ void SnakeScene::check_collisions() {
     m_food.erase(m_food.begin() + index_to_remove);
     spawn_food();
 
-    utils::log("Head Eating", "SnakeGame");
+    ++m_score;
+
+    utils::log("Head Eating. Score: " + std::to_string(m_score), "SnakeGame");
+    utils::log("Next tick: " + std::to_string(m_tick_time), "SnakeGame");
   }
 
   // Check for wall collisions
