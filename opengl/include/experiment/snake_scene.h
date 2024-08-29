@@ -2,6 +2,7 @@
 #define EXPERIMENT_SNAKE_SCENE_H_
 
 #include "scene.h"
+#include "experiment/cube.h"
 
 #include <chrono>
 
@@ -36,9 +37,9 @@ const Color food_color = {
 };
 
 const Color border_color = {
-  .r = 52,
-  .g = 214,
-  .b = 235
+  .r = 0,
+  .g = 0,
+  .b = 0
 };
 
 const size_t NEXT_TICK_MAXIMUM = 500;

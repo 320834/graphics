@@ -11,7 +11,7 @@ GameEndScene::GameEndScene(
     m_is_win{false},
     m_lose{[&engine]() -> std::shared_ptr<PhraseBuilder>{
       auto lose = std::make_shared<PhraseBuilder>(
-        engine->shader().m_ID, "You Lose", 0.35f 
+        engine, "You Lose", 0.35f 
       );
       lose->transform(glm::vec3(-8.5,1,-15));
 
@@ -19,13 +19,13 @@ GameEndScene::GameEndScene(
     }()},
     m_win{[&engine]() -> std::shared_ptr<PhraseBuilder>{
       auto win = std::make_shared<PhraseBuilder>(
-        engine->shader().m_ID, "You Win", 0.35f);
+        engine, "You Win", 0.35f);
       win->transform(glm::vec3(-7,1,-15));
       return win;
     }()},
     m_pointer{[&engine]() -> std::shared_ptr<Cube> {
       auto pointer = std::make_shared<Cube>(
-        engine->shader().m_ID, glm::vec3(-2.5, -0.8, -15), default_letter_color 
+        engine, glm::vec3(-2.5, -0.8, -15), default_letter_color 
       );
       
       pointer->ScaleX(0.8f);
@@ -37,12 +37,10 @@ GameEndScene::GameEndScene(
     }()},
     m_next_tick_last{std::chrono::system_clock::now()}
 {
-  const unsigned int id = m_engine->shader().m_ID;
-
-  PhraseBuilder menu(id, "Menu", 0.1f);
+  PhraseBuilder menu(m_engine, "Menu", 0.1f);
   menu.transform(glm::vec3(-1.5,-1,-15));
    
-  PhraseBuilder quit(id, "Quit", 0.1f);
+  PhraseBuilder quit(m_engine, "Quit", 0.1f);
   quit.transform(glm::vec3(-1.5, -2.5, -15));
 
   m_options.push_back(menu);

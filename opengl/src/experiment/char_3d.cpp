@@ -5,11 +5,11 @@
 #include <array>
 
 Char3D::Char3D(
-  const unsigned int shader_id,
+  const std::shared_ptr<Engine>& engine,
   const Character ch,
   float size
 )
-  : m_shader_id{shader_id},
+  : m_engine{engine},
     m_size{size},
     m_ch{ch}
 {
@@ -61,7 +61,7 @@ void Char3D::construct_letter_blocks(
       const float y = row_pos * m_size;
       glm::vec3 pos(x,y,0);
 
-      Cube block(m_shader_id, pos, default_letter_color);
+      Cube block(m_engine, pos, default_letter_color);
       block.Scale(m_size);
 
       m_blocks.push_back(block);
@@ -72,11 +72,11 @@ void Char3D::construct_letter_blocks(
 }
 
 PhraseBuilder::PhraseBuilder(
-  const unsigned int shader_id,
+  const std::shared_ptr<Engine>& engine,
   const std::string& text,
   const float size
 )
-  : m_shader_id{shader_id},
+  : m_engine{engine},
     m_text{text},
     m_size{size}
 {
@@ -92,7 +92,7 @@ PhraseBuilder::PhraseBuilder(
     const float spacing = 2;
     float x = i * m_size * (char3d_constants::col_max + spacing);
 
-    Char3D block(m_shader_id, ch, m_size);
+    Char3D block(m_engine, ch, m_size);
     block.transform(glm::vec3(x, 0, 0));
 
     m_chars.push_back(block);
