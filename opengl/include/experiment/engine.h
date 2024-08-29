@@ -18,9 +18,39 @@
 class SceneInterface;
 // class Engine;
 
+struct TextureLoadData {
+  int width;
+  int height;
+  int nr_channels;
+  unsigned char* data;
+};
+
+struct TextureStatus {
+  unsigned int texture_id;
+  bool success;
+};
+
 class Engine {
 
 public:
+
+  class TextureManager {
+  public:
+    TextureManager() = default;
+
+    TextureStatus get_texture(const std::string& texture_name);
+  private:
+
+    TextureStatus import_texture_file(
+      const std::string& filename
+    );
+    TextureStatus load_texture(
+      TextureLoadData& texture_data,
+      const std::string extension
+    );
+
+    std::unordered_map<std::string, unsigned int> m_textures;
+  };
 
   class SceneManager {
   public:
@@ -54,6 +84,7 @@ public:
   Shader& shader();
   GLFWwindow* glfw_window();
   SceneManager& scene_manager();
+  TextureManager& texture_manager();
 
   void add_engine_instance(std::shared_ptr<Engine> engine);
 
@@ -77,6 +108,7 @@ private:
   // to be passed onto event handlers.
   std::shared_ptr<Engine> m_engine;
 
+  TextureManager m_texture_manager;
   SceneManager m_scene_manager;
   // Double nested map
   // First layer is storing scene_name

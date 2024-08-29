@@ -43,9 +43,11 @@ void SnakeScene::render() {
       
     Cube& cube = m_snake[index];
     if(index == m_head_index) {
-      cube.SetColor(snake_head_color);
+      // cube.SetColor(snake_head_color);
+      cube.SetTexture("awesomeface.png");
     } else {
-      cube.SetColor(snake_body_color);
+      // cube.SetColor(snake_body_color);
+      cube.SetTexture("container.jpg");
     }
     cube.Render();
   }
