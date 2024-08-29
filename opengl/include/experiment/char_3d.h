@@ -3,6 +3,8 @@
 
 #include "experiment/cube.h"
 #include "experiment/char_3d_constants.h"
+#include "experiment/engine.h"
+
 #include <glm/glm.hpp>
 
 #include <array>
@@ -16,7 +18,7 @@ const Color default_letter_color = {
 class Char3D {
 public:
   Char3D(
-    const unsigned int shader_id,
+    const std::shared_ptr<Engine>& engine,
     const Character ch,
     float size = 1.0f
   );
@@ -29,7 +31,7 @@ private:
   void construct_letter_blocks(const std::array<std::array<bool, 5>, 5> mapping);
 
   const Character m_ch;
-  const unsigned int m_shader_id;
+  std::shared_ptr<Engine> m_engine;
   float m_size;
   std::vector<Cube> m_blocks;
 };
@@ -37,7 +39,7 @@ private:
 class PhraseBuilder {
 public:
   PhraseBuilder(
-    const unsigned int shader_id,
+    const std::shared_ptr<Engine>& engine,
     const std::string& text,
     const float size = 1.0f
   );
@@ -51,7 +53,7 @@ private:
   std::vector<Character> extract_chars();
   
   glm::mat4 m_transformation;
-  const unsigned int m_shader_id;
+  const std::shared_ptr<Engine> m_engine;
   std::string m_text;
   float m_size;
   std::vector<Char3D> m_chars;

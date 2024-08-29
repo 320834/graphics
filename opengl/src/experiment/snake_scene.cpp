@@ -75,36 +75,34 @@ void SnakeScene::controls() {
 }
 
 void SnakeScene::init_snake_body() {
-  const int shader_id = m_engine->shader().m_ID;
   m_snake.emplace_back(
-    shader_id, glm::vec3(0.0f, 0.0f, m_z_depth), snake_body_color
+    m_engine, glm::vec3(0.0f, 0.0f, m_z_depth), snake_body_color
   );
   m_snake.emplace_back(
-    shader_id, glm::vec3(1.0f, 0.0f, m_z_depth), snake_body_color
+    m_engine, glm::vec3(1.0f, 0.0f, m_z_depth), snake_body_color
   );
   m_snake.emplace_back(
-    shader_id, glm::vec3(2.0f, 0.0f, m_z_depth), snake_body_color
+    m_engine, glm::vec3(2.0f, 0.0f, m_z_depth), snake_body_color
   );
   m_snake.emplace_back(
-    shader_id, glm::vec3(3.0f, 0.0f, m_z_depth), snake_body_color
+    m_engine, glm::vec3(3.0f, 0.0f, m_z_depth), snake_body_color
   );
 }
 
 void SnakeScene::init_walls() {
-  const int shader_id = m_engine->shader().m_ID;
   const float scale_factor =
     m_wall_length * 2;
 
-  Cube left(shader_id, glm::vec3(-m_wall_length, 0.0f, m_z_depth), border_color);
+  Cube left(m_engine, glm::vec3(-m_wall_length, 0.0f, m_z_depth), border_color);
   left.ScaleY(scale_factor);
 
-  Cube right(shader_id, glm::vec3(m_wall_length, 0.0f, m_z_depth), border_color);
+  Cube right(m_engine, glm::vec3(m_wall_length, 0.0f, m_z_depth), border_color);
   right.ScaleY(scale_factor);
 
-  Cube top(shader_id, glm::vec3(0.0f, m_wall_length, m_z_depth), border_color);
+  Cube top(m_engine, glm::vec3(0.0f, m_wall_length, m_z_depth), border_color);
   top.ScaleX(scale_factor);
 
-  Cube bottom(shader_id, glm::vec3(0.0f, -m_wall_length, m_z_depth), border_color);
+  Cube bottom(m_engine, glm::vec3(0.0f, -m_wall_length, m_z_depth), border_color);
   bottom.ScaleX(scale_factor);
 
   m_walls.push_back(right);
@@ -262,7 +260,7 @@ void SnakeScene::insert_body_end() {
   auto it = m_snake.begin() + insert_index;
   m_head_index = m_head_index + 1;
 
-  Cube cube(m_engine->shader().m_ID, new_cube_pos, snake_body_color);
+  Cube cube(m_engine, new_cube_pos, snake_body_color);
   m_snake.insert(it, cube);
 }
 
@@ -322,7 +320,7 @@ void SnakeScene::spawn_food() {
 
   const glm::vec3 pos = positions[pos_i];
   const int shader_id = m_engine->shader().m_ID;
-  m_food.emplace_back(shader_id, pos, food_color);
+  m_food.emplace_back(m_engine, pos, food_color);
 }
 
 void SnakeScene::check_collisions() {

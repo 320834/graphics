@@ -11,7 +11,7 @@ MainMenuScene::MainMenuScene(
     m_next_tick_last{std::chrono::system_clock::now()},
     m_title{[&engine]() -> std::shared_ptr<PhraseBuilder>{
       auto title = std::make_shared<PhraseBuilder>(
-        engine->shader().m_ID, "Snake", 0.35f 
+        engine, "Snake", 0.35f 
       );
       title->transform(glm::vec3(-5.5,1,-15));
       
@@ -20,7 +20,7 @@ MainMenuScene::MainMenuScene(
     }()},
     m_pointer{[&engine]() -> std::shared_ptr<Cube>{
       auto pointer = std::make_shared<Cube>(
-        engine->shader().m_ID, glm::vec3(-2.5, -0.8, -15), default_letter_color 
+        engine, glm::vec3(-2.5, -0.8, -15), default_letter_color 
       );
 
       pointer->ScaleX(0.8f);
@@ -30,14 +30,14 @@ MainMenuScene::MainMenuScene(
       return pointer;
     }()}
 {
-  const unsigned int m_id = m_engine->shader().m_ID;
+  // const unsigned int m_id = m_engine->shader().m_ID;
 
-  PhraseBuilder start(m_id, "Start", 0.1f);
+  PhraseBuilder start(m_engine, "Start", 0.1f);
   start.transform(glm::vec3(-1.5,-1,-15));
   
   m_options.push_back(start);
   
-  PhraseBuilder quit(m_id, "Quit", 0.1f);
+  PhraseBuilder quit(m_engine, "Quit", 0.1f);
   quit.transform(glm::vec3(-1.5, -2.5, -15));
 
   m_options.push_back(quit);

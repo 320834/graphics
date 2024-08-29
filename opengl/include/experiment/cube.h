@@ -8,6 +8,7 @@
 #include "shader.h"
 #include "image/stb_image.h"
 #include "experiment/utils.h"
+#include "experiment/engine.h"
 
 struct TextureLoadData {
   int width;
@@ -100,19 +101,19 @@ public:
     size_t z = 0;
   };
 
-  Cube(const unsigned int shader_id);
+  Cube(const std::shared_ptr<Engine>& engine);
   Cube(
-    const unsigned int shader_id,
+    const std::shared_ptr<Engine>& engine,
     const glm::vec3 position
   );
   Cube(
-    const unsigned int shader_id,
+    const std::shared_ptr<Engine>& engine,
     const glm::vec3 position,
     const std::string& texture_name
   );
 
   Cube(
-    const unsigned int shader_int,
+    const std::shared_ptr<Engine>& engine,
     const glm::vec3 position,
     const Color color
   );
@@ -166,26 +167,30 @@ private:
   glm::mat4 m_model;
   const unsigned m_shader_id;
 
+  // For shader ids and texture management
+  std::shared_ptr<Engine> m_engine;
+
 };
 
-inline Cube::Cube(const unsigned int shader_id) 
-  : Cube(shader_id, glm::vec3(0.0f, 0.0f, 0.0f)) {}
+inline Cube::Cube(const std::shared_ptr<Engine>& engine) 
+  : Cube(engine, glm::vec3(0.0f, 0.0f, 0.0f)) {}
 
-inline Cube::Cube(const unsigned int shader_id, const glm::vec3 position)
-  : Cube(shader_id, position, EMPTY)
+inline Cube::Cube(const std::shared_ptr<Engine>& engine, const glm::vec3 position)
+  : Cube(engine, position, EMPTY)
 {}
 
 inline Cube::Cube(
-  const unsigned int shader_id,
+  const std::shared_ptr<Engine>& engine,
   const glm::vec3 position,
   const std::string& texture_name
-) : m_shader_id(shader_id)
+) : m_engine{engine},
+    m_shader_id{engine->shader().m_ID},
+    m_model{glm::mat4(1.0f)},
+    m_transformation{glm::mat4(1.0f)},
+    m_rotation{glm::mat4(1.0f)},
+    m_scale{glm::mat4(1.0f)},
+    m_texture_id{-1}
 {
-  m_model = glm::mat4(1.0f);
-  m_transformation = glm::mat4(1.0f);
-  m_rotation = glm::mat4(1.0f);
-  m_scale = glm::mat4(1.0f);
-  m_texture_id = -1;
 
   Transform(position);
 
@@ -194,11 +199,11 @@ inline Cube::Cube(
 }
 
 inline Cube::Cube(
-  const unsigned int shader_id,
+  const std::shared_ptr<Engine>& engine,
   const glm::vec3 position,
   const Color color
 )
-  : Cube(shader_id, position, EMPTY)
+  : Cube(engine, position, EMPTY)
 {
   SetColor(color);
 }

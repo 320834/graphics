@@ -2,6 +2,7 @@
 #define EXPERIMENT_SNAKE_SCENE_H_
 
 #include "scene.h"
+#include "experiment/cube.h"
 
 #include <chrono>
 

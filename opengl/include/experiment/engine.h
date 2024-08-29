@@ -8,7 +8,6 @@
 
 #include "shader.h"
 #include "camera.h"
-#include "experiment/cube.h"
 
 #include <glm/glm.hpp>
 
@@ -17,7 +16,7 @@
 
 // Foward declare. Scene depends on engine.h
 class SceneInterface;
-class Engine;
+// class Engine;
 
 class Engine {
 
