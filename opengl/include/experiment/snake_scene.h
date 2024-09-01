@@ -74,7 +74,7 @@ private:
   // Members
   
   bool m_start_rotate = false;
-  float m_degree = 270;
+  float m_degree = 0;
 
   size_t m_tick_time;
   size_t m_score;

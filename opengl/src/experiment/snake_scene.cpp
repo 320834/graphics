@@ -40,7 +40,7 @@ void SnakeScene::render() {
   if(duration.count() >= m_tick_time) {
     m_next_tick_last = std::chrono::system_clock::now();
     rotate_board();
-    move_snake_body();
+    // move_snake_body();
     check_collisions();
   }
 
@@ -424,25 +424,21 @@ void SnakeScene::check_collisions() {
 }
 
 void SnakeScene::rotate_board() {
-  // const float degrees = 45.0f;
-  // for(Cube& snake : m_snake) {
-  //   snake.Rotate(degrees, Cube::RotateDirection::X);
-  // }
 
-  // for(Cube& wall : m_walls) {
-  //   wall.Rotate(degrees, Cube::RotateDirection::X);
-  // }
+  float x = -1 * m_z_depth * glm::cos(glm::radians(m_degree));
+  float z = -1 * m_z_depth * glm::sin(glm::radians(m_degree)) + m_z_depth;
 
-  // for(Cube& food : m_food) {
-  //   food.Rotate(degrees, Cube::RotateDirection::X);
-  // }
+  m_degree += 15;
+  m_degree = (int)m_degree % 360;
 
-  
-  m_degree += 1;
-  float x = -1 * m_z_depth * glm::cos(m_degree);
-  float z = -1 * m_z_depth * glm::sin(m_degree) + m_z_depth;
+  // utils::print_glm_vec(glm::vec3(x, 0.0f, z));
+  // utils::print_glm_vec(glm::vec3(0.0f, 0.0f, m_z_depth));
 
   m_engine->camera().Position = glm::vec3(x, 0.0f, z);
 
-  m_engine->camera().Front = glm::vec3(0.0f, 0.0f, m_z_depth);
+  // std::cout << m_engine->camera().Yaw << " : " << m_degree << std::endl;
+  // m_engine->camera().Yaw = m_degree - 180;
+    // std::cout << m_engine->camera().Yaw << " : " << m_degree << std::endl;
+  m_engine->camera().UpdateCameraVectors(glm::vec3(0.0f, 0.0f, -m_z_depth));
+  // m_engine->camera().Front = glm::vec3(0.0f, 0.0f, m_z_depth);
 }

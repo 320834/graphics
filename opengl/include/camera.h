@@ -60,7 +60,7 @@ public:
     WorldUp = up;
     Yaw = yaw;
     Pitch = pitch;
-    updateCameraVectors();
+    UpdateCameraVectors();
   }
 
   // constructor with scalar values
@@ -69,7 +69,7 @@ public:
     WorldUp = glm::vec3(upX, upY, upZ);
     Yaw = yaw;
     Pitch = pitch;
-    updateCameraVectors();
+    UpdateCameraVectors();
   }
 
   // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -121,7 +121,7 @@ public:
     }
 
     // update Front, Right and Up Vectors using the updated Euler angles
-    updateCameraVectors();
+    UpdateCameraVectors();
   }
 
   // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
@@ -133,9 +133,8 @@ public:
       Zoom = 45.0f;
   }
 
-private:
-    // calculates the front vector from the Camera's (updated) Euler Angles
-  void updateCameraVectors() {
+  // calculates the front vector from the Camera's (updated) Euler Angles
+  void UpdateCameraVectors() {
     // calculate the new Front vector
     glm::vec3 front;
     front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
@@ -146,5 +145,14 @@ private:
     Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     Up    = glm::normalize(glm::cross(Right, Front));
   }
+
+  void UpdateCameraVectors(const glm::vec3& front) {
+    // calculate the new Front vector
+    // also re-calculate the Right and Up vector
+    Right = glm::normalize(glm::cross(front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+    Up    = glm::normalize(glm::cross(Right, front));
+  }
+
+private:
 };
 #endif
