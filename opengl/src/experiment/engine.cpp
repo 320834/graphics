@@ -135,6 +135,8 @@ TextureStatus Engine::TextureManager::import_texture_file(
 
   const std::string path = "../textures/" + filename;
   int width, height, nr_channels;
+  
+  stbi_set_flip_vertically_on_load(true);
   unsigned char *data = stbi_load(path.c_str(), &width, &height,
     &nr_channels, 0);
 
@@ -481,7 +483,7 @@ void Engine::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
   if(!engine) return;
 
-  engine->camera().ProcessMouseMovement(xpos, ypos);
+  // engine->camera().ProcessMouseMovement(xpos, ypos);
 }
 
 void Engine::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {

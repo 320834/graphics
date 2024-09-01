@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
+
 #include <vector>
 
 #include "shader.h"
@@ -94,6 +96,12 @@ public:
     size_t z = 0;
   };
 
+  enum class RotateDirection {
+    X,
+    Y,
+    Z
+  };
+
   Cube(const std::shared_ptr<Engine>& engine);
   Cube(
     const std::shared_ptr<Engine>& engine,
@@ -132,6 +140,7 @@ public:
   Color GetColor() const;
 
   void Transform(const glm::vec3& position);
+  void Rotate(float degrees, RotateDirection direction);
   void Scale(const float scale);
   void ScaleX(const float scale);
   void ScaleY(const float scale);
@@ -145,11 +154,6 @@ public:
   Collision IsColliding(const Cube& cube) const;
 
 private:
-
-  // void LoadTexture(
-  //   TextureLoadData& texture_data,
-  //   const std::string extension
-  // );
 
   void FailLoadTexture();
 
@@ -302,6 +306,20 @@ inline void Cube::SetPosition(const glm::vec3& position) {
 
 inline void Cube::Transform(const glm::vec3& position) {
   m_transformation = glm::translate(m_transformation, position);
+}
+
+inline void Cube::Rotate(float degrees, RotateDirection direction) {
+  switch(direction) {
+    case RotateDirection::X:
+      m_rotation = glm::rotate(m_rotation, glm::radians(degrees), glm::vec3(1.0, 0.0, 0.0));
+      break;
+    case RotateDirection::Y:
+      m_rotation = glm::rotate(m_rotation, glm::radians(degrees), glm::vec3(0.0, 1.0, 0.0));
+      break;
+    case RotateDirection::Z:
+      m_rotation = glm::rotate(m_rotation, glm::radians(degrees), glm::vec3(0.0, 0.0, 1.0));
+      break;
+  }
 }
 
 inline void Cube::Scale(const float scale) {

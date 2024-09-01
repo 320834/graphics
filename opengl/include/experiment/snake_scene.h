@@ -68,14 +68,19 @@ private:
   std::vector<glm::vec3> get_empty_positions();
   void spawn_food();
   void check_collisions();
+  void rotate_board();
 
   // ==================================
   // Members
   
+  bool m_start_rotate = false;
+  float m_degree = 270;
+
   size_t m_tick_time;
   size_t m_score;
 
   std::chrono::time_point<std::chrono::system_clock> m_next_tick_last;
+  std::chrono::time_point<std::chrono::system_clock> m_rotate_time;
 
   size_t m_head_index = 0;
   size_t m_max_food = 1;
