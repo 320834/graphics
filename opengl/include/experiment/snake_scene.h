@@ -68,13 +68,13 @@ private:
   std::vector<glm::vec3> get_empty_positions();
   void spawn_food();
   void check_collisions();
-  void rotate_board();
+  bool rotate_board();
 
   // ==================================
   // Members
   
-  bool m_start_rotate = false;
-  float m_degree = 0;
+  float m_degree = 90;
+  float m_yaw = 270;
 
   size_t m_tick_time;
   size_t m_score;

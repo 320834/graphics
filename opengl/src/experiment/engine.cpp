@@ -483,7 +483,7 @@ void Engine::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
   if(!engine) return;
 
-  // engine->camera().ProcessMouseMovement(xpos, ypos);
+  engine->camera().ProcessMouseMovement(xpos, ypos);
 }
 
 void Engine::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {

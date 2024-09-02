@@ -28,19 +28,19 @@ void SnakeScene::render() {
     std::chrono::duration_cast<std::chrono::seconds>(now - m_rotate_time);
   
   // Do rotate of board for spice. Runs every x seconds
-  // if(duration_rotate.count() >= 5) {
-  //   m_start_rotate = true;
-  // }
-
-  // if(m_start_rotate) {
-
-  // }
+  if(duration_rotate.count() >= 10) {
+    bool keep_rotating = rotate_board();
+    // utils::log("Start board rotation", "SnakeGame");
+    
+    if(!keep_rotating) {
+      m_rotate_time = std::chrono::system_clock::now();
+    }
+  } 
 
   // Concept of next tick. Run every x milliseconds
   if(duration.count() >= m_tick_time) {
     m_next_tick_last = std::chrono::system_clock::now();
-    rotate_board();
-    // move_snake_body();
+    move_snake_body();
     check_collisions();
   }
 
@@ -423,22 +423,30 @@ void SnakeScene::check_collisions() {
   }
 }
 
-void SnakeScene::rotate_board() {
+bool SnakeScene::rotate_board() {
 
-  float x = -1 * m_z_depth * glm::cos(glm::radians(m_degree));
-  float z = -1 * m_z_depth * glm::sin(glm::radians(m_degree)) + m_z_depth;
+  const float rotate_amount = 1;
 
-  m_degree += 15;
+  m_degree += rotate_amount;
   m_degree = (int)m_degree % 360;
 
-  // utils::print_glm_vec(glm::vec3(x, 0.0f, z));
-  // utils::print_glm_vec(glm::vec3(0.0f, 0.0f, m_z_depth));
+  m_yaw += rotate_amount;
+  m_yaw = (int)m_yaw % 360;
 
+  int radius = ((-1) * m_z_depth);
+
+  float x = radius * glm::cos(glm::radians(m_degree));
+  float z = radius * glm::sin(glm::radians(m_degree)) - radius;
+  
   m_engine->camera().Position = glm::vec3(x, 0.0f, z);
+  
+  int yaw = (int)m_engine->camera().Yaw % 360; 
+  m_engine->camera().Yaw = m_yaw;
+  m_engine->camera().UpdateCameraVectors();
 
-  // std::cout << m_engine->camera().Yaw << " : " << m_degree << std::endl;
-  // m_engine->camera().Yaw = m_degree - 180;
-    // std::cout << m_engine->camera().Yaw << " : " << m_degree << std::endl;
-  m_engine->camera().UpdateCameraVectors(glm::vec3(0.0f, 0.0f, -m_z_depth));
-  // m_engine->camera().Front = glm::vec3(0.0f, 0.0f, m_z_depth);
+  if(m_yaw == 90.0f || m_yaw == 270.0f) {
+    return false;
+  }
+
+  return true;
 }

@@ -15,8 +15,8 @@ int runner() {
       "Snake Game", 
       "../shaders/experiment/simple.vert",
       "../shaders/experiment/simple.frag",
-      1920,
-      1080
+      960,
+      540
     );
 
   // 960,
