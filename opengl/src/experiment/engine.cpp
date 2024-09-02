@@ -289,7 +289,9 @@ Engine::Engine(
 ) : 
   m_window_name(window_name),
   m_window_width(width),
-  m_window_height(height)
+  m_window_height(height),
+  m_enable_cam_pan(true),
+  m_enable_cam_move(true)
 {
 
   init_window();
@@ -334,6 +336,22 @@ Engine::SceneManager& Engine::scene_manager() {
 
 Engine::TextureManager& Engine::texture_manager() {
   return m_texture_manager;
+}
+
+bool Engine::camera_pan() {
+  return m_enable_cam_pan;
+}
+
+void Engine::camera_pan(bool value) {
+  m_enable_cam_pan = value;
+}
+
+bool Engine::camera_move() {
+  return m_enable_cam_move;
+}
+
+void Engine::camera_move(bool value) {
+  m_enable_cam_move = value;
 }
 
 void Engine::loop() {
@@ -458,6 +476,9 @@ void Engine::calculate_delta_time() {
 }
 
 void Engine::process_input_wasd() {
+
+  if(camera_move()) return;
+
   bool w = glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS;
   bool a = glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS;
   bool s = glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS;
@@ -475,6 +496,7 @@ void Engine::process_input_wasd() {
 }
 
 void Engine::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+  
   void* user_data = glfwGetWindowUserPointer(window);
 
   if(!user_data) return;
@@ -482,11 +504,14 @@ void Engine::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
   Engine* engine = reinterpret_cast<Engine*>(user_data);
 
   if(!engine) return;
+
+  if(!engine->camera_pan()) return;
 
   engine->camera().ProcessMouseMovement(xpos, ypos);
 }
 
 void Engine::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+
   void* user_data = glfwGetWindowUserPointer(window);
 
   if(!user_data) return;
@@ -494,6 +519,8 @@ void Engine::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
   Engine* engine = reinterpret_cast<Engine*>(user_data);
 
   if(!engine) return;
+
+  if(!engine->camera_pan()) return;
 
   engine->camera().ProcessMouseScroll(yoffset);
 }
