@@ -45,8 +45,14 @@ int runner() {
     [&game_end_scene_name, &snake_scene_name](std::shared_ptr<Engine> engine) {
       utils::log("Game Lose Go Back To Main Menu", "Engine Event");
 
+      engine->reset_camera();
+      engine->camera_pan(true);
+      engine->camera_move(true);
+
       engine->scene_manager().set_current_scene(game_end_scene_name);
 
+      // Delete old snake game. Maybe should implement reset instead
+      // TODO: Add reset instead of destroying and recreating scene
       engine->scene_manager().delete_scene(snake_scene_name);
       std::shared_ptr<SnakeScene> snake_game =
         std::make_shared<SnakeScene>(engine, snake_scene_name);
@@ -61,7 +67,10 @@ int runner() {
     "start",
     [&snake_scene_name](std::shared_ptr<Engine> engine) {
       utils::log("Start Snake Game", "Engine Event");
-
+  
+      engine->reset_camera();
+      engine->camera_pan(false);
+      engine->camera_move(false);
 
       engine->scene_manager().set_current_scene(snake_scene_name);
     }
@@ -81,6 +90,11 @@ int runner() {
     "menu",
     [&menu_scene_name, &main_menu](std::shared_ptr<Engine> engine) {
       utils::log("Go to Menu", "Engine Event");
+
+      engine->reset_camera();
+      engine->camera_pan(true);
+      engine->camera_move(true);
+
       engine->scene_manager().set_current_scene(menu_scene_name);
       main_menu->reset_timer();
     }
@@ -93,9 +107,7 @@ int runner() {
       utils::log("Quit", "Engine Event");
       glfwSetWindowShouldClose(engine->glfw_window(), true);
     }
-  );
-
-  // engine->scene_manager().set_current_scene(game_end_scene_name);
+  ); 
   
   engine->scene_manager().set_current_scene(menu_scene_name);
   engine->loop();

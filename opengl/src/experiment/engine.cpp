@@ -354,6 +354,13 @@ void Engine::camera_move(bool value) {
   m_enable_cam_move = value;
 }
 
+void Engine::reset_camera() {
+  camera().Yaw = 270;
+  camera().Position = glm::vec3(0.0f, 0.0f, 0.0f);
+
+  camera().UpdateCameraVectors();
+}
+
 void Engine::loop() {
   while(!glfwWindowShouldClose(m_window)) {
     process_exit();

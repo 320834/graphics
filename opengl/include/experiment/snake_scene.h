@@ -53,6 +53,8 @@ public:
 
   void render() override;
   void controls() override;
+
+  void reset();
 private:
 
   void init_snake_body();

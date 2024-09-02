@@ -16,7 +16,6 @@
 
 // Foward declare. Scene depends on engine.h
 class SceneInterface;
-// class Engine;
 
 struct TextureLoadData {
   int width;
@@ -91,6 +90,8 @@ public:
 
   bool camera_move();
   void camera_move(bool);
+
+  void reset_camera();
 
   void add_engine_instance(std::shared_ptr<Engine> engine);
 

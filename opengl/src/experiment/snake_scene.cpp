@@ -30,9 +30,9 @@ void SnakeScene::render() {
   // Do rotate of board for spice. Runs every x seconds
   if(duration_rotate.count() >= 10) {
     bool keep_rotating = rotate_board();
-    // utils::log("Start board rotation", "SnakeGame");
     
     if(!keep_rotating) {
+      utils::log("Finish Rotating", "SnakeGame");
       m_rotate_time = std::chrono::system_clock::now();
     }
   } 
@@ -56,10 +56,8 @@ void SnakeScene::render() {
       
     Cube& cube = m_snake[index];
     if(index == m_head_index) {
-      // cube.SetColor(snake_head_color);
       cube.SetTexture("head.png");
     } else {
-      // cube.SetColor(snake_body_color);
       cube.SetTexture("snake.jpg");
     }
     cube.Render();
@@ -77,10 +75,19 @@ void SnakeScene::render() {
 
 void SnakeScene::controls() {
   if(glfwGetKey(m_engine->glfw_window(), GLFW_KEY_UP) == GLFW_PRESS) {
-    change_direction(SnakeDirection::UP);
+
+    if(m_yaw == 270.0f) {
+      change_direction(SnakeDirection::UP);
+    } else {
+      change_direction(SnakeDirection::DOWN);
+    }
   } 
   else if(glfwGetKey(m_engine->glfw_window(), GLFW_KEY_DOWN) == GLFW_PRESS) {
-    change_direction(SnakeDirection::DOWN);
+    if(m_yaw == 270.0f) {
+      change_direction(SnakeDirection::DOWN);
+    } else {
+      change_direction(SnakeDirection::UP);
+    }
   } 
   else if(glfwGetKey(m_engine->glfw_window(), GLFW_KEY_LEFT) == GLFW_PRESS) {
     change_direction(SnakeDirection::LEFT);
@@ -351,9 +358,9 @@ std::vector<glm::vec3> SnakeScene::get_empty_positions() {
     }
   }
   
-  const std::string message =
-    "Empty Positions: " + std::to_string(empty_positions.size());
-  utils::log(message, "SnakeGame");
+  // const std::string message =
+  // "Empty Positions: " + std::to_string(empty_positions.size());
+  // utils::log(message, "SnakeGame");
 
   return empty_positions;
 }
@@ -450,3 +457,4 @@ bool SnakeScene::rotate_board() {
 
   return true;
 }
+

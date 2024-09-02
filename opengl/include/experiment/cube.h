@@ -457,44 +457,6 @@ inline Cube::Collision Cube::IsColliding(const Cube& cube) const {
 
 }
 
-// inline void Cube::LoadTexture(
-//   TextureLoadData& texture_data,
-//   const std::string extension
-// ) {
-
-//   unsigned int texture;
-
-//   // Check if texture is already set
-//   if(m_texture_id == -1) {
-//     glGenTextures(1, &texture);
-//   } else {
-//     texture = m_texture_id;
-//   }
-//   glBindTexture(GL_TEXTURE_2D, texture);
-
-//   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-//   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//   // set texture filtering parameters
-//   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-//   if(auto search = extension.find(".png"); search != std::string::npos) {
-//     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture_data.width, texture_data.height, 0, GL_RGBA,
-//       GL_UNSIGNED_BYTE, texture_data.data);
-//   } else {
-//     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture_data.width, texture_data.height, 0, GL_RGB,
-//       GL_UNSIGNED_BYTE, texture_data.data);
-//   }
-
-//   glGenerateMipmap(GL_TEXTURE_2D);
-//   m_texture_id = texture;
-//   unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
-//   glUniform1i(use_texture_id, (int)true);
-
-
-//   stbi_image_free(texture_data.data);
-// }
-
 inline void Cube::FailLoadTexture() {
   unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
   glUniform1i(use_texture_id, (int)false);
