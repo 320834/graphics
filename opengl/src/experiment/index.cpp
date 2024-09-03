@@ -51,13 +51,6 @@ int runner() {
 
       engine->scene_manager().set_current_scene(game_end_scene_name);
 
-      // Delete old snake game. Maybe should implement reset instead
-      // TODO: Add reset instead of destroying and recreating scene
-      engine->scene_manager().delete_scene(snake_scene_name);
-      std::shared_ptr<SnakeScene> snake_game =
-        std::make_shared<SnakeScene>(engine, snake_scene_name);
-      engine->scene_manager().add_scene(snake_game);
-
     }
   );
 
@@ -73,6 +66,16 @@ int runner() {
       engine->camera_move(false);
 
       engine->scene_manager().set_current_scene(snake_scene_name);
+      std::shared_ptr<SceneInterface> curr = engine->scene_manager().get_current_scene();
+
+      SnakeScene* snake_scene =
+        dynamic_cast<SnakeScene*>(curr.get());
+
+      if(!snake_scene) {
+        utils::log("Failed to cast to SnakeScene", "Engine Event");
+      }
+
+      snake_scene->reset();
     }
   );
 

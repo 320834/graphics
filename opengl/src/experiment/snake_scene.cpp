@@ -28,7 +28,7 @@ void SnakeScene::render() {
     std::chrono::duration_cast<std::chrono::seconds>(now - m_rotate_time);
   
   // Do rotate of board for spice. Runs every x seconds
-  if(duration_rotate.count() >= 10) {
+  if(duration_rotate.count() >= 5) {
     bool keep_rotating = rotate_board();
     
     if(!keep_rotating) {
@@ -458,3 +458,24 @@ bool SnakeScene::rotate_board() {
   return true;
 }
 
+void SnakeScene::reset() {
+  m_next_tick_last = std::chrono::system_clock::now();
+  m_rotate_time = std::chrono::system_clock::now();
+
+  m_engine->reset_camera();
+  m_tick_time = NEXT_TICK_MAXIMUM;
+  m_curr_dir = SnakeDirection::LEFT;
+
+  m_degree = 90;
+  m_yaw = 270;
+  
+  m_head_index = 0;
+  m_score = 0;
+
+  m_food.clear();
+  m_snake.clear();
+
+  init_snake_body();
+
+  spawn_food();
+}

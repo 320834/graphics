@@ -484,7 +484,7 @@ void Engine::calculate_delta_time() {
 
 void Engine::process_input_wasd() {
 
-  if(camera_move()) return;
+  if(!camera_move()) return;
 
   bool w = glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS;
   bool a = glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS;
