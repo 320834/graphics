@@ -28,7 +28,7 @@ void SnakeScene::render() {
     std::chrono::duration_cast<std::chrono::seconds>(now - m_rotate_time);
   
   // Do rotate of board for spice. Runs every x seconds
-  if(duration_rotate.count() >= 5) {
+  if(duration_rotate.count() >= 10) {
     bool keep_rotating = rotate_board();
     
     if(!keep_rotating) {
