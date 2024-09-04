@@ -9,6 +9,7 @@ SnakeScene::SnakeScene(
 )
   : SceneInterface(engine, scene_name),
     m_next_tick_last{std::chrono::system_clock::now()},
+    m_rotate_time{std::chrono::system_clock::now()},
     m_tick_time{NEXT_TICK_MAXIMUM},
     m_score{0}
 {
@@ -23,10 +24,22 @@ void SnakeScene::render() {
   auto duration =
     std::chrono::duration_cast<std::chrono::milliseconds>(now - m_next_tick_last);
 
+  auto duration_rotate =
+    std::chrono::duration_cast<std::chrono::seconds>(now - m_rotate_time);
+  
+  // Do rotate of board for spice. Runs every x seconds
+  if(duration_rotate.count() >= 10) {
+    bool keep_rotating = rotate_board();
+    
+    if(!keep_rotating) {
+      utils::log("Finish Rotating", "SnakeGame");
+      m_rotate_time = std::chrono::system_clock::now();
+    }
+  } 
+
   // Concept of next tick. Run every x milliseconds
   if(duration.count() >= m_tick_time) {
     m_next_tick_last = std::chrono::system_clock::now();
-
     move_snake_body();
     check_collisions();
   }
@@ -43,16 +56,15 @@ void SnakeScene::render() {
       
     Cube& cube = m_snake[index];
     if(index == m_head_index) {
-      // cube.SetColor(snake_head_color);
-      cube.SetTexture("awesomeface.png");
+      cube.SetTexture("head.png");
     } else {
-      // cube.SetColor(snake_body_color);
-      cube.SetTexture("container.jpg");
+      cube.SetTexture("snake.jpg");
     }
     cube.Render();
   }
 
-  for(Cube& wall : m_walls) { 
+  for(Cube& wall : m_walls) {
+    wall.SetTexture("container.jpg");
     wall.Render();
   }
 
@@ -63,10 +75,19 @@ void SnakeScene::render() {
 
 void SnakeScene::controls() {
   if(glfwGetKey(m_engine->glfw_window(), GLFW_KEY_UP) == GLFW_PRESS) {
-    change_direction(SnakeDirection::UP);
+
+    if(m_yaw == 270.0f) {
+      change_direction(SnakeDirection::UP);
+    } else {
+      change_direction(SnakeDirection::DOWN);
+    }
   } 
   else if(glfwGetKey(m_engine->glfw_window(), GLFW_KEY_DOWN) == GLFW_PRESS) {
-    change_direction(SnakeDirection::DOWN);
+    if(m_yaw == 270.0f) {
+      change_direction(SnakeDirection::DOWN);
+    } else {
+      change_direction(SnakeDirection::UP);
+    }
   } 
   else if(glfwGetKey(m_engine->glfw_window(), GLFW_KEY_LEFT) == GLFW_PRESS) {
     change_direction(SnakeDirection::LEFT);
@@ -92,25 +113,63 @@ void SnakeScene::init_snake_body() {
 }
 
 void SnakeScene::init_walls() {
-  const float scale_factor =
-    m_wall_length * 2;
 
-  Cube left(m_engine, glm::vec3(-m_wall_length, 0.0f, m_z_depth), border_color);
-  left.ScaleY(scale_factor);
+  const std::string wall_texture = "container.jpg"; 
+  
+  // Construct left
+  {
+    for(int i = 0; i <= m_wall_length; ++i) {
+      m_walls.emplace_back(m_engine, glm::vec3(-m_wall_length, i, m_z_depth), wall_texture);
+    }
 
-  Cube right(m_engine, glm::vec3(m_wall_length, 0.0f, m_z_depth), border_color);
-  right.ScaleY(scale_factor);
+    for(int i = -1; i >= -m_wall_length; --i) {
+      m_walls.emplace_back(m_engine, glm::vec3(-m_wall_length, i, m_z_depth), wall_texture);
+    }
+  }
 
-  Cube top(m_engine, glm::vec3(0.0f, m_wall_length, m_z_depth), border_color);
-  top.ScaleX(scale_factor);
+  // Construct right
+  {
+    for(int i = 0; i <= m_wall_length; ++i) {
+      m_walls.emplace_back(m_engine, glm::vec3(m_wall_length, i, m_z_depth), wall_texture);
+    }
 
-  Cube bottom(m_engine, glm::vec3(0.0f, -m_wall_length, m_z_depth), border_color);
-  bottom.ScaleX(scale_factor);
+    for(int i = -1; i >= -m_wall_length; --i) {
+      m_walls.emplace_back(m_engine, glm::vec3(m_wall_length, i, m_z_depth), wall_texture);
+    }
+  }
 
-  m_walls.push_back(right);
-  m_walls.push_back(top);
-  m_walls.push_back(bottom);
-  m_walls.push_back(left);
+  // Construct top
+  {
+    for(int i = 0; i <= m_wall_length; ++i) {
+      m_walls.emplace_back(m_engine, glm::vec3(i, m_wall_length, m_z_depth), wall_texture);
+    }
+
+    for(int i = -1; i >= -m_wall_length; --i) {
+      m_walls.emplace_back(m_engine, glm::vec3(i, m_wall_length, m_z_depth), wall_texture);
+    }
+  }
+
+  // Construct bottom
+  {
+    for(int i = 0; i <= m_wall_length; ++i) {
+      m_walls.emplace_back(m_engine, glm::vec3(i, m_wall_length, m_z_depth), wall_texture);
+    }
+
+    for(int i = -1; i >= -m_wall_length; --i) {
+      m_walls.emplace_back(m_engine, glm::vec3(i, m_wall_length, m_z_depth), wall_texture);
+    }
+  }
+
+  // Construct top
+  {
+    for(int i = 0; i <= m_wall_length; ++i) {
+      m_walls.emplace_back(m_engine, glm::vec3(i, -m_wall_length, m_z_depth), wall_texture);
+    }
+
+    for(int i = -1; i >= -m_wall_length; --i) {
+      m_walls.emplace_back(m_engine, glm::vec3(i, -m_wall_length, m_z_depth), wall_texture);
+    }
+  }
 }
 
 void SnakeScene::move_snake_body() {
@@ -299,9 +358,9 @@ std::vector<glm::vec3> SnakeScene::get_empty_positions() {
     }
   }
   
-  const std::string message =
-    "Empty Positions: " + std::to_string(empty_positions.size());
-  utils::log(message, "SnakeGame");
+  // const std::string message =
+  // "Empty Positions: " + std::to_string(empty_positions.size());
+  // utils::log(message, "SnakeGame");
 
   return empty_positions;
 }
@@ -322,7 +381,7 @@ void SnakeScene::spawn_food() {
 
   const glm::vec3 pos = positions[pos_i];
   const int shader_id = m_engine->shader().m_ID;
-  m_food.emplace_back(m_engine, pos, food_color);
+  m_food.emplace_back(m_engine, pos, "apple.jpg");
 }
 
 void SnakeScene::check_collisions() {
@@ -370,3 +429,32 @@ void SnakeScene::check_collisions() {
 
   }
 }
+
+bool SnakeScene::rotate_board() {
+
+  const float rotate_amount = 1;
+
+  m_degree += rotate_amount;
+  m_degree = (int)m_degree % 360;
+
+  m_yaw += rotate_amount;
+  m_yaw = (int)m_yaw % 360;
+
+  int radius = ((-1) * m_z_depth);
+
+  float x = radius * glm::cos(glm::radians(m_degree));
+  float z = radius * glm::sin(glm::radians(m_degree)) - radius;
+  
+  m_engine->camera().Position = glm::vec3(x, 0.0f, z);
+  
+  int yaw = (int)m_engine->camera().Yaw % 360; 
+  m_engine->camera().Yaw = m_yaw;
+  m_engine->camera().UpdateCameraVectors();
+
+  if(m_yaw == 90.0f || m_yaw == 270.0f) {
+    return false;
+  }
+
+  return true;
+}
+

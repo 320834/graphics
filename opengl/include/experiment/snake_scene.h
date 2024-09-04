@@ -53,6 +53,8 @@ public:
 
   void render() override;
   void controls() override;
+
+  void reset();
 private:
 
   void init_snake_body();
@@ -68,14 +70,19 @@ private:
   std::vector<glm::vec3> get_empty_positions();
   void spawn_food();
   void check_collisions();
+  bool rotate_board();
 
   // ==================================
   // Members
   
+  float m_degree = 90;
+  float m_yaw = 270;
+
   size_t m_tick_time;
   size_t m_score;
 
   std::chrono::time_point<std::chrono::system_clock> m_next_tick_last;
+  std::chrono::time_point<std::chrono::system_clock> m_rotate_time;
 
   size_t m_head_index = 0;
   size_t m_max_food = 1;

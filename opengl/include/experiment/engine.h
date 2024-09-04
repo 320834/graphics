@@ -16,7 +16,6 @@
 
 // Foward declare. Scene depends on engine.h
 class SceneInterface;
-// class Engine;
 
 struct TextureLoadData {
   int width;
@@ -86,6 +85,14 @@ public:
   SceneManager& scene_manager();
   TextureManager& texture_manager();
 
+  bool camera_pan();
+  void camera_pan(bool);
+
+  bool camera_move();
+  void camera_move(bool);
+
+  void reset_camera();
+
   void add_engine_instance(std::shared_ptr<Engine> engine);
 
   bool add_event(
@@ -128,6 +135,8 @@ private:
   float m_window_height;
 
   unsigned int m_VAO, m_VBO;
+
+  bool m_enable_cam_pan, m_enable_cam_move;
 
   glm::mat4 m_model;
   glm::mat4 m_view;
