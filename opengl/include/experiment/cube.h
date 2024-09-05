@@ -290,11 +290,13 @@ inline void Cube::Render() {
     glUniform4f(color_id, r, g, b, 1.0);
   }
 
-  unsigned int model_id = glGetUniformLocation(m_shader_id, "model");
-  m_model = glm::mat4(1.0f);
-  m_model = m_transformation * m_rotation * m_scale;
+  unsigned int model_id_trans = glGetUniformLocation(m_shader_id, "transform");
+  unsigned int model_id_rotate = glGetUniformLocation(m_shader_id, "rotate");
+  unsigned int model_id_scale = glGetUniformLocation(m_shader_id, "scale");
 
-  glUniformMatrix4fv(model_id, 1, GL_FALSE, glm::value_ptr(m_model));
+  glUniformMatrix4fv(model_id_trans, 1, GL_FALSE, glm::value_ptr(m_transformation));
+  glUniformMatrix4fv(model_id_rotate, 1, GL_FALSE, glm::value_ptr(m_rotation));
+  glUniformMatrix4fv(model_id_scale, 1, GL_FALSE, glm::value_ptr(m_scale));
 
   glDrawArrays(GL_TRIANGLES, 0, 36);
 }
