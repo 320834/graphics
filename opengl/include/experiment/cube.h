@@ -294,9 +294,6 @@ inline void Cube::Render() {
   unsigned int model_id_rotate = glGetUniformLocation(m_shader_id, "rotate");
   unsigned int model_id_scale = glGetUniformLocation(m_shader_id, "scale");
 
-  // m_model = glm::mat4(1.0f);
-  // m_model = m_transformation * m_rotation * m_scale;
-
   glUniformMatrix4fv(model_id_trans, 1, GL_FALSE, glm::value_ptr(m_transformation));
   glUniformMatrix4fv(model_id_rotate, 1, GL_FALSE, glm::value_ptr(m_rotation));
   glUniformMatrix4fv(model_id_scale, 1, GL_FALSE, glm::value_ptr(m_scale));
