@@ -73,6 +73,7 @@ int runner() {
 
       if(!snake_scene) {
         utils::log("Failed to cast to SnakeScene", "Engine Event");
+        return;
       }
 
       snake_scene->reset();
