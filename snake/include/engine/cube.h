@@ -1,5 +1,5 @@
-#ifndef EXPERIMENT_CUBE_H_
-#define EXPERIMENT_CUBE_H_
+#ifndef ENGINE_CUBE_H_
+#define ENGINE_CUBE_H_
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -9,8 +9,8 @@
 
 #include "shader.h"
 #include "image/stb_image.h"
-#include "experiment/utils.h"
-#include "experiment/engine.h"
+#include "engine/utils.h"
+#include "engine/engine.h"
 
 struct Color {
   unsigned char r;
@@ -478,4 +478,4 @@ inline void Cube::FailLoadTexture() {
   m_texture_id = -1;
 }
 
-#endif //EXPERIMENT_CUBE_H_
+#endif // ENGINE_CUBE_H_

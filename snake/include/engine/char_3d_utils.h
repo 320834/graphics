@@ -1,8 +1,8 @@
-#ifndef EXPERIMENT_CHAR_3D_UTILS_H_
-#define EXPERIMENT_CHAR_3D_UTILS_H_
+#ifndef ENGINE_CHAR_3D_UTILS_H_
+#define ENGINE_CHAR_3D_UTILS_H_
 
-#include "experiment/char_3d_constants.h"
-#include "experiment/char_3d.h"
+#include "engine/char_3d_constants.h"
+#include "engine/char_3d.h"
 #include <string>
 
 namespace char3d_utils {
@@ -72,4 +72,4 @@ inline Character get_character(const char c) {
 
 } // namespace char3d_utils
 
-#endif // EXPERIMENT_CHAR_3D_UTILS_H_
+#endif // ENGINE_CHAR_3D_UTILS_H_

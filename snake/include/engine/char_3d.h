@@ -1,9 +1,9 @@
-#ifndef EXPERIMENT_CHAR_3D_H_
-#define EXPERIMENT_CHAR_3D_H_
+#ifndef ENGINE_CHAR_3D_H_
+#define ENGINE_CHAR_3D_H_
 
-#include "experiment/cube.h"
-#include "experiment/char_3d_constants.h"
-#include "experiment/engine.h"
+#include "engine/cube.h"
+#include "engine/char_3d_constants.h"
+#include "engine/engine.h"
 
 #include <glm/glm.hpp>
 
@@ -59,4 +59,4 @@ private:
   std::vector<Char3D> m_chars;
 };
 
-#endif // EXPERIMENT_CHAR_3D_H_
+#endif // ENGINE_CHAR_3D_H_

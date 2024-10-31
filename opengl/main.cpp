@@ -6,7 +6,6 @@
 #include "lessons/chp_9_coordinate_systems.h"
 #include "lessons/chp_9_exercises.h"
 #include "lessons/chp_10_camera.h"
-#include "experiment/index.h"
 #include "shader.h"
 
 #include <glm/glm.hpp>
@@ -37,11 +36,6 @@ int main() {
   // chp_10_camera_look_at();
   // chp_10_freeroam();
   // chp_10_ex_1_and_2();
-
-
-  runner();
-
-  // snake_game(); 
 
   return 0;
 }

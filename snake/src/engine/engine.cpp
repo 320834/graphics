@@ -1,12 +1,13 @@
-#include "experiment/engine.h"
+#include "engine/engine.h"
 
-#include "shader.h"
-#include "camera.h"
-#include "experiment/cube.h"
-#include "experiment/scene.h"
-#include "utils.h"
+#include "engine/shader.h"
+#include "engine/camera.h"
+#include "engine/cube.h"
+#include "engine/scene.h"
+#include "engine/utils.h"
 
 #include <memory>
+#include <map>
 
 class SceneInterface;
 

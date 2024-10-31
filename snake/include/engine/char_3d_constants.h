@@ -1,7 +1,7 @@
-#ifndef EXPERIMENT_CHAR_3D_CONSTANTS_H_
-#define EXPERIMENT_CHAR_3D_CONSTANTS_H_
+#ifndef ENGINE_CHAR_3D_CONSTANTS_H_
+#define ENGINE_CHAR_3D_CONSTANTS_H_
 
-#include "experiment/char_3d.h"
+#include "engine/char_3d.h"
 
 #include <unordered_map>
 #include <array>

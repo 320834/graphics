@@ -1,8 +1,8 @@
-#ifndef EXPERIMENT_SCENE_H_
-#define EXPERIMENT_SCENE_H_
+#ifndef ENGINE_SCENE_H_
+#define ENGINE_SCENE_H_
 
 #include <memory>
-#include "experiment/engine.h"
+#include "engine/engine.h"
 
 class SceneInterface {
 public:
@@ -28,4 +28,4 @@ inline std::string SceneInterface::scene_name() const {
   return m_scene_name;
 }
 
-#endif // EXPERIMENT_SCENE_H_
+#endif // ENGINE_SCENE_H_

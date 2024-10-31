@@ -1,4 +1,4 @@
-#include "experiment/snake_scene.h"
+#include "snake_scene.h"
 
 #include <unordered_set>
 #include <random>

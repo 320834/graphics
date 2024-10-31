@@ -2,25 +2,22 @@
 #include <vector>
 #include <memory>
 
-#include "experiment/engine.h"
-#include "experiment/utils.h"
-#include "experiment/snake_scene.h"
-#include "experiment/main_menu_scene.h" 
-#include "experiment/game_end_scene.h"
+#include "engine/engine.h"
+#include "engine/utils.h"
+#include "snake_scene.h"
+#include "main_menu_scene.h" 
+#include "game_end_scene.h"
 
-int runner() {
+int main() {
 
   std::shared_ptr<Engine> engine =
     create_engine(
       "Snake Game", 
-      "../shaders/experiment/simple.vert",
-      "../shaders/experiment/simple.frag",
-      960,
-      540
+      "../shaders/simple.vert",
+      "../shaders/simple.frag",
+      1920,
+      1080
     );
-
-  // 960,
-  // 540
 
   const std::string snake_scene_name =
     "snake_game";
