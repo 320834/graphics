@@ -18,7 +18,8 @@ struct Color {
   unsigned char b;
 };
 
-const std::string EMPTY;
+// Intentionally left empty
+const std::string DEFAULT_TEXTURE;
 const Color DEFAULT_COLOR = {
   .r = 0,
   .g = 0,
@@ -105,19 +106,26 @@ public:
   Cube(const std::shared_ptr<Engine>& engine);
   Cube(
     const std::shared_ptr<Engine>& engine,
-    const glm::vec3 position
+    const glm::vec3& position
   );
   Cube(
     const std::shared_ptr<Engine>& engine,
-    const glm::vec3 position,
+    const glm::vec3& position,
     const std::string& texture_name
   );
 
   Cube(
     const std::shared_ptr<Engine>& engine,
-    const glm::vec3 position,
-    const Color color
+    const glm::vec3& position,
+    const Color& color
   );
+
+  Cube(
+    const std::shared_ptr<Engine>& engine,
+    const glm::vec3& position,
+    const std::string& texture_name,
+    const Color& color
+  ); 
 
   Cube(const Cube& other);
   Cube& operator=(const Cube& other);
@@ -174,14 +182,31 @@ private:
 inline Cube::Cube(const std::shared_ptr<Engine>& engine) 
   : Cube(engine, glm::vec3(0.0f, 0.0f, 0.0f)) {}
 
-inline Cube::Cube(const std::shared_ptr<Engine>& engine, const glm::vec3 position)
-  : Cube(engine, position, EMPTY)
+inline Cube::Cube(const std::shared_ptr<Engine>& engine, const glm::vec3& position)
+  : Cube(engine, position, DEFAULT_TEXTURE, DEFAULT_COLOR)
 {}
 
 inline Cube::Cube(
   const std::shared_ptr<Engine>& engine,
-  const glm::vec3 position,
+  const glm::vec3& position,
   const std::string& texture_name
+)
+  : Cube(engine, position, texture_name, DEFAULT_COLOR)
+{}
+
+inline Cube::Cube(
+  const std::shared_ptr<Engine>& engine,
+  const glm::vec3& position,
+  const Color& color
+)
+  : Cube(engine, position, DEFAULT_TEXTURE, color)
+{}
+
+inline Cube::Cube(
+  const std::shared_ptr<Engine>& engine,
+  const glm::vec3& position,
+  const std::string& texture_name,
+  const Color& color
 ) : m_engine{engine},
     m_shader_id{engine->shader().m_ID},
     m_model{glm::mat4(1.0f)},
@@ -193,30 +218,18 @@ inline Cube::Cube(
 
   Transform(position);
 
-  SetColor(DEFAULT_COLOR);
+  SetColor(color);
   SetTexture(texture_name);
 }
 
-inline Cube::Cube(
-  const std::shared_ptr<Engine>& engine,
-  const glm::vec3 position,
-  const Color color
-)
-  : Cube(engine, position, EMPTY)
-{
-  SetColor(color);
-}
-
-
 inline Cube::Cube(const Cube& other)
- : m_shader_id(other.ShaderId())
+ : m_shader_id{other.ShaderId()},
+   m_engine{other.Engine_Ptr()},
+   m_texture_id{other.TextureId()},
+   m_transformation{other.TransformMatrix()},
+   m_scale{other.ScaleMatrix()},
+   m_rotation{other.RotateMatrix()}
 {
-  m_engine = other.Engine_Ptr();
-  m_texture_id = other.TextureId();
-  m_transformation = other.TransformMatrix();
-  m_scale = other.ScaleMatrix();
-  m_rotation = other.RotateMatrix();
- 
   // Figure out for texture
   if(other.UseColor()) {
     SetColor(other.GetColor()); 
