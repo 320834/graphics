@@ -45,12 +45,6 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_9_exercises.cpp
   src/lessons/chp_10_camera.cpp
   src/lessons/chp_10_exercises.cpp
-  src/experiment/index.cpp
-  src/experiment/engine.cpp
-  src/experiment/snake_scene.cpp
-  src/experiment/char_3d.cpp
-  src/experiment/main_menu_scene.cpp
-  src/experiment/game_end_scene.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})

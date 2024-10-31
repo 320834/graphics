@@ -1,8 +1,8 @@
-#ifndef EXPERIMENT_SNAKE_SCENE_H_
-#define EXPERIMENT_SNAKE_SCENE_H_
+#ifndef SNAKE_SCENE_H_
+#define SNAKE_SCENE_H_
 
-#include "scene.h"
-#include "experiment/cube.h"
+#include "engine/scene.h"
+#include "engine/cube.h"
 
 #include <chrono>
 
@@ -95,4 +95,4 @@ private:
   std::vector<Cube> m_snake;
 };
 
-#endif //EXPERIMENT_SNAKE_SCENE_H_
+#endif // SNAKE_SCENE_H_

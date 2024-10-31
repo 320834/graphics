@@ -1,5 +1,5 @@
-#ifndef EXPERIMENT_UTILS_H_
-#define EXPERIMENT_UTILS_H_
+#ifndef ENGINE_UTILS_H_
+#define ENGINE_UTILS_H_
 
 #include <iostream>
 #include <chrono>
@@ -35,4 +35,4 @@ inline void log(const std::string& message, const std::string& type = "")
 
 } // namespace utils
 
-#endif //EXPERIMENT_UTILS_H_
+#endif // ENGINE_UTILS_H_

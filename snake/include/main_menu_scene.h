@@ -1,11 +1,11 @@
-#ifndef EXPERIMENT_MAIN_MENU_H_
-#define EXPERIMENT_MAIN_MENU_H_
+#ifndef MAIN_MENU_H_
+#define MAIN_MENU_H_
 
 #include <vector>
 
-#include "experiment/scene.h"
-#include "experiment/cube.h"
-#include "experiment/char_3d.h"
+#include "engine/scene.h"
+#include "engine/cube.h"
+#include "engine/char_3d.h"
 
 class MainMenuScene : public SceneInterface {
 public:
@@ -31,4 +31,4 @@ private:
   std::vector<PhraseBuilder> m_options;
 };
 
-#endif // EXPERIMENT_MAIN_MENU_H_
+#endif // MAIN_MENU_H_

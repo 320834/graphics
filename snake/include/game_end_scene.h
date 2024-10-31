@@ -1,10 +1,10 @@
-#ifndef EXPERIMENT_GAME_END_SCENE_H_
-#define EXPERIMENT_GAME_END_SCENE_H_
+#ifndef GAME_END_SCENE_H_
+#define GAME_END_SCENE_H_
 
-#include "experiment/scene.h"
-#include "experiment/engine.h"
+#include "engine/scene.h"
+#include "engine/engine.h"
 
-#include "experiment/char_3d.h"
+#include "engine/char_3d.h"
 
 #include <chrono>
 
@@ -34,4 +34,4 @@ private:
   std::shared_ptr<PhraseBuilder> m_win;
 };
 
-#endif // EXPERIMENT_GAME_END_SCENE_H_
+#endif // GAME_END_SCENE_H_

@@ -1,5 +1,5 @@
-#ifndef EXPERIMENET_ENGINE_H_
-#define EXPERIMENET_ENGINE_H_
+#ifndef ENGINE_ENGINE_H_
+#define ENGINE_ENGINE_H_
 
 #include <string>
 #include <vector>
@@ -173,4 +173,4 @@ std::shared_ptr<Engine> create_engine(
   const float height
 );
 
-#endif //EXPERIMENET_ENGINE_H_
+#endif // ENGINE_ENGINE_H_

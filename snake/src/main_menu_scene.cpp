@@ -1,72 +1,65 @@
-#include "experiment/game_end_scene.h"
+#include "main_menu_scene.h"
+#include "engine/char_3d.h"
 
-#include "experiment/engine.h"
-#include "experiment/char_3d.h"
+#include <memory>
 
-GameEndScene::GameEndScene(
-  std::shared_ptr<Engine> engine,
+MainMenuScene::MainMenuScene(
+  const std::shared_ptr<Engine> engine,
   const std::string& scene_name
 )
   : SceneInterface(engine, scene_name),
-    m_is_win{false},
-    m_lose{[&engine]() -> std::shared_ptr<PhraseBuilder>{
-      auto lose = std::make_shared<PhraseBuilder>(
-        engine, "You Lose", 0.35f 
+    m_next_tick_last{std::chrono::system_clock::now()},
+    m_title{[&engine]() -> std::shared_ptr<PhraseBuilder>{
+      auto title = std::make_shared<PhraseBuilder>(
+        engine, "Snake", 0.35f 
       );
-      lose->transform(glm::vec3(-8.5,1,-15));
+      title->transform(glm::vec3(-5.5,1,-15));
+      
+      return title;
 
-      return lose;
     }()},
-    m_win{[&engine]() -> std::shared_ptr<PhraseBuilder>{
-      auto win = std::make_shared<PhraseBuilder>(
-        engine, "You Win", 0.35f);
-      win->transform(glm::vec3(-7,1,-15));
-      return win;
-    }()},
-    m_pointer{[&engine]() -> std::shared_ptr<Cube> {
+    m_pointer{[&engine]() -> std::shared_ptr<Cube>{
       auto pointer = std::make_shared<Cube>(
         engine, glm::vec3(-2.5, -0.8, -15), default_letter_color 
       );
-      
+
       pointer->ScaleX(0.8f);
       pointer->ScaleY(0.1f);
       pointer->ScaleZ(0.1f);
-      
-      return pointer;
 
-    }()},
-    m_next_tick_last{std::chrono::system_clock::now()}
+      return pointer;
+    }()}
 {
-  PhraseBuilder menu(m_engine, "Menu", 0.1f);
-  menu.transform(glm::vec3(-1.5,-1,-15));
-   
+  // const unsigned int m_id = m_engine->shader().m_ID;
+
+  PhraseBuilder start(m_engine, "Start", 0.1f);
+  start.transform(glm::vec3(-1.5,-1,-15));
+  
+  m_options.push_back(start);
+  
   PhraseBuilder quit(m_engine, "Quit", 0.1f);
   quit.transform(glm::vec3(-1.5, -2.5, -15));
 
-  m_options.push_back(menu);
   m_options.push_back(quit);
 }
 
-void GameEndScene::render() {
-  if(m_is_win) {
-    m_win->render();
-  } else {
-    m_lose->render();
-  }
+void MainMenuScene::render() {
+
+  m_title->render();
 
   m_pointer->Render();
 
-  for(PhraseBuilder& option : m_options) {
-    option.render();
+  for(PhraseBuilder& phrase : m_options) {
+    phrase.render();
   }
 }
 
-void GameEndScene::controls() {
+void MainMenuScene::controls() {
+
   std::chrono::time_point now =
     std::chrono::system_clock::now();
   auto duration =
     std::chrono::duration_cast<std::chrono::milliseconds>(now - m_next_tick_last);
-
  
   if(duration.count() >= 150) {
 
@@ -86,14 +79,13 @@ void GameEndScene::controls() {
       m_next_tick_last = std::chrono::system_clock::now();
     }
   }
-  
 }
 
-void GameEndScene::set_condition(bool is_win) {
-  m_is_win = is_win;
+void MainMenuScene::reset_timer() {
+  m_next_tick_last = std::chrono::system_clock::now(); 
 }
 
-void GameEndScene::change_option(bool direction) {
+void MainMenuScene::change_option(bool direction) {
   // true is up
   // false is down
 
@@ -118,15 +110,10 @@ void GameEndScene::change_option(bool direction) {
   m_pointer_index = new_i;
 }
 
-void GameEndScene::hit_option() {
+void MainMenuScene::hit_option() {
   if(m_pointer_index == 0) {
-    m_engine->invoke_event(
-      scene_name(), "menu" 
-    );
+    m_engine->invoke_event(scene_name(), "start"); 
   } else if(m_pointer_index == 1) {
-    m_engine->invoke_event(
-      scene_name(), "quit"
-    );
+    m_engine->invoke_event(scene_name(), "quit");
   }
 }
-
