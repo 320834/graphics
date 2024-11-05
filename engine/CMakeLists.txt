@@ -20,9 +20,16 @@ FetchContent_Declare(
   URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip # v1.15.2
 )
 
+FetchContent_Declare(
+  stb_image
+  DOWNLOAD_NO_EXTRACT TRUE
+  URL https://raw.githubusercontent.com/nothings/stb/refs/heads/master/stb_image.h
+)
+
 FetchContent_MakeAvailable(glfw)
 FetchContent_MakeAvailable(glm)
 FetchContent_MakeAvailable(googletest)
+FetchContent_MakeAvailable(stb_image)
 
 # ================================
 # Build library
@@ -54,6 +61,7 @@ target_include_directories(
   ${PROJECT_NAME}
     PRIVATE
       ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${stb_image_SOURCE_DIR} # Add header to include path
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
