@@ -46,6 +46,9 @@ set(DEPENDENCY_SOURCES
 
 set(ENGINE_SOURCES
   src/engine.cpp
+  src/cube.cpp
+  src/scene_manager.cpp
+  src/square.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED)
@@ -67,19 +70,26 @@ target_include_directories(
       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
-target_link_libraries(${PROJECT_NAME} PRIVATE glm)
+target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
+target_link_libraries(${PROJECT_NAME} PUBLIC glm)
 
 # ================================
-# Build executable
+# Build demo executable
 
 set(ENGINE_EXEC_NAME
-  ${PROJECT_NAME}_main
+  demo
 )
 
-add_executable(${ENGINE_EXEC_NAME} main.cpp)
+set(ENGINE_EXEC_SOURCES
+  demo_game/main.cpp
+  demo_game/src/generic_scene.cpp
+)
+
+set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/demo_game/include)
+include_directories(${HEADERS_DIR})
+
+add_executable(${ENGINE_EXEC_NAME} ${ENGINE_EXEC_SOURCES})
 target_link_libraries(${ENGINE_EXEC_NAME} PRIVATE ${PROJECT_NAME})
-target_link_libraries(${ENGINE_EXEC_NAME} PRIVATE glm)
 
 # ================================
 # Test setup
