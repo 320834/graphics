@@ -73,10 +73,6 @@ void Cube::init_vertex_buffers() {
 
 // =================================
 
-Cube::Cube()
-  : Cube(empty) 
-{}
-
 Cube::Cube(const glm::vec3& position)
   : Shape(position) 
 {}

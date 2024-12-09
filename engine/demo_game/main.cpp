@@ -5,20 +5,23 @@
 #include "shapes/square.h"
 
 #include "generic_scene.h"
+#include "shapes/dynamic.h"
 
 int main() {
 
   std::shared_ptr<Engine<OpenGLWrapper>> engine =
     std::make_shared<Engine<OpenGLWrapper>>(
       "Snake Game", 
-      "../shaders/simple.vert",
-      "../shaders/simple.frag",
+      "../demo_game/shaders/simple.vert",
+      "../demo_game/shaders/simple.frag",
       // 1920,
       // 1080
       960,
       540
     );
 
+  DynamicShapeManager::load_shape("cube_dynamic", "../demo_game/shapes/cube.txt");
+  DynamicShapeManager::load_shape("weird_dynamic", "../demo_game/shapes/weird.txt");
   Cube::init_vertex_buffers();
   Square::init_vertex_buffers();
 

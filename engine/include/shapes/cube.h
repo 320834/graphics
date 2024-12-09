@@ -8,7 +8,6 @@
 class Cube : public Shape {
 public:
 
-  Cube();
   Cube(const glm::vec3& position);
 
   Cube(const Cube& other);

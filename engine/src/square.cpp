@@ -41,10 +41,6 @@ void Square::init_vertex_buffers() {
 
 // =================================
 
-Square::Square()
-  : Square(empty) 
-{}
-
 Square::Square(const glm::vec3& position)
   : Shape(position) 
 {}

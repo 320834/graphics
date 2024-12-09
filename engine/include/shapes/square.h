@@ -7,7 +7,6 @@
 
 class Square : public Shape {
 public:
-  Square();
   Square(const glm::vec3& position);
 
   Square(const Square& other);
