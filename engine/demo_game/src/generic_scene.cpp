@@ -41,5 +41,5 @@ void GenericScene::render() {
 }
 
 void GenericScene::controls() {
-
+  // bool w = glfwGetKey(m_glfw_window, GLFW_KEY_W) == GLFW_PRESS;
 }

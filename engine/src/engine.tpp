@@ -69,8 +69,18 @@ Camera& Engine<OpenGLWrapper>::camera() {
 }
 
 template <class OpenGLWrapper>
+GLFWwindow* Engine<OpenGLWrapper>::glfw_window() {
+  return m_glfw_window;
+}
+
+template <class OpenGLWrapper>
 SceneManager& Engine<OpenGLWrapper>::scene_manager() {
   return m_scene_manager;
+}
+
+template <class OpenGLWrapper>
+std::shared_ptr<Engine<OpenGLWrapper>> Engine<OpenGLWrapper>::engine() {
+  return this->shared_from_this();
 }
 
 // ==============================

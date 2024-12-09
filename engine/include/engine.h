@@ -2,6 +2,7 @@
 #define ENGINE_H_
 
 #include <string>
+#include <memory>
 
 #include <glm/glm.hpp>
 #include <glad/glad.h>
@@ -14,7 +15,7 @@
 #include "opengl_wrapper.h"
 
 template<class OpenGLWrapper>
-class Engine {
+class Engine : public std::enable_shared_from_this<Engine<OpenGLWrapper>> {
 public:
   Engine(
     const std::string& window_name,
@@ -25,10 +26,13 @@ public:
   );
   ~Engine();
 
-  void loop();
 
+  void loop();
+  
+  GLFWwindow* glfw_window();
   Camera& camera();
   SceneManager& scene_manager();
+  std::shared_ptr<Engine> engine();
   static Shader& shader();
 
 private:
