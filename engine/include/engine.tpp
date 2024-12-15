@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "opengl_wrapper.h"
+#include "constants.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -58,8 +59,14 @@ void Engine<OpenGLWrapper>::loop() {
     glUniformMatrix4fv(m_view_id, 1, GL_FALSE, glm::value_ptr(m_view));
     glUniformMatrix4fv(m_projection_id, 1, GL_FALSE, glm::value_ptr(m_projection));
 
-    scene_manager().get_current_scene()->controls();
     scene_manager().get_current_scene()->render();
+    if(
+        m_control_timer.elapsed_milliseconds() >
+        constants::CONTROL_DELAY_MILLISECONDS
+      ) {
+      scene_manager().get_current_scene()->controls();
+      m_control_timer.reset();
+    }
   }
 }
 

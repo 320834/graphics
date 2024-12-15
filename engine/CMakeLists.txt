@@ -50,6 +50,7 @@ set(ENGINE_SOURCES
   src/scene_manager.cpp
   src/square.cpp
   src/dynamic.cpp
+  src/timer.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED)

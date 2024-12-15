@@ -11,6 +11,7 @@
 #include "scene_manager.h"
 #include "shader.h"
 #include "camera.h"
+#include "timer.h"
 
 #include "opengl_wrapper.h"
 
@@ -67,6 +68,7 @@ private:
   SceneManager m_scene_manager;
   Camera m_camera;
   GLFWwindow* m_glfw_window;
+  Timer m_control_timer;
 };
 
 template <class OpenGLWrapper>
