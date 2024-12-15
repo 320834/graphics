@@ -3,10 +3,14 @@
 
 #include "scene.h"
 #include "shapes/shape.h"
+#include "opengl_wrapper.h"
 
 class GenericScene : public SceneInterface {
 public:
-  GenericScene(const std::string& scene_name);
+  GenericScene(
+    const std::shared_ptr<Engine<OpenGLWrapper>>& engine,
+    const std::string& scene_name
+  );
   ~GenericScene() = default;
 
   void render() override;

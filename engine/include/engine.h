@@ -77,4 +77,6 @@ Shader& Engine<OpenGLWrapper>::shader() {
   return Engine<OpenGLWrapper>::m_shader;
 }
 
+#include "engine.tpp"
+
 #endif // ENGINE_H_

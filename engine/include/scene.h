@@ -3,16 +3,20 @@
 
 #include <memory>
 #include <string>
-// #include "engine.h"
+#include "opengl_wrapper.h"
+
+// Foward declare
+template<class OpenGLWrapper>
+class Engine;
 
 class SceneInterface {
 public:
   SceneInterface(
-    // const std::shared_ptr<Engine>& engine,
+    const std::shared_ptr<Engine<OpenGLWrapper>>& engine,
     const std::string& scene_name
   )
-    // : m_engine{engine},
-    : m_scene_name{scene_name}
+    : m_engine{engine},
+      m_scene_name{scene_name}
   {}
 
   std::string scene_name() const;
@@ -21,7 +25,7 @@ public:
   virtual void controls() = 0;
 
 protected:
-  // std::shared_ptr<Engine> m_engine;
+  std::shared_ptr<Engine<OpenGLWrapper>> m_engine;
   std::string m_scene_name; // unique identifier
 };
 

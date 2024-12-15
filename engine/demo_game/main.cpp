@@ -27,6 +27,7 @@ int main() {
 
   std::shared_ptr<GenericScene> gen_scene =
     std::make_shared<GenericScene>(
+      engine,
       "main"
     );
 
