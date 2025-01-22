@@ -51,6 +51,7 @@ set(ENGINE_SOURCES
   src/square.cpp
   src/dynamic.cpp
   src/timer.cpp
+  src/texture_manager.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED)

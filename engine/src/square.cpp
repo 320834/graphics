@@ -49,7 +49,9 @@ Square::Square(const Square& other)
   : Shape(
       other.TransformMatrix(),
       other.RotateMatrix(),
-      other.ScaleMatrix()
+      other.ScaleMatrix(),
+      other.TextureId(),
+      other.GetColor()
     )
 {}
 

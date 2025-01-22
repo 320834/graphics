@@ -13,7 +13,8 @@ GenericScene::GenericScene(
 {
   m_shapes.push_back(
     std::make_shared<Cube>(
-      glm::vec3(0.0f, 0.0f, -4.0f)
+      glm::vec3(0.0f, 0.0f, -4.0f),
+      "../demo_game/textures/apple.jpg"
     )
   );
 

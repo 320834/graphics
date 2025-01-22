@@ -149,7 +149,9 @@ Dynamic::Dynamic(const Dynamic& other)
   : Shape(
       other.TransformMatrix(),
       other.RotateMatrix(),
-      other.ScaleMatrix()
+      other.ScaleMatrix(),
+      other.TextureId(),
+      other.GetColor()
   ),
   m_VAO(other.VAO()),
   m_VBO(other.VBO())

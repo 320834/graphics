@@ -77,11 +77,20 @@ Cube::Cube(const glm::vec3& position)
   : Shape(position) 
 {}
 
+Cube::Cube(
+  const glm::vec3& position,
+  const std::string& texture_name
+)
+  : Shape(position, texture_name)
+{}
+
 Cube::Cube(const Cube& other)
   : Shape(
       other.TransformMatrix(),
       other.RotateMatrix(),
-      other.ScaleMatrix()
+      other.ScaleMatrix(),
+      other.TextureId(),
+      other.GetColor()
     )
 {}
 
@@ -98,6 +107,9 @@ Cube& Cube::operator=(const Cube& other) {
 }
 
 void Cube::render() {
+
+  Shape::use_texture();
+
   glBindVertexArray(Cube::m_VAO);
 
   unsigned int m_shader_id =

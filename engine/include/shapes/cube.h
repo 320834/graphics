@@ -9,6 +9,10 @@ class Cube : public Shape {
 public:
 
   Cube(const glm::vec3& position);
+  Cube(
+    const glm::vec3& position,
+    const std::string& texture_name
+  );
 
   Cube(const Cube& other);
   Cube& operator=(const Cube& other);
