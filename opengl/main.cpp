@@ -6,6 +6,8 @@
 #include "lessons/chp_9_coordinate_systems.h"
 #include "lessons/chp_9_exercises.h"
 #include "lessons/chp_10_camera.h"
+#include "lessons/chp_12_color.h"
+#include "lessons/chp_13_exercises.h"
 #include "shader.h"
 
 #include <glm/glm.hpp>
@@ -36,6 +38,9 @@ int main() {
   // chp_10_camera_look_at();
   // chp_10_freeroam();
   // chp_10_ex_1_and_2();
+  
+  chp_12_color();
+  // chp_13_exercise_four();
 
   return 0;
 }
