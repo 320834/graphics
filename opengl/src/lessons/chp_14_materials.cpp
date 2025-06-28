@@ -1,4 +1,4 @@
-#include "lessons/chp_12_color.h"
+#include "lessons/chp_14_materials.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -12,11 +12,11 @@
 
 #include <iostream>
 
-void framebuffer_size_callback_12(GLFWwindow* window, int width, int height);
-void mouse_callback_12(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback_12(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
-void moveLight(GLFWwindow *window);
+void framebuffer_size_callback_14(GLFWwindow* window, int width, int height);
+void mouse_callback_14(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback_14(GLFWwindow* window, double xoffset, double yoffset);
+void processInput_14(GLFWwindow *window);
+void moveLight_14(GLFWwindow *window);
 
 namespace {
 
@@ -34,15 +34,11 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-glm::vec3 lightsPos[] = {
-    {1.2f, 1.0f, 2.0f},
-    {0.0f, 0.0f, -2.0f},
-    {0.0f, 3.0f, 0.0f}
-};
+glm::vec3 lightPos = {1.2f, 1.0f, 2.0f};
 
 }
 
-int chp_12_color()
+int chp_14_materials()
 {
     // glfw: initialize and configure
     // ------------------------------
@@ -65,9 +61,9 @@ int chp_12_color()
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback_12);
-    glfwSetCursorPosCallback(window, mouse_callback_12);
-    glfwSetScrollCallback(window, scroll_callback_12);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback_14);
+    glfwSetCursorPosCallback(window, mouse_callback_14);
+    glfwSetScrollCallback(window, scroll_callback_14);
 
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -86,8 +82,8 @@ int chp_12_color()
 
     // build and compile our shader zprogram
     // ------------------------------------
-    Shader lightingShader("../shaders/chapter_12_13/lesson/color.vert", "../shaders/chapter_12_13/lesson/color.frag");
-    Shader lightCubeShader("../shaders/chapter_12_13/lesson/lightCube.vert", "../shaders/chapter_12_13/lesson/lightCube.frag");
+    Shader lightingShader("../shaders/chapter_14/lesson/color.vert", "../shaders/chapter_14/lesson/color.frag");
+    Shader lightCubeShader("../shaders/chapter_14/lesson/lightCube.vert", "../shaders/chapter_14/lesson/lightCube.frag");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -171,22 +167,37 @@ int chp_12_color()
 
         // input
         // -----
-        processInput(window);
+        processInput_14(window);
 
         // render
         // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        moveLight(window);
+        moveLight_14(window);
         
         // be sure to activate shader when setting uniforms/drawing objects
         lightingShader.use();
         lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         lightingShader.setVec3("lightColor",  1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("viewPos", camera.Position);
-        // lightingShader.setVec3("lightPos", lightPos);
-        lightingShader.setVec3Array("lightsPos", lightsPos, 3);
+        lightingShader.setVec3("lightPos", lightPos);
+
+        lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        lightingShader.setFloat("material.shininess", 32.0f);
+
+        glm::vec3 lightColor;
+        lightColor.x = sin(glfwGetTime() * 2.0f);
+        lightColor.y = sin(glfwGetTime() * 0.7f);
+        lightColor.z = sin(glfwGetTime() * 1.3f);
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+        lightingShader.setVec3("light.ambient", ambientColor);
+        lightingShader.setVec3("light.diffuse", diffuseColor);
+        lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -205,19 +216,17 @@ int chp_12_color()
 
         // also draw the lamp objects
 
-        for(int i = 0; i < 3; ++i) {
-            lightCubeShader.use();
-            lightCubeShader.setMat4("projection", projection);
-            lightCubeShader.setMat4("view", view);
-    
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, lightsPos[i]);
-            model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-            lightCubeShader.setMat4("model", model);
-    
-            glBindVertexArray(lightCubeVAO);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+        lightCubeShader.use();
+        lightCubeShader.setMat4("projection", projection);
+        lightCubeShader.setMat4("view", view);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+        lightCubeShader.setMat4("model", model);
+
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -237,64 +246,35 @@ int chp_12_color()
     return 0;
 }
 
-void moveLight(GLFWwindow *window)
+void moveLight_14(GLFWwindow *window)
 {
     double step = 0.05;
 
     // Z direction
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-        lightsPos[0] += glm::vec3(0.0, 0.0, -step);
+        lightPos += glm::vec3(0.0, 0.0, -step);
     }
 
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
-        lightsPos[0] += glm::vec3(0.0, 0.0, step);
+        lightPos += glm::vec3(0.0, 0.0, step);
     }
 
     // y direction
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-        lightsPos[0] += glm::vec3(0.0, step, 0.0);
+        lightPos += glm::vec3(0.0, step, 0.0);
     }
 
     if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
-        lightsPos[0] += glm::vec3(0.0, -step, 0.0);
+        lightPos += glm::vec3(0.0, -step, 0.0);
     }
 
     // x direction
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
-        lightsPos[0] += glm::vec3(-step, 0.0, 0.0);
+        lightPos += glm::vec3(-step, 0.0, 0.0);
     }
 
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-        lightsPos[0] += glm::vec3(step, 0.0, 0.0);
-    }
-
-    // Second light
-
-    // Z direction
-    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
-        lightsPos[1] += glm::vec3(0.0, 0.0, -step);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
-        lightsPos[1] += glm::vec3(0.0, 0.0, step);
-    }
-
-    // y direction
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-        lightsPos[1] += glm::vec3(0.0, step, 0.0);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
-        lightsPos[1] += glm::vec3(0.0, -step, 0.0);
-    }
-
-    // x direction
-    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
-        lightsPos[1] += glm::vec3(-step, 0.0, 0.0);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-        lightsPos[1] += glm::vec3(step, 0.0, 0.0);
+        lightPos += glm::vec3(step, 0.0, 0.0);
     }
 
     
@@ -302,7 +282,7 @@ void moveLight(GLFWwindow *window)
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
+void processInput_14(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -319,7 +299,7 @@ void processInput(GLFWwindow *window)
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback_12(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback_14(GLFWwindow* window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
@@ -329,14 +309,14 @@ void framebuffer_size_callback_12(GLFWwindow* window, int width, int height)
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
-void mouse_callback_12(GLFWwindow* window, double xposIn, double yposIn)
+void mouse_callback_14(GLFWwindow* window, double xposIn, double yposIn)
 {
     camera.ProcessMouseMovement(xposIn, yposIn);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
-void scroll_callback_12(GLFWwindow* window, double xoffset, double yoffset)
+void scroll_callback_14(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
