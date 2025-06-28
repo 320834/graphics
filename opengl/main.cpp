@@ -8,6 +8,9 @@
 #include "lessons/chp_10_camera.h"
 #include "lessons/chp_12_color.h"
 #include "lessons/chp_13_exercises.h"
+#include "lessons/chp_14_materials.h"
+#include "lessons/chp_14_exercises.h"
+
 #include "shader.h"
 
 #include <glm/glm.hpp>
@@ -39,8 +42,11 @@ int main() {
   // chp_10_freeroam();
   // chp_10_ex_1_and_2();
   
-  chp_12_color();
+  // chp_12_color();
   // chp_13_exercise_four();
+
+  // chp_14_materials();
+  chp_14_materials_exercises();
 
   return 0;
 }
