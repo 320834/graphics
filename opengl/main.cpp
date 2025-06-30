@@ -10,6 +10,7 @@
 #include "lessons/chp_13_exercises.h"
 #include "lessons/chp_14_materials.h"
 #include "lessons/chp_14_exercises.h"
+#include "lessons/chp_15_lightmap.h"
 
 #include "shader.h"
 
@@ -46,7 +47,9 @@ int main() {
   // chp_13_exercise_four();
 
   // chp_14_materials();
-  chp_14_materials_exercises();
+  // chp_14_materials_exercises();
+
+  chp_15_lesson();
 
   return 0;
 }
