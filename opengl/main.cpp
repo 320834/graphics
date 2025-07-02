@@ -11,6 +11,7 @@
 #include "lessons/chp_14_materials.h"
 #include "lessons/chp_14_exercises.h"
 #include "lessons/chp_15_lightmap.h"
+#include "lessons/chp_16_lightcaster.h"
 
 #include "shader.h"
 
@@ -49,7 +50,11 @@ int main() {
   // chp_14_materials();
   // chp_14_materials_exercises();
 
-  chp_15_lesson();
+  // chp_15_lesson();
+  
+  // chp_16_directional();
+  // chp_16_point();
+  chp_16_spotlight();
 
   return 0;
 }
