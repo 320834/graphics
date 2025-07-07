@@ -51,6 +51,7 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_14_exercises.cpp
   src/lessons/chp_15_lightmap.cpp
   src/lessons/chp_16_lightcaster.cpp
+  src/lessons/chp_17_multiple_lights.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})
