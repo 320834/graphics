@@ -12,6 +12,7 @@
 #include "lessons/chp_14_exercises.h"
 #include "lessons/chp_15_lightmap.h"
 #include "lessons/chp_16_lightcaster.h"
+#include "lessons/chp_17_multiple_lights.h"
 
 #include "shader.h"
 
@@ -54,7 +55,9 @@ int main() {
   
   // chp_16_directional();
   // chp_16_point();
-  chp_16_spotlight();
+  // chp_16_spotlight();
+
+  chp_17_multiple_lights();
 
   return 0;
 }
