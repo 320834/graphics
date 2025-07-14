@@ -40,6 +40,7 @@ set(DEPENDENCY_SOURCES
 
 set(GRAPHICS_SOURCES
   main.cpp
+  src/model.cpp
   src/lessons/chp_5_hello_triangle.cpp
   src/lessons/chp_5_exercises.cpp
   src/lessons/chp_6_shaders.cpp
@@ -59,6 +60,7 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_15_lightmap.cpp
   src/lessons/chp_16_lightcaster.cpp
   src/lessons/chp_17_multiple_lights.cpp
+  src/lessons/chp_19_20_21_model.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})

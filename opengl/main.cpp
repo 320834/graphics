@@ -14,6 +14,8 @@
 #include "lessons/chp_16_lightcaster.h"
 #include "lessons/chp_17_multiple_lights.h"
 
+#include "lessons/chp_19_20_21_model.h"
+
 #include "shader.h"
 
 #include <glm/glm.hpp>
@@ -57,7 +59,9 @@ int main() {
   // chp_16_point();
   // chp_16_spotlight();
 
-  chp_17_multiple_lights();
+  // chp_17_multiple_lights();
+
+  chp_19_20_21_model();
 
   return 0;
 }
