@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iostream>
 
+#include <glm/glm.hpp>
 class Shader
 {
 public:
@@ -23,6 +24,17 @@ public:
   void setBool(const std::string &name, bool value) const;
   void setInt(const std::string &name, int value) const;
   void setFloat(const std::string &name, float value) const;
+  void setVec3(const std::string &name, const glm::vec3 &value) const;
+  void setMat4(const std::string &name, const glm::mat4 &mat) const;
+
+  void setVec3(const std::string &name, float x, float y, float z) const;
+
+  void setVec3Array(
+    const std::string& name,
+    const glm::vec3 array[],
+    const int array_value
+  ) const;
+
 
   unsigned int get_program();
 };
@@ -145,6 +157,34 @@ inline void Shader::setFloat(const std::string &name, float value) const
 
 inline unsigned int Shader::get_program() {
   return m_ID;
+}
+
+inline void Shader::setVec3(const std::string &name, const glm::vec3 &value) const
+{ 
+  glUniform3fv(glGetUniformLocation(m_ID, name.c_str()), 1, &value[0]); 
+}
+
+inline void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
+{
+  glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+}
+
+inline void Shader::setVec3(const std::string &name, float x, float y, float z) const
+{ 
+  glUniform3f(glGetUniformLocation(m_ID, name.c_str()), x, y, z); 
+}
+
+inline void Shader::setVec3Array(
+  const std::string& name,
+  const glm::vec3 array[],
+  const int array_value
+) const
+{
+  glUniform3fv(
+    glGetUniformLocation(m_ID, name.c_str()),
+    array_value,
+    &array[0][0]
+  );
 }
 
 #endif //SHADER_H_

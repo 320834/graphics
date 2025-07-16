@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 project(graphics)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_CXX_COMPILER clang++)
-# set(CMAKE_EXE_LINKER_FLAGS "-lGL")
-
 # All module for fetch content
 include(FetchContent)
 
@@ -15,7 +10,19 @@ FetchContent_Declare(
   GIT_TAG 3.4
 )
 
+FetchContent_Declare(
+  assimp
+  GIT_REPOSITORY https://github.com/assimp/assimp.git
+  GIT_TAG v6.0.2
+)
+
 FetchContent_MakeAvailable(glfw)
+FetchContent_MakeAvailable(assimp)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_COMPILER clang++)
+# set(CMAKE_EXE_LINKER_FLAGS "-lGL")
 
 # Set header dir
 set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -33,6 +40,7 @@ set(DEPENDENCY_SOURCES
 
 set(GRAPHICS_SOURCES
   main.cpp
+  src/model.cpp
   src/lessons/chp_5_hello_triangle.cpp
   src/lessons/chp_5_exercises.cpp
   src/lessons/chp_6_shaders.cpp
@@ -45,9 +53,18 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_9_exercises.cpp
   src/lessons/chp_10_camera.cpp
   src/lessons/chp_10_exercises.cpp
+  src/lessons/chp_12_13_color_light.cpp
+  src/lessons/chp_13_exercise_4.cpp
+  src/lessons/chp_14_materials.cpp
+  src/lessons/chp_14_exercises.cpp
+  src/lessons/chp_15_lightmap.cpp
+  src/lessons/chp_16_lightcaster.cpp
+  src/lessons/chp_17_multiple_lights.cpp
+  src/lessons/chp_19_20_21_model.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})
 target_link_libraries(graphics PRIVATE glfw)
+target_link_libraries(graphics PRIVATE assimp)
 
 target_include_directories(graphics PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/_deps/glfw-src/include)

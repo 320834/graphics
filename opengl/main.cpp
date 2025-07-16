@@ -6,6 +6,16 @@
 #include "lessons/chp_9_coordinate_systems.h"
 #include "lessons/chp_9_exercises.h"
 #include "lessons/chp_10_camera.h"
+#include "lessons/chp_12_color.h"
+#include "lessons/chp_13_exercises.h"
+#include "lessons/chp_14_materials.h"
+#include "lessons/chp_14_exercises.h"
+#include "lessons/chp_15_lightmap.h"
+#include "lessons/chp_16_lightcaster.h"
+#include "lessons/chp_17_multiple_lights.h"
+
+#include "lessons/chp_19_20_21_model.h"
+
 #include "shader.h"
 
 #include <glm/glm.hpp>
@@ -36,6 +46,22 @@ int main() {
   // chp_10_camera_look_at();
   // chp_10_freeroam();
   // chp_10_ex_1_and_2();
+  
+  // chp_12_color();
+  // chp_13_exercise_four();
+
+  // chp_14_materials();
+  // chp_14_materials_exercises();
+
+  // chp_15_lesson();
+  
+  // chp_16_directional();
+  // chp_16_point();
+  // chp_16_spotlight();
+
+  // chp_17_multiple_lights();
+
+  chp_19_20_21_model();
 
   return 0;
 }
