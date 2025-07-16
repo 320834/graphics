@@ -151,7 +151,7 @@ inline const Color Shape::GetColor() const {
 inline void Shape::use_texture() {
   // Handle textures
   unsigned int m_shader_id =
-    Engine<OpenGLWrapper>::shader().get_program();
+    Engine<OpenGLWrapper>::simple_shader().get_program();
   if(!m_use_color) {
     unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
     if(m_texture_id == -1) {

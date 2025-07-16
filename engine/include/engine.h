@@ -15,15 +15,21 @@
 
 #include "opengl_wrapper.h"
 
+struct ShaderFiles {
+  std::string simple_vertex_shader;
+  std::string simple_fragment_shader;
+  std::string assimp_vertex_shader;
+  std::string assimp_fragment_shader;
+};
+
 template<class OpenGLWrapper>
 class Engine : public std::enable_shared_from_this<Engine<OpenGLWrapper>> {
 public:
   Engine(
     const std::string& window_name,
-    const std::string& vertex_shader,
-    const std::string& fragment_shader,
     const float width,
-    const float height
+    const float height,
+    const ShaderFiles& shaders
   );
   ~Engine();
 
@@ -34,7 +40,7 @@ public:
   Camera& camera();
   SceneManager& scene_manager();
   std::shared_ptr<Engine> engine();
-  static Shader& shader();
+  static Shader& simple_shader();
 
 private:
 
@@ -64,7 +70,7 @@ private:
   float m_last_frame = 0.0f;
   float m_delta_time = 0.0f;
 
-  static Shader m_shader;
+  static Shader m_simple_shader;
   SceneManager m_scene_manager;
   Camera m_camera;
   GLFWwindow* m_glfw_window;
@@ -72,11 +78,11 @@ private:
 };
 
 template <class OpenGLWrapper>
-Shader Engine<OpenGLWrapper>::m_shader;
+Shader Engine<OpenGLWrapper>::m_simple_shader;
 
 template <class OpenGLWrapper>
-Shader& Engine<OpenGLWrapper>::shader() {
-  return Engine<OpenGLWrapper>::m_shader;
+Shader& Engine<OpenGLWrapper>::simple_shader() {
+  return Engine<OpenGLWrapper>::m_simple_shader;
 }
 
 #include "engine.tpp"

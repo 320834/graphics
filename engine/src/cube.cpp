@@ -110,17 +110,15 @@ void Cube::render() {
 
   Shape::use_texture();
 
+  Shader& simple_shader =
+    Engine<OpenGLWrapper>::simple_shader();
+  simple_shader.use();
+
   glBindVertexArray(Cube::m_VAO);
 
-  unsigned int m_shader_id =
-    Engine<OpenGLWrapper>::shader().get_program();
-  unsigned int model_id_trans = glGetUniformLocation(m_shader_id, "transform");
-  unsigned int model_id_rotate = glGetUniformLocation(m_shader_id, "rotate");
-  unsigned int model_id_scale = glGetUniformLocation(m_shader_id, "scale");
-
-  glUniformMatrix4fv(model_id_trans, 1, GL_FALSE, glm::value_ptr(m_transformation));
-  glUniformMatrix4fv(model_id_rotate, 1, GL_FALSE, glm::value_ptr(m_rotation));
-  glUniformMatrix4fv(model_id_scale, 1, GL_FALSE, glm::value_ptr(m_scale));
+  simple_shader.setMat4("transform", m_transformation);
+  simple_shader.setMat4("rotate", m_rotation);
+  simple_shader.setMat4("scale", m_scale);
 
   glDrawArrays(GL_TRIANGLES, 0, 36);
 }

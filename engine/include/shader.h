@@ -24,6 +24,11 @@ public:
   void setInt(const std::string &name, int value) const;
   void setFloat(const std::string &name, float value) const;
 
+  void setVec3(const std::string &name, const glm::vec3 &value) const;
+  void setVec3(const std::string &name, float x, float y, float z) const;
+
+  void setMat4(const std::string &name, const glm::mat4 &mat) const;
+
   unsigned int get_program();
 };
 
@@ -120,7 +125,6 @@ inline Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 }
 
 inline Shader::Shader(Shader& shader) {
-  std::cout << "Copy constructor" << std::endl;
   shader.m_ID = m_ID;
 }
 
@@ -141,6 +145,21 @@ inline void Shader::setInt(const std::string &name, int value) const
 inline void Shader::setFloat(const std::string &name, float value) const
 {
   glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value);
+}
+
+inline void Shader::setVec3(const std::string &name, float x, float y, float z) const
+{ 
+  glUniform3f(glGetUniformLocation(m_ID, name.c_str()), x, y, z); 
+}
+
+inline void Shader::setVec3(const std::string &name, const glm::vec3 &value) const
+{ 
+  glUniform3fv(glGetUniformLocation(m_ID, name.c_str()), 1, &value[0]); 
+}
+
+inline void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
+{
+  glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
 inline unsigned int Shader::get_program() {

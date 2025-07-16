@@ -48,7 +48,6 @@ set(ENGINE_SOURCES
   src/engine.cpp
   src/cube.cpp
   src/scene_manager.cpp
-  src/square.cpp
   src/dynamic.cpp
   src/timer.cpp
   src/texture_manager.cpp

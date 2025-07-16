@@ -8,23 +8,21 @@
 
 template <class OpenGLWrapper>
 Engine<OpenGLWrapper>::Engine(
-  const std::string& window_name,
-  const std::string& vertex_shader,
-  const std::string& fragment_shader,
-  const float width,
-  const float height
+    const std::string& window_name,
+    const float width,
+    const float height,
+    const ShaderFiles& shaders
 ) : 
   m_window_name(window_name),
   m_window_width(width),
   m_window_height(height)
 {
   init_window();
-  Engine<OpenGLWrapper>::m_shader = Shader(
-    vertex_shader.c_str(),
-    fragment_shader.c_str()
+  Engine<OpenGLWrapper>::m_simple_shader = Shader(
+    shaders.simple_vertex_shader.c_str(),
+    shaders.simple_fragment_shader.c_str()
   );
 
-  m_shader.use();
   init_model_view_projection();
   init_callbacks();
 }
@@ -32,7 +30,7 @@ Engine<OpenGLWrapper>::Engine(
 template <class OpenGLWrapper>
 Engine<OpenGLWrapper>::~Engine() {
 
-  glDeleteProgram(m_shader.get_program());
+  glDeleteProgram(m_simple_shader.get_program());
   glfwTerminate();
 }
 
@@ -139,9 +137,9 @@ void Engine<OpenGLWrapper>::init_model_view_projection() {
   m_view = m_camera.GetViewMatrix();
   m_projection = glm::perspective(glm::radians(m_camera.Zoom), m_window_width / m_window_height, 0.1f, 100.0f);
 
-  m_model_id = glGetUniformLocation(m_shader.get_program(), "model");
-  m_view_id = glGetUniformLocation(m_shader.get_program(), "view");
-  m_projection_id = glGetUniformLocation(m_shader.get_program(), "projection");
+  m_model_id = glGetUniformLocation(m_simple_shader.get_program(), "model");
+  m_view_id = glGetUniformLocation(m_simple_shader.get_program(), "view");
+  m_projection_id = glGetUniformLocation(m_simple_shader.get_program(), "projection");
 
   glUniformMatrix4fv(m_model_id, 1, GL_FALSE, glm::value_ptr(m_model));
   glUniformMatrix4fv(m_view_id, 1, GL_FALSE, glm::value_ptr(m_view));

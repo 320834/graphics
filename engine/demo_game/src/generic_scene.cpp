@@ -1,6 +1,5 @@
 #include "generic_scene.h"
 #include "shapes/cube.h"
-#include "shapes/square.h"
 #include "shapes/dynamic.h"
 #include "engine.h"
 #include <glm/glm.hpp>
