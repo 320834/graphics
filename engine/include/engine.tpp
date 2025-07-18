@@ -23,6 +23,11 @@ Engine<OpenGLWrapper>::Engine(
     shaders.simple_fragment_shader.c_str()
   );
 
+  Engine<OpenGLWrapper>::m_assimp_shader = Shader(
+    shaders.assimp_vertex_shader.c_str(),
+    shaders.assimp_fragment_shader.c_str()
+  );
+
   init_model_view_projection();
   init_callbacks();
 }
@@ -54,8 +59,13 @@ void Engine<OpenGLWrapper>::loop() {
     m_view = m_camera.GetViewMatrix();
     m_projection = glm::perspective(glm::radians(m_camera.Zoom), m_window_width / m_window_height, 0.1f, 100.0f);
 
-    glUniformMatrix4fv(m_view_id, 1, GL_FALSE, glm::value_ptr(m_view));
-    glUniformMatrix4fv(m_projection_id, 1, GL_FALSE, glm::value_ptr(m_projection));
+    m_simple_shader.use();
+    m_simple_shader.setMat4("view", m_view);
+    m_simple_shader.setMat4("projection", m_projection);
+
+    m_assimp_shader.use();
+    m_assimp_shader.setMat4("view", m_view);
+    m_assimp_shader.setMat4("projection", m_projection);
 
     scene_manager().get_current_scene()->render();
     if(
@@ -133,17 +143,15 @@ void Engine<OpenGLWrapper>::init_window() {
 
 template <class OpenGLWrapper>
 void Engine<OpenGLWrapper>::init_model_view_projection() {
-  m_model = glm::mat4(1.0f);
+
   m_view = m_camera.GetViewMatrix();
   m_projection = glm::perspective(glm::radians(m_camera.Zoom), m_window_width / m_window_height, 0.1f, 100.0f);
 
-  m_model_id = glGetUniformLocation(m_simple_shader.get_program(), "model");
-  m_view_id = glGetUniformLocation(m_simple_shader.get_program(), "view");
-  m_projection_id = glGetUniformLocation(m_simple_shader.get_program(), "projection");
+  m_simple_shader.setMat4("view", m_view);
+  m_simple_shader.setMat4("projection", m_projection);
 
-  glUniformMatrix4fv(m_model_id, 1, GL_FALSE, glm::value_ptr(m_model));
-  glUniformMatrix4fv(m_view_id, 1, GL_FALSE, glm::value_ptr(m_view));
-  glUniformMatrix4fv(m_projection_id, 1, GL_FALSE, glm::value_ptr(m_projection));
+  m_assimp_shader.setMat4("view", m_view);
+  m_assimp_shader.setMat4("projection", m_projection);
 }
 
 template <class OpenGLWrapper>
