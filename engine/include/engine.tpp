@@ -146,12 +146,6 @@ void Engine<OpenGLWrapper>::init_model_view_projection() {
 
   m_view = m_camera.GetViewMatrix();
   m_projection = glm::perspective(glm::radians(m_camera.Zoom), m_window_width / m_window_height, 0.1f, 100.0f);
-
-  m_simple_shader.setMat4("view", m_view);
-  m_simple_shader.setMat4("projection", m_projection);
-
-  m_assimp_shader.setMat4("view", m_view);
-  m_assimp_shader.setMat4("projection", m_projection);
 }
 
 template <class OpenGLWrapper>
