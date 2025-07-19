@@ -10,7 +10,9 @@ int main() {
 
   ShaderFiles shaders = {
     .simple_vertex_shader = "../demo_game/shaders/simple.vert",
-    .simple_fragment_shader = "../demo_game/shaders/simple.frag"
+    .simple_fragment_shader = "../demo_game/shaders/simple.frag",
+    .assimp_vertex_shader = "../demo_game/shaders/assimp.vert",
+    .assimp_fragment_shader = "../demo_game/shaders/assimp.frag"
   };
 
   std::shared_ptr<Engine<OpenGLWrapper>> engine =
@@ -21,8 +23,7 @@ int main() {
       shaders
     );
 
-  DynamicShapeManager::load_shape("cube_dynamic", "../demo_game/shapes/cube.txt");
-  DynamicShapeManager::load_shape("weird_dynamic", "../demo_game/shapes/weird.txt");
+  DynamicShapeManager::load_shape("backpack", "../demo_game/models/backpack/backpack.obj");
   Cube::init_vertex_buffers();
 
   std::shared_ptr<GenericScene> gen_scene =

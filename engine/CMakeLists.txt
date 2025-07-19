@@ -26,10 +26,17 @@ FetchContent_Declare(
   URL https://raw.githubusercontent.com/nothings/stb/refs/heads/master/stb_image.h
 )
 
+FetchContent_Declare(
+  assimp
+  GIT_REPOSITORY https://github.com/assimp/assimp.git
+  GIT_TAG v6.0.2
+)
+
 FetchContent_MakeAvailable(glfw)
 FetchContent_MakeAvailable(glm)
 FetchContent_MakeAvailable(googletest)
 FetchContent_MakeAvailable(stb_image)
+FetchContent_MakeAvailable(assimp)
 
 # ================================
 # Build library
@@ -45,10 +52,12 @@ set(DEPENDENCY_SOURCES
 )
 
 set(ENGINE_SOURCES
+  src/shapes/cube.cpp
+  src/shapes/dynamic.cpp
+  src/shapes/assimp/model.cpp
+  src/shapes/assimp/mesh.cpp
   src/engine.cpp
-  src/cube.cpp
   src/scene_manager.cpp
-  src/dynamic.cpp
   src/timer.cpp
   src/texture_manager.cpp
 )
@@ -74,6 +83,7 @@ target_include_directories(
 
 target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
 target_link_libraries(${PROJECT_NAME} PUBLIC glm)
+target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
 
 # ================================
 # Build demo executable

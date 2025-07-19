@@ -41,6 +41,7 @@ public:
   SceneManager& scene_manager();
   std::shared_ptr<Engine> engine();
   static Shader& simple_shader();
+  static Shader& assimp_shader();
 
 private:
 
@@ -59,11 +60,6 @@ private:
   float m_window_width;
   float m_window_height;
 
-  unsigned int m_model_id;
-  unsigned int m_projection_id;
-  unsigned int m_view_id;
-
-  glm::mat4 m_model;
   glm::mat4 m_view;
   glm::mat4 m_projection;
 
@@ -71,6 +67,7 @@ private:
   float m_delta_time = 0.0f;
 
   static Shader m_simple_shader;
+  static Shader m_assimp_shader;
   SceneManager m_scene_manager;
   Camera m_camera;
   GLFWwindow* m_glfw_window;
@@ -81,8 +78,16 @@ template <class OpenGLWrapper>
 Shader Engine<OpenGLWrapper>::m_simple_shader;
 
 template <class OpenGLWrapper>
+Shader Engine<OpenGLWrapper>::m_assimp_shader;
+
+template <class OpenGLWrapper>
 Shader& Engine<OpenGLWrapper>::simple_shader() {
   return Engine<OpenGLWrapper>::m_simple_shader;
+}
+
+template <class OpenGLWrapper>
+Shader& Engine<OpenGLWrapper>::assimp_shader() {
+  return Engine<OpenGLWrapper>::m_assimp_shader;
 }
 
 #include "engine.tpp"

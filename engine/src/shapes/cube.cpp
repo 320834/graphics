@@ -1,5 +1,6 @@
 #include "shapes/cube.h"
 #include "engine.h"
+#include "texture_manager.h"
 
 #include <glad/glad.h>
 
@@ -81,16 +82,39 @@ Cube::Cube(
   const glm::vec3& position,
   const std::string& texture_name
 )
-  : Shape(position, texture_name)
-{}
+  : Shape(position)
+{
+  // Call set texture
+  TextureStatus status = TextureManager::get_texture(
+    texture_name
+  );
+
+  if(!status.success) {
+    m_texture_id = -1;
+    m_use_color = true;
+    return;
+  }
+
+  m_texture_id = status.texture_id;
+  m_use_color = false;
+}
+
+Cube::Cube(
+  const glm::vec3& position,
+  const Color color
+)
+  : Shape(position)
+{
+  m_color = color;
+  m_use_color = true;
+  m_texture_id = -1;
+}
 
 Cube::Cube(const Cube& other)
   : Shape(
       other.TransformMatrix(),
       other.RotateMatrix(),
-      other.ScaleMatrix(),
-      other.TextureId(),
-      other.GetColor()
+      other.ScaleMatrix()
     )
 {}
 
@@ -106,9 +130,64 @@ Cube& Cube::operator=(const Cube& other) {
   return *this;
 }
 
-void Cube::render() {
+const int Cube::TextureId() const {
+  return m_texture_id;
+}
 
-  Shape::use_texture();
+const Color Cube::GetColor() const {
+  return m_color;
+}
+
+inline void Cube::SetTexture(const std::string& texture_name) {
+  TextureStatus status = TextureManager::get_texture(texture_name);
+
+  if(!status.success) {
+    m_texture_id = -1;
+    m_use_color = true;
+    return;
+  }
+
+  m_texture_id = status.texture_id;
+  m_use_color = false;
+}
+
+inline void Cube::SetColor(const Color color) {
+  m_use_color = true;
+  m_color = color;
+}
+
+void Cube::use_texture() {
+  // Handle textures
+  unsigned int m_shader_id =
+    Engine<OpenGLWrapper>::simple_shader().get_program();
+  if(!m_use_color) {
+    unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
+    if(m_texture_id == -1) {
+      glUniform1i(use_texture_id, (int)false);
+    } else {
+      glUniform1i(use_texture_id, (int)true);
+
+      // Probably not a good idea to bind every render call
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_texture_id);    
+    }
+  }
+
+  // Handle color
+  if(m_use_color) {
+    unsigned int use_texture_id = glGetUniformLocation(m_shader_id, "use_texture");
+    glUniform1i(use_texture_id, (int)false);
+
+    unsigned int color_id = glGetUniformLocation(m_shader_id, "color");
+
+    float r = ((float)m_color.r) / 255;
+    float g = ((float)m_color.g) / 255;
+    float b = ((float)m_color.b) / 255;
+    glUniform4f(color_id, r, g, b, 1.0);
+  }
+}
+
+void Cube::render() {
 
   Shader& simple_shader =
     Engine<OpenGLWrapper>::simple_shader();
@@ -116,9 +195,12 @@ void Cube::render() {
 
   glBindVertexArray(Cube::m_VAO);
 
+  use_texture();
+
   simple_shader.setMat4("transform", m_transformation);
   simple_shader.setMat4("rotate", m_rotation);
   simple_shader.setMat4("scale", m_scale);
 
   glDrawArrays(GL_TRIANGLES, 0, 36);
+  glBindVertexArray(0);
 }

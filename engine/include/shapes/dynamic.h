@@ -4,14 +4,15 @@
 #include <unordered_map>
 #include <optional>
 #include <string>
+#include <memory>
 
 #include "shapes/shape.h"
+#include "shapes/assimp/model.h"
 
 struct DynamicShapeMetadata {
-  unsigned int m_VAO;
-  unsigned int m_VBO;
-  unsigned int m_stride;
-  std::vector<VertexType> m_vertices;
+  std::string name;
+  std::string filename;
+  std::shared_ptr<Model> model;
 };
 
 class DynamicShapeManager {
@@ -44,13 +45,12 @@ public:
   Dynamic(const Dynamic& other);
   Dynamic& operator=(const Dynamic& other);
 
-  unsigned VAO() const;
-  unsigned VBO() const;
-
   void render() override;
+
 private:
-  unsigned m_VAO;
-  unsigned m_VBO;
+
+  std::string m_model_name;
+  std::shared_ptr<Model> m_model;
 };
 
 #endif //SHAPES_DYNAMIC_H_
