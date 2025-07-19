@@ -6,6 +6,8 @@
 #include <assimp/postprocess.h>
 #include <vector>
 
+#include <glm/glm.hpp>
+
 #include "shader.h"
 
 struct Vertex {
