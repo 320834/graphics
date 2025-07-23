@@ -67,7 +67,7 @@ void Engine<OpenGLWrapper>::loop() {
     m_assimp_shader.setMat4("view", m_view);
     m_assimp_shader.setMat4("projection", m_projection);
 
-    scene_manager().get_current_scene()->render();
+    scene_manager().get_current_scene()->base_render();
     if(
         m_control_timer.elapsed_milliseconds() >
         constants::CONTROL_DELAY_MILLISECONDS
