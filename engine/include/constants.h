@@ -5,6 +5,7 @@ namespace constants {
 
   const double CONTROL_DELAY_MILLISECONDS = 10;
   const unsigned int MAX_POINT_LIGHTS = 10;
+  const unsigned int MAX_SPOT_LIGHTS = 10;
 
 } // namespace constants
 

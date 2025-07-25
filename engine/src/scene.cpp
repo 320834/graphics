@@ -50,13 +50,13 @@ std::shared_ptr<PointLight> SceneInterface::add_point_light(
   m_point_lights.emplace_back(
     std::make_shared<PointLight>(index, position));
 
-  return m_point_lights[m_point_lights.size() - 1];
+  return m_point_lights.back();
 }
 
 std::shared_ptr<SpotLight> SceneInterface::add_spot_light(
   const glm::vec3 position
 ) {
-  if(m_spot_lights.size() >= constants::MAX_POINT_LIGHTS) {
+  if(m_spot_lights.size() >= constants::MAX_SPOT_LIGHTS) {
     return nullptr;
   }
 
@@ -64,7 +64,7 @@ std::shared_ptr<SpotLight> SceneInterface::add_spot_light(
   m_spot_lights.emplace_back(
     std::make_shared<SpotLight>(index, position));
 
-  return m_spot_lights[m_spot_lights.size() - 1];
+  return m_spot_lights.back();
 }
 
 std::string SceneInterface::scene_name() const {
