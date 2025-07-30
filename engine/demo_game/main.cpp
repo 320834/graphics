@@ -20,6 +20,8 @@ int main() {
       "Snake Game", 
       1920,
       1080,
+      // 720,
+      // 360,
       shaders
     );
 

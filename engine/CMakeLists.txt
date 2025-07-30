@@ -60,6 +60,10 @@ set(ENGINE_SOURCES
   src/scene_manager.cpp
   src/timer.cpp
   src/texture_manager.cpp
+  src/lights/directional.cpp
+  src/lights/point.cpp
+  src/lights/spot.cpp
+  src/scene.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED)

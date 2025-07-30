@@ -15,7 +15,8 @@ Engine<OpenGLWrapper>::Engine(
 ) : 
   m_window_name(window_name),
   m_window_width(width),
-  m_window_height(height)
+  m_window_height(height),
+  m_background_color({0.2f, 0.3f, 0.3f})
 {
   init_window();
   Engine<OpenGLWrapper>::m_simple_shader = Shader(
@@ -51,7 +52,9 @@ void Engine<OpenGLWrapper>::loop() {
     glfwPollEvents();
 
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(
+      m_background_color.x, m_background_color.y, 
+      m_background_color.z, 1.0f);
     // Clear Buffer so previous frame is not stored
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -67,7 +70,7 @@ void Engine<OpenGLWrapper>::loop() {
     m_assimp_shader.setMat4("view", m_view);
     m_assimp_shader.setMat4("projection", m_projection);
 
-    scene_manager().get_current_scene()->render();
+    scene_manager().get_current_scene()->base_render();
     if(
         m_control_timer.elapsed_milliseconds() >
         constants::CONTROL_DELAY_MILLISECONDS
@@ -182,6 +185,14 @@ void Engine<OpenGLWrapper>::process_input_wasd() {
   } else if(s) {
     m_camera.ProcessKeyboard(Camera_Movement::BACKWARD, m_delta_time);
   }
+}
+
+template <class OpenGLWrapper>
+void Engine<OpenGLWrapper>::set_background(
+  const glm::vec3 color
+)
+{
+  m_background_color = color;
 }
 
 template <class OpenGLWrapper>
