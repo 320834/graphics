@@ -43,6 +43,8 @@ public:
   static Shader& simple_shader();
   static Shader& assimp_shader();
 
+  void set_background(const glm::vec3 color);
+
 private:
 
   OpenGLWrapper opengl;
@@ -69,6 +71,7 @@ private:
   static Shader m_simple_shader;
   static Shader m_assimp_shader;
   SceneManager m_scene_manager;
+  glm::vec3 m_background_color;
   Camera m_camera;
   GLFWwindow* m_glfw_window;
   Timer m_control_timer;

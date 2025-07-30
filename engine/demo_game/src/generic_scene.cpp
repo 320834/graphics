@@ -12,6 +12,8 @@ GenericScene::GenericScene(
   : SceneInterface(engine, scene_name)
 {
 
+  m_engine->set_background({0.0f, 0.0f, 0.0f});
+
   m_shapes.push_back(
     std::make_shared<Dynamic>(
       "backpack",
@@ -31,20 +33,20 @@ GenericScene::GenericScene(
   );
 
   directional_light().set_direction(glm::vec3(-0.2f, -1.0f, -0.3f));
-  directional_light().set_ambient(glm::vec3(0.1f, 0.1f, 0.1f));
-  directional_light().set_diffuse(glm::vec3(0.5f, 0.5f, 0.5f));
+  directional_light().set_ambient(glm::vec3(0.01f, 0.01f, 0.01f));
+  directional_light().set_diffuse(glm::vec3(0.01f, 0.01f, 0.01f));
   directional_light().set_specular(glm::vec3(0.5f, 0.5f, 0.5f));
 
   std::shared_ptr<PointLight> point_one =
-    add_point_light(glm::vec3(0.0f, 0.0f, -4.0f));
+    add_point_light(glm::vec3(0.0f, 0.0f, 0.0f));
 
-  point_one->set_ambient(glm::vec3(0.4f, 0.4f, 0.1));
-  point_one->set_diffuse(glm::vec3(0.5f, 0.5f, 0.5f));
+  point_one->set_ambient(glm::vec3(0.1f, 0.1f, 0.1f));
+  point_one->set_diffuse(glm::vec3(0.1f, 0.1f, 0.1f));
   point_one->set_specular(glm::vec3(1.0f, 1.0f, 1.0f));
 
   std::shared_ptr<SpotLight> spot_one =
     add_spot_light(glm::vec3(0.0f, 0.0f, -2.0f));
-  spot_one->set_ambient(glm::vec3(0.4f, 0.4f, 0.1));
+  spot_one->set_ambient(glm::vec3(0.0f, 0.0f, 0.0f));
   spot_one->set_diffuse(glm::vec3(1.0f, 1.0f, 1.0f));
   spot_one->set_specular(glm::vec3(0.5f, 0.5f, 0.5f));
   spot_one->set_cutoffs(2.5f, 5.0f);
