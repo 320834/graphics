@@ -2,6 +2,13 @@
 
 Playground for custom render engine
 
+## Conan
+
+conan install . --output-folder=release --build=missing -c tools.system.package_manager:mode=install -c system.package_manager:sudo=True
+
+cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+
+make
 
 Dependencies
 

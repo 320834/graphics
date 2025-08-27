@@ -3,40 +3,45 @@ project(engine VERSION 0.1.0 LANGUAGES C CXX)
 
 # ================================
 # Dependencies
-include(FetchContent)
+# include(FetchContent)
 
-FetchContent_Declare(
-  glfw
-  URL https://github.com/glfw/glfw/archive/refs/tags/3.4.zip # v3.4
-)
+# FetchContent_Declare(
+#   glfw
+#   URL https://github.com/glfw/glfw/archive/refs/tags/3.4.zip # v3.4
+# )
 
-FetchContent_Declare(
-  glm
-  URL https://github.com/g-truc/glm/archive/refs/tags/1.0.1.zip # v1.0.1
-)
+# FetchContent_Declare(
+#   glm
+#   URL https://github.com/g-truc/glm/archive/refs/tags/1.0.1.zip # v1.0.1
+# )
 
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip # v1.15.2
-)
+# FetchContent_Declare(
+#   googletest
+#   URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip # v1.15.2
+# )
 
-FetchContent_Declare(
-  stb_image
-  DOWNLOAD_NO_EXTRACT TRUE
-  URL https://raw.githubusercontent.com/nothings/stb/refs/heads/master/stb_image.h
-)
+# FetchContent_Declare(
+#   stb_image
+#   DOWNLOAD_NO_EXTRACT TRUE
+#   URL https://raw.githubusercontent.com/nothings/stb/refs/heads/master/stb_image.h
+# )
 
-FetchContent_Declare(
-  assimp
-  GIT_REPOSITORY https://github.com/assimp/assimp.git
-  GIT_TAG v6.0.2
-)
+# FetchContent_Declare(
+#   assimp
+#   GIT_REPOSITORY https://github.com/assimp/assimp.git
+#   GIT_TAG v6.0.2
+# )
 
-FetchContent_MakeAvailable(glfw)
-FetchContent_MakeAvailable(glm)
-FetchContent_MakeAvailable(googletest)
-FetchContent_MakeAvailable(stb_image)
-FetchContent_MakeAvailable(assimp)
+# FetchContent_MakeAvailable(glfw)
+# FetchContent_MakeAvailable(glm)
+# FetchContent_MakeAvailable(googletest)
+# FetchContent_MakeAvailable(stb_image)
+# FetchContent_MakeAvailable(assimp)
+
+find_package(glfw3)
+find_package(glm)
+find_package(stb)
+find_package(assimp)
 
 # Links for shared object. Linux mint has weirdness
 # where it has issues linking this shared object with static libz
