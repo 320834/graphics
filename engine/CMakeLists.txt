@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(engine)
+project(engine VERSION 0.1.0 LANGUAGES C CXX)
 
 # ================================
 # Dependencies
@@ -37,6 +37,10 @@ FetchContent_MakeAvailable(glm)
 FetchContent_MakeAvailable(googletest)
 FetchContent_MakeAvailable(stb_image)
 FetchContent_MakeAvailable(assimp)
+
+# Links for shared object. Linux mint has weirdness
+# where it has issues linking this shared object with static libz
+find_package(ZLIB REQUIRED)
 
 # ================================
 # Build library
@@ -88,6 +92,8 @@ target_include_directories(
 target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
 target_link_libraries(${PROJECT_NAME} PUBLIC glm)
 target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
+# For linking shared object
+target_link_libraries(${PROJECT_NAME} PRIVATE ZLIB::ZLIB)
 
 # ================================
 # Build demo executable
@@ -133,3 +139,40 @@ include(GoogleTest)
 gtest_discover_tests(${ENGINE_TEST_NAME})
 
 
+# Installation
+
+include(CMakePackageConfigHelpers)
+
+install(TARGETS ${PROJECT_NAME}
+  EXPORT engineTargets
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(EXPORT engineTargets
+  FILE engineTargets.cmake
+  NAMESPACE engine::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
+)
+
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/engineConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+
+configure_package_config_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/engineConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/engineConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
+)
+
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/engineConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/engineConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
+)
