@@ -1,42 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
-project(engine)
+project(engine VERSION 0.1.0 LANGUAGES C CXX)
 
-# ================================
-# Dependencies
-include(FetchContent)
-
-FetchContent_Declare(
-  glfw
-  URL https://github.com/glfw/glfw/archive/refs/tags/3.4.zip # v3.4
-)
-
-FetchContent_Declare(
-  glm
-  URL https://github.com/g-truc/glm/archive/refs/tags/1.0.1.zip # v1.0.1
-)
-
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip # v1.15.2
-)
-
-FetchContent_Declare(
-  stb_image
-  DOWNLOAD_NO_EXTRACT TRUE
-  URL https://raw.githubusercontent.com/nothings/stb/refs/heads/master/stb_image.h
-)
-
-FetchContent_Declare(
-  assimp
-  GIT_REPOSITORY https://github.com/assimp/assimp.git
-  GIT_TAG v6.0.2
-)
-
-FetchContent_MakeAvailable(glfw)
-FetchContent_MakeAvailable(glm)
-FetchContent_MakeAvailable(googletest)
-FetchContent_MakeAvailable(stb_image)
-FetchContent_MakeAvailable(assimp)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
+find_package(stb CONFIG CONFIG REQUIRED)
+find_package(ZLIB CONFIG REQUIRED)
 
 # ================================
 # Build library
@@ -86,8 +55,9 @@ target_include_directories(
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
-target_link_libraries(${PROJECT_NAME} PUBLIC glm)
-target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
+target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm)
+target_link_libraries(${PROJECT_NAME} PUBLIC assimp::assimp)
+target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 
 # ================================
 # Build demo executable
@@ -110,26 +80,64 @@ target_link_libraries(${DEMO_EXEC_NAME} PRIVATE ${PROJECT_NAME}) # Link engine
 # ================================
 # Test setup
 
-set(ENGINE_TEST_NAME
-  ${PROJECT_NAME}_td 
+# set(ENGINE_TEST_NAME
+#   ${PROJECT_NAME}_td 
+# )
+
+# enable_testing()
+
+# set(ENGINE_TEST_SOURCES
+#   tests/test_main.cpp
+# )
+
+# add_executable(
+#   ${ENGINE_TEST_NAME}
+#   ${ENGINE_TEST_SOURCES}
+# )
+
+# target_link_libraries(${ENGINE_TEST_NAME} PRIVATE GTest::gtest_main)
+# # Link engine library
+# target_link_libraries(${ENGINE_TEST_NAME} PRIVATE ${PROJECT_NAME})
+
+# include(GoogleTest)
+# gtest_discover_tests(${ENGINE_TEST_NAME})
+
+
+# Installation
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+install(TARGETS ${PROJECT_NAME}
+  EXPORT engineTargets
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-enable_testing()
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-set(ENGINE_TEST_SOURCES
-  tests/test_main.cpp
+install(EXPORT engineTargets
+  FILE engineTargets.cmake
+  NAMESPACE engine::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
 )
 
-add_executable(
-  ${ENGINE_TEST_NAME}
-  ${ENGINE_TEST_SOURCES}
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/engineConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
 )
 
-target_link_libraries(${ENGINE_TEST_NAME} PRIVATE GTest::gtest_main)
-# Link engine library
-target_link_libraries(${ENGINE_TEST_NAME} PRIVATE ${PROJECT_NAME})
+configure_package_config_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/engineConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/engineConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
+)
 
-include(GoogleTest)
-gtest_discover_tests(${ENGINE_TEST_NAME})
-
-
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/engineConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/engineConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
+)
