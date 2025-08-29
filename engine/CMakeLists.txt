@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
 project(engine VERSION 0.1.0 LANGUAGES C CXX)
 
-find_package(glfw3 REQUIRED)
-find_package(glm REQUIRED)
-find_package(assimp REQUIRED)
-find_package(stb CONFIG REQUIRED)
-find_package(ZLIB REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
+find_package(stb CONFIG CONFIG REQUIRED)
+find_package(ZLIB CONFIG REQUIRED)
 
 # ================================
 # Build library
@@ -57,7 +57,7 @@ target_include_directories(
 target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
 target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm)
 target_link_libraries(${PROJECT_NAME} PUBLIC assimp::assimp)
-target_link_libraries(${PROJECT_NAME} PRIVATE ZLIB::ZLIB)
+target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 
 # ================================
 # Build demo executable
@@ -105,38 +105,39 @@ target_link_libraries(${DEMO_EXEC_NAME} PRIVATE ${PROJECT_NAME}) # Link engine
 
 # Installation
 
-# include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
-# install(TARGETS ${PROJECT_NAME}
-#   EXPORT engineTargets
-#   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-# )
+install(TARGETS ${PROJECT_NAME}
+  EXPORT engineTargets
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
 
-# install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# install(EXPORT engineTargets
-#   FILE engineTargets.cmake
-#   NAMESPACE engine::
-#   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
-# )
+install(EXPORT engineTargets
+  FILE engineTargets.cmake
+  NAMESPACE engine::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
+)
 
-# write_basic_package_version_file(
-#   "${CMAKE_CURRENT_BINARY_DIR}/engineConfigVersion.cmake"
-#   VERSION ${PROJECT_VERSION}
-#   COMPATIBILITY SameMajorVersion
-# )
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/engineConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
 
-# configure_package_config_file(
-#   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/engineConfig.cmake.in
-#   ${CMAKE_CURRENT_BINARY_DIR}/engineConfig.cmake
-#   INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
-# )
+configure_package_config_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/engineConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/engineConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
+)
 
-# install(FILES
-#   "${CMAKE_CURRENT_BINARY_DIR}/engineConfig.cmake"
-#   "${CMAKE_CURRENT_BINARY_DIR}/engineConfigVersion.cmake"
-#   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
-# )
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/engineConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/engineConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/engine
+)
