@@ -4,6 +4,7 @@ project(cvp)
 # Add dependencies here
 
 find_package(engine CONFIG REQUIRED)
+find_package(OpenCV CONFIG REQUIRED)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -19,3 +20,4 @@ include_directories(${HEADERS_DIR})
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC engine::engine)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS})
