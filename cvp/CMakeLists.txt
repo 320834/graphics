@@ -12,7 +12,7 @@ set(CMAKE_CXX_COMPILER clang++)
 
 set(SOURCES
   main.cpp
-  src/main_scene.cpp
+  src/camera_scene.cpp
 )
 
 set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)

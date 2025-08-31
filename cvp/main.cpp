@@ -5,7 +5,7 @@
 #include "engine.h"
 #include "shapes/cube.h"
 
-#include "main_scene.h"
+#include "camera_scene.h"
 #include "shapes/dynamic.h"
 
 int main() {
@@ -19,27 +19,22 @@ int main() {
   std::shared_ptr<Engine<OpenGLWrapper>> engine =
     std::make_shared<Engine<OpenGLWrapper>>(
       "Snake Game", 
-      1920,
-      1080,
-      // 720,
-      // 360,
+      // 1920,
+      // 1080,
+      720,
+      360,
       shaders
     );
-
-  DynamicShapeManager::load_shape(
-    "backpack",
-    "../assets/backpack/backpack.obj"
-  );
   Cube::init_vertex_buffers();
 
-  std::shared_ptr<MainScene> gen_scene =
-    std::make_shared<MainScene>(
+  std::shared_ptr<CameraScene> gen_scene =
+    std::make_shared<CameraScene>(
       engine,
-      "main"
+      "camera"
     );
 
   engine->scene_manager().add_scene(gen_scene);
-  engine->scene_manager().set_current_scene("main");
+  engine->scene_manager().set_current_scene("camera");
 
   engine->loop();
 }
