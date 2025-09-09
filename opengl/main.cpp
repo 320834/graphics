@@ -13,8 +13,8 @@
 #include "lessons/chp_15_lightmap.h"
 #include "lessons/chp_16_lightcaster.h"
 #include "lessons/chp_17_multiple_lights.h"
-
 #include "lessons/chp_19_20_21_model.h"
+#include "lessons/chp_22_depth_testing.h"
 
 #include "shader.h"
 
@@ -61,7 +61,8 @@ int main() {
 
   // chp_17_multiple_lights();
 
-  chp_19_20_21_model();
+  // chp_19_20_21_model();
+  chp_22_depth_testing();
 
   return 0;
 }
