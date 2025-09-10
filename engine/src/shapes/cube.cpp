@@ -138,7 +138,7 @@ const Color Cube::GetColor() const {
   return m_color;
 }
 
-inline void Cube::SetTexture(const std::string& texture_name) {
+void Cube::SetTexture(const std::string& texture_name) {
   TextureStatus status = TextureManager::get_texture(texture_name);
 
   if(!status.success) {
@@ -151,7 +151,7 @@ inline void Cube::SetTexture(const std::string& texture_name) {
   m_use_color = false;
 }
 
-inline void Cube::SetColor(const Color color) {
+void Cube::SetColor(const Color color) {
   m_use_color = true;
   m_color = color;
 }
