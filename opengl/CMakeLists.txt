@@ -62,6 +62,7 @@ set(GRAPHICS_SOURCES
   src/lessons/chp_17_multiple_lights.cpp
   src/lessons/chp_19_20_21_model.cpp
   src/lessons/chp_22_depth_testing.cpp
+  src/lessons/chp_23_stencil.cpp
 )
 
 add_executable(graphics ${GRAPHICS_SOURCES} ${DEPENDENCY_SOURCES})

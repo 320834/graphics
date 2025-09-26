@@ -15,6 +15,7 @@
 #include "lessons/chp_17_multiple_lights.h"
 #include "lessons/chp_19_20_21_model.h"
 #include "lessons/chp_22_depth_testing.h"
+#include "lessons/chp_23_stencil.h"
 
 #include "shader.h"
 
@@ -62,7 +63,8 @@ int main() {
   // chp_17_multiple_lights();
 
   // chp_19_20_21_model();
-  chp_22_depth_testing();
+  // chp_22_depth_testing();
+  chp_23_stencil();
 
   return 0;
 }
