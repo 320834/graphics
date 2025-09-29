@@ -151,6 +151,11 @@ void Cube::SetTexture(const std::string& texture_name) {
   m_use_color = false;
 }
 
+void Cube::SetTexture(const unsigned int texture_id) {
+  m_texture_id = texture_id;
+  m_use_color = false;
+}
+
 void Cube::SetColor(const Color color) {
   m_use_color = true;
   m_color = color;

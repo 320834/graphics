@@ -31,6 +31,11 @@ public:
 
   int m_camera_width;
   int m_camera_height;
+
+  bool m_init = false;
+
+  std::shared_ptr<Cube> m_canvas;
+
 };
 
 #endif //MAIN_SCENE_H_

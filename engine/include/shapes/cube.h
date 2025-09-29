@@ -34,6 +34,7 @@ public:
   const Color GetColor() const;
 
   void SetTexture(const std::string& texture_name);
+  void SetTexture(const unsigned int texture_id);
   void SetColor(const Color color);
 
   Cube(const Cube& other);
