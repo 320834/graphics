@@ -78,6 +78,22 @@ void setup_pbo(const cv::Mat& frame) {
 
   std::cout << "Init Byte Size: " << size_bytes << std::endl;
 
+  // Setup texture
+  glGenTextures(1, &texture_id);
+  glActiveTexture(GL_TEXTURE0 + texture_id);
+  glBindTexture(GL_TEXTURE_2D, texture_id);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  // Fiddle around with these values
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
+  error = glGetError();
+  if (error != GL_NO_ERROR) {
+    std::cout << "Init PBO (GlTexImage2D): ";
+    print_error(error);
+  }
+
   // Setup PBO
   glGenBuffers(1, &PBO[0]);
   glBindBuffer(GL_PIXEL_UNPACK_BUFFER, PBO[0]);
@@ -98,24 +114,6 @@ void setup_pbo(const cv::Mat& frame) {
   }
 
   glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-
-  // Setup texture
-  glGenTextures(1, &texture_id);
-  glActiveTexture(GL_TEXTURE0 + texture_id);
-  glBindTexture(GL_TEXTURE_2D, texture_id);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  // Fiddle around with these values
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
-  error = glGetError();
-  if (error != GL_NO_ERROR) {
-    std::cout << "Init PBO (GlTexImage2D): ";
-    print_error(error);
-  }
-
   glBindTexture(GL_TEXTURE_2D, 0);
 
 }

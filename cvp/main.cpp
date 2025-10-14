@@ -17,15 +17,54 @@ struct InitReturn {
   GLFWwindow* window;
 };
 
-float vertices[] = {
-  -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-left
-  1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
-  1.0f,  1.0f, 0.0f, 1.0f, 1.0f, // top-right
+// float vertices[] = {
+//   -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-left
+//   1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
+//   1.0f,  1.0f, 0.0f, 1.0f, 1.0f, // top-right
 
-  // Second triangle
-  -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-left
-    1.0f,  1.0f, 0.0f, 1.0f, 1.0f, // top-right
-  -1.0f,  1.0f, 0.0f, 0.0f, 1.0f  // top-left
+//   // Second triangle
+//   -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-left
+//     1.0f,  1.0f, 0.0f, 1.0f, 1.0f, // top-right
+//   -1.0f,  1.0f, 0.0f, 0.0f, 1.0f  // top-left
+// };
+
+float vertices[] = {
+  -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // TopBackLeft
+  0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+  0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+  0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+  -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+  -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+  -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+  0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+  0.5f, 0.5f, 0.5f, 1.0f, 1.0f, // BottomFrontRight
+  0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+  -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+  -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+  -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+  -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+  -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+  -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+  -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+  -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+  0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+  0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+  0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+  0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+  0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+  0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+  -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+  0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+  0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+  0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+  -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+  -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+  -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+  0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+  0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+  0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+  -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+  -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
 };
 
 float g_lastX = 400;
@@ -38,10 +77,13 @@ float g_zoom = 45.0f;
 // Something here
 namespace {
 
-const int camera_width = 200;
-const int camera_height = 200;
+const int camera_width = 400;
+const int camera_height = 400;
 
-unsigned int PBO;
+const float window_width = 1280;
+const float window_height = 720;
+
+unsigned int PBO[2];
 unsigned int texture_id;
 
 GLenum error;
@@ -78,7 +120,11 @@ void print_error(GLenum error) {
   }
 }
 
-}
+} // namespace
+
+namespace CVP_MAIN {
+int index = 0;
+};
 
 InitReturn init(const std::string window_name) {
   glfwInit();
@@ -90,7 +136,8 @@ InitReturn init(const std::string window_name) {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   #endif
 
-  GLFWwindow* window = glfwCreateWindow(800, 600, window_name.c_str(), NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(
+    window_width, window_height, window_name.c_str(), NULL, NULL);
   if (window == NULL)
   {
     std::cout << "Failed to create GLFW window" << std::endl;
@@ -112,8 +159,8 @@ InitReturn init(const std::string window_name) {
     };
   }
 
-  int viewport_width = 800;
-  int viewport_height = 600;
+  int viewport_width = window_width;
+  int viewport_height = window_height;
   glfwGetFramebufferSize(window, &viewport_width, &viewport_height);
   glViewport(0, 0, viewport_width, viewport_height);
 
@@ -174,27 +221,36 @@ void generate_pbo(const cv::Mat& frame) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)nullptr);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)nullptr);
   error = glGetError();
   if (error != GL_NO_ERROR) {
     std::cout << "Init PBO (GlBufferData): ";
     print_error(error);
   }
 
-  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+  // glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
   const int size_bytes =
     frame.total() * (frame.elemSize() + 1);
-  glGenBuffers(1, &PBO);
-  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, PBO);
+  glGenBuffers(1, &PBO[0]);
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, PBO[0]);
   glBufferData(GL_PIXEL_UNPACK_BUFFER, size_bytes, nullptr, GL_STREAM_DRAW);
   error = glGetError();
   if (error != GL_NO_ERROR) {
-    std::cout << "Init PBO (GlBufferData): ";
+    std::cout << "Init PBO 1 (GlBufferData): ";
     print_error(error);
   }
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  glGenBuffers(1, &PBO[1]);
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, PBO[1]);
+  glBufferData(GL_PIXEL_UNPACK_BUFFER, size_bytes, nullptr, GL_STREAM_DRAW);
+  error = glGetError();
+  if (error != GL_NO_ERROR) {
+    std::cout << "Init PBO 2 (GlBufferData): ";
+    print_error(error);
+  }
+
+  // glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void update_buf(void* dst, const cv::Mat& frame) {
@@ -205,8 +261,8 @@ void update_buf(void* dst, const cv::Mat& frame) {
 
   // height - rows
   // width. - cols
-  for(int row = 0; row < frame.rows; ++row) {
-    for(int col = 0; col < frame.cols; ++col) {
+  for(int row = frame.rows - 1; row >= 0; --row) {
+    for(int col = frame.cols - 1; col >= 0; --col) {
       const cv::Vec3b pix = frame.at<cv::Vec3b>(row, col);
 
       int r = pix[2];
@@ -219,7 +275,7 @@ void update_buf(void* dst, const cv::Mat& frame) {
       ++ptr;
       (*ptr) = b;
       ++ptr;
-      (*ptr) = 255;
+      (*ptr) = 200;
       ++ptr;
 
     }
@@ -233,9 +289,12 @@ void reload_pbo(const cv::Mat& frame) {
   const int size_bytes =
     frame.total() * (frame.elemSize() + 1);
 
+  CVP_MAIN::index = (CVP_MAIN::index + 1) % 2;
+  int next_index = (CVP_MAIN::index + 1) % 2;
+
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glBindTexture(GL_TEXTURE_2D, texture_id);
-  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, PBO);
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, PBO[CVP_MAIN::index]);
 
   // glActiveTexture(GL_TEXTURE0);
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
@@ -245,10 +304,13 @@ void reload_pbo(const cv::Mat& frame) {
     print_error(error);
   }
 
-  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, PBO);
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, PBO[next_index]);
   glBufferData(GL_PIXEL_UNPACK_BUFFER, size_bytes, 0, GL_STREAM_DRAW);
   // GLubyte* ptr = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
-  void* ptr = glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, size_bytes, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+  void* ptr = glMapBufferRange(
+    GL_PIXEL_UNPACK_BUFFER, 0,
+    size_bytes,
+    GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
   error = glGetError();
   if (error != GL_NO_ERROR) {
     std::cout << "Update PBO (GlMapBufferRange): ";
@@ -356,7 +418,7 @@ int main()
   glm::mat4 projection = glm::mat4(1.0f);
 
   view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-  projection = glm::perspective(glm::radians(g_zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+  projection = glm::perspective(glm::radians(g_zoom), window_width / window_height, 0.1f, 100.0f);
 
   unsigned int model_id = glGetUniformLocation(shader.get_program(), "model");
   unsigned int view_id = glGetUniformLocation(shader.get_program(), "view");
@@ -399,10 +461,6 @@ int main()
 
     shader.use();
 
-    // Explicitly use first texture.
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture_id);
-
     glBindVertexArray(VAO);
 
     glm::vec3 direction;
@@ -426,19 +484,27 @@ int main()
     video >> frame;
     reload_pbo(frame);
 
+    // Explicitly use first texture.
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+
     {
       model = glm::mat4(1.0f);
       view = glm::mat4(1.0f);
 
+      float scale_factor = 2.0f;
+
       model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
+      // model = glm::scale(model, scale_factor * glm::vec3(4.0f, 3.0f, 4.0f));
+      model = glm::scale(model, scale_factor * glm::vec3(1.0f, 1.0f, 1.0f));
       view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-      projection = glm::perspective(glm::radians(g_zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+      projection = glm::perspective(glm::radians(g_zoom), window_width / window_height, 0.1f, 100.0f);
 
       glUniformMatrix4fv(model_id, 1, GL_FALSE, glm::value_ptr(model));
       glUniformMatrix4fv(view_id, 1, GL_FALSE, glm::value_ptr(view));
       glUniformMatrix4fv(projection_id, 1, GL_FALSE, glm::value_ptr(projection));
 
-      glDrawArrays(GL_TRIANGLES, 0, 6);
+      glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
     glfwSwapBuffers(window);
