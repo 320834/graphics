@@ -175,7 +175,7 @@ void Cube::use_texture() {
       Engine<OpenGLWrapper>::simple_shader().setInt("texture_one", m_texture_id);
 
       // Probably not a good idea to bind every render call
-      // glActiveTexture(GL_TEXTURE0);
+      glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_texture_id);    
     }
   }

@@ -5,15 +5,15 @@ layout (location = 1) in vec2 aTextCoords;
 // out vec3 ourColor;
 out vec2 textCoords;
 
-uniform mat4 transform;
-uniform mat4 rotate;
-uniform mat4 scale;
+// uniform mat4 transform;
+// uniform mat4 rotate;
+// uniform mat4 scale;
 uniform mat4 model;
 
 uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
-  gl_Position = projection * view * scale * rotate * transform * vec4(pos, 1.0);
+  gl_Position = projection * view * model * vec4(pos, 1.0);
   textCoords = aTextCoords;
 }

@@ -80,7 +80,7 @@ void setup_pbo(const cv::Mat& frame) {
 
   // Setup texture
   glGenTextures(1, &texture_id);
-  glActiveTexture(GL_TEXTURE0 + texture_id);
+  // glActiveTexture(GL_TEXTURE0 + texture_id);
   glBindTexture(GL_TEXTURE_2D, texture_id);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -113,8 +113,8 @@ void setup_pbo(const cv::Mat& frame) {
     print_error(error);
   }
 
-  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-  glBindTexture(GL_TEXTURE_2D, 0);
+  // glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+  // glBindTexture(GL_TEXTURE_2D, 0);
 
 }
 
@@ -176,7 +176,10 @@ void update_pbo(const cv::Mat& frame) {
   glBindBuffer(GL_PIXEL_UNPACK_BUFFER, PBO[nextIndex]);
   glBufferData(GL_PIXEL_UNPACK_BUFFER, size_bytes, 0, GL_STREAM_DRAW);
   // GLubyte* ptr = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
-  void* ptr = glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, size_bytes, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+  void* ptr = glMapBufferRange(
+    GL_PIXEL_UNPACK_BUFFER, 0,
+    size_bytes,
+    GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
   error = glGetError();
   if (error != GL_NO_ERROR) {
     std::cout << "Update PBO (GlMapBufferRange): ";
@@ -218,7 +221,7 @@ CameraScene::CameraScene(
 
   m_engine->set_background({0.2f, 0.2f, 0.2f});
 
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
   error = glGetError();
   if (error != GL_NO_ERROR) {
     std::cout << "Pixel Store: ";
@@ -236,8 +239,11 @@ CameraScene::CameraScene(
   const glm::vec3 pos(-1.0f, 0.0f, -10.0f);
   Color color = {.r=255, .g=255, .b=255};
   m_canvas = std::make_shared<Cube>(pos);
-  m_canvas->ScaleX(4.0f);
-  m_canvas->ScaleY(3.0f);
+  // m_canvas->ScaleX(4.0f);
+  // m_canvas->ScaleY(3.0f);
+
+  m_engine->simple_shader().use();
+  m_engine->simple_shader().setInt("texture_one", 0);
 
   // glActiveTexture(GL_TEXTURE0);
   m_canvas->SetTexture(texture_id);
@@ -259,9 +265,13 @@ void CameraScene::render() {
     return;
   }
 
+  m_engine->simple_shader().use();
+
   update_pbo(m_frame);
 
-  glActiveTexture(GL_TEXTURE0 + texture_id);
+  // glActiveTexture(GL_TEXTURE0 + texture_id);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, texture_id);
   m_canvas->render();
 
 }
