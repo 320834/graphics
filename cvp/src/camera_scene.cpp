@@ -234,7 +234,6 @@ CameraScene::CameraScene(
   }
 
   setup_pbo(m_frame);
-  update_pbo(m_frame);
 
   const glm::vec3 pos(-1.0f, 0.0f, -10.0f);
   Color color = {.r=255, .g=255, .b=255};
@@ -245,7 +244,7 @@ CameraScene::CameraScene(
   m_engine->simple_shader().use();
   m_engine->simple_shader().setInt("texture_one", 0);
 
-  // glActiveTexture(GL_TEXTURE0);
+  glActiveTexture(GL_TEXTURE0);
   m_canvas->SetTexture(texture_id);
   // m_canvas->SetTexture("../shaders/container.jpg");
 
