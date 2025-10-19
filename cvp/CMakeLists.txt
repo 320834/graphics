@@ -12,7 +12,8 @@ set(CMAKE_CXX_COMPILER clang++)
 
 set(SOURCES
   main.cpp
-  src/camera_scene.cpp
+  src/naive_camera_scene.cpp
+  src/pbo_test_scene.cpp
 )
 
 set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)

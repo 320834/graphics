@@ -1,5 +1,5 @@
-#ifndef MAIN_SCENE_H_
-#define MAIN_SCENE_H_
+#ifndef PBO_TEST_SCENE_H_
+#define PBO_TEST_SCENE_H_
 
 #include "scene.h"
 #include "shapes/cube.h"
@@ -9,20 +9,21 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/videoio.hpp>
 
-using Grid = std::vector<std::vector<std::shared_ptr<Cube>>>;
-
-class CameraScene : public SceneInterface {
+class PboTestScene : public SceneInterface {
 public:
-  CameraScene(
+  PboTestScene(
     const std::shared_ptr<Engine<OpenGLWrapper>>& engine,
     const std::string& scene_name
   );
-  ~CameraScene() = default;
+
+  ~PboTestScene() = default;
 
   void render() override;
   void controls() override;
 
-  Grid m_grid;
+  void setup_pbo(const cv::Mat& frame);
+  void update_pbo();
+
   cv::VideoCapture m_video;
   cv::Mat m_frame;
 
@@ -32,10 +33,18 @@ public:
   int m_camera_width;
   int m_camera_height;
 
-  bool m_init = false;
-
   std::shared_ptr<Cube> m_canvas;
+
+  int m_pbo_index;
+  unsigned int m_texture_id;
+  unsigned int m_PBO[2];
+
+  GLenum m_error;
+
+private:
+  void update_buffer(void* dst);
+  void print_error();
 
 };
 
-#endif //MAIN_SCENE_H_
+#endif //PBO_TEST_SCENE_H_
