@@ -14,6 +14,6 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
-  gl_Position = projection * view * scale * rotate * transform * vec4(pos, 1.0);
+  gl_Position = projection * view * transform * rotate * scale * vec4(pos, 1.0);
   textCoords = aTextCoords;
 }
