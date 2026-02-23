@@ -1,4 +1,4 @@
-#include "camera_scene.h"
+#include "naive_camera_scene.h"
 
 #include "shapes/cube.h"
 #include "shapes/dynamic.h"
@@ -9,7 +9,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/videoio.hpp>
 
-CameraScene::CameraScene(
+NaiveCameraScene::NaiveCameraScene(
     const std::shared_ptr<Engine<OpenGLWrapper>>& engine,
     const std::string& scene_name
 )
@@ -31,7 +31,7 @@ CameraScene::CameraScene(
   int top_x = -5;
   int top_y = 2;
   m_height = 200;
-  m_width = 280;
+  m_width = 200;
   double scale = 0.05;
 
   for(int h = 0; h < m_height; ++h) {
@@ -62,7 +62,7 @@ CameraScene::CameraScene(
 
 }
 
-void CameraScene::render() {
+void NaiveCameraScene::render() {
 
   m_video >> m_frame;
 
@@ -99,6 +99,6 @@ void CameraScene::render() {
   }
 }
 
-void CameraScene::controls() {
+void NaiveCameraScene::controls() {
 
 }

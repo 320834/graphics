@@ -27,6 +27,9 @@ public:
   const glm::mat4 RotateMatrix() const;
 
   void Scale(const float scale);
+  void ScaleX(const float scale);
+  void ScaleY(const float scale);
+  void ScaleZ(const float scale);
   void Translate(const glm::vec3& delta);
 
   virtual void render() = 0;
@@ -61,6 +64,18 @@ inline void Shape::Translate(const glm::vec3& delta) {
 
 inline void Shape::Scale(const float scale) {
   m_scale = glm::scale(m_scale, glm::vec3(scale));
+}
+
+inline void Shape::ScaleX(const float scale) {
+  m_scale = glm::scale(m_scale, glm::vec3(scale, 1.0f, 1.0f));
+}
+
+inline void Shape::ScaleY(const float scale) {
+  m_scale = glm::scale(m_scale, glm::vec3(1.0f, scale, 1.0f));
+}
+
+inline void Shape::ScaleZ(const float scale) {
+  m_scale = glm::scale(m_scale, glm::vec3(1.0f, 1.0f, scale));
 }
 
 inline const glm::mat4 Shape::TransformMatrix() const {
