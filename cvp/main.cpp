@@ -55,8 +55,8 @@ int main(int argc, char** argv) {
 
   auto engine = std::make_shared<Engine<OpenGLWrapper>>(
     "PBO Test",
-    720,
-    360,
+    1920,
+    1080,
     shaders
   );
 

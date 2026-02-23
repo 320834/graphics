@@ -69,15 +69,8 @@ void PboTestScene::setup_pbo(const cv::Mat& frame) {
   const int width = frame.cols;
   const int height = frame.rows;
 
-  std::cout << "Width: " << width << " Height: " << height << std::endl;
-  std::cout << "Element Size: " << frame.elemSize() << std::endl;
-  std::cout << "GL_UNSIGNED_BYTE: " << sizeof(GL_UNSIGNED_BYTE) << std::endl;
-  std::cout << "GLubyte: " << sizeof(GLubyte) << std::endl;
-
   const int size_bytes =
     frame.total() * (frame.elemSize() + 1);
-
-  std::cout << "Init Byte Size: " << size_bytes << std::endl;
 
   // Setup texture
   glGenTextures(1, &m_texture_id);
